@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900|Material+Icons" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/vuetify/dist/vuetify.min.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+  </head>
+  <body>
+    <div id="app">
+      <v-app>
+        <v-content>
+          <v-container>
+            <v-layout column>
+              <v-flex mb-2 title>Gradient Descent for Linear Regression</v-flex>
+              <v-flex mb-2>
+                <v-card>
+                  <v-container>Use gradient descent to calculate the optimal values of <b>m</b> and <b>c</b> in the linear regression equation <b>y = mx + c</b> that minimises the cost function of least-squares method <b>J = n<sup>-1</sup> &Sigma; (y<sub>i</sub> - y<sub>i</sub>)<sup>2</sup></b>.</v-container>
+                </v-card>
+              </v-flex>
+              <v-flex mb-2>
+                <v-card>
+                  <v-container class="body-2">
+                    <v-layout column>
+                      <v-flex>CSV file: <input type="file"></v-flex>
+                      <v-divider></v-divider>
+                      Initial values:
+                      <v-switch label="random"></v-switch>
+                      <v-text-field label="m"></v-text-field>
+                      <v-text-field label="c"></v-text-field>
+                    </v-layout>
+                  </v-container>
+                </v-card>
+              </v-flex>
+            </v-layout>
+          </v-container>
+        </v-content>
+      </v-app>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vuetify/dist/vuetify.js"></script>
+    <script>
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [['$','$'], ['\\(','\\)']],
+          processEscapes: true
+        }
+      });
+      var app = new Vue({
+        el: "#app"
+      });
+    </script>
+  </body>
+</html>
