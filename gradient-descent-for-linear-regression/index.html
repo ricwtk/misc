@@ -16,19 +16,31 @@
               <v-flex mb-2 title>Gradient Descent for Linear Regression</v-flex>
               <v-flex mb-2>
                 <v-card>
-                  <v-container>Use gradient descent to calculate the optimal values of <b>m</b> and <b>c</b> in the linear regression equation <b>y = mx + c</b> that minimises the cost function of least-squares method <b>J = n<sup>-1</sup> &Sigma; (y<sub>i</sub> - y&#770;<sub>i</sub>)<sup>2</sup></b>.</v-container>
+                  <v-container>Use gradient descent to calculate the optimal values of <b>m</b> and <b>c</b> in the linear regression equation <b>y = mx + c</b> that minimises the cost function of least-squares method <b>J = <sup>1</sup>&frasl;<sub>n</sub> &Sigma; (y<sub>i</sub> - y&#770;<sub>i</sub>)<sup>2</sup></b>.</v-container>
                 </v-card>
               </v-flex>
               <v-flex mb-2>
                 <v-card>
                   <v-container class="body-2">
-                    <v-layout column>
-                      <v-flex>CSV file: <input type="file"></v-flex>
-                      <v-divider></v-divider>
-                      Initial values:
-                      <v-switch label="random"></v-switch>
-                      <v-text-field label="m"></v-text-field>
-                      <v-text-field label="c"></v-text-field>
+                    <v-layout wrap>
+                      <v-flex mb-2 xs12>CSV file: <input type="file"></v-flex>
+                      <v-flex xs12><v-divider></v-divider></v-flex>
+                      <v-flex mt-2 xs12>Initial values:</v-flex>
+                      <v-flex xs12><v-switch label="random" v-model="random_initialisation"></v-switch></v-flex>
+                      <v-flex xs12 sm6 md4 px-2><v-text-field label="m" :rules="[isNumeric]"></v-text-field></v-flex>
+                      <v-flex xs12 sm6 md4 px-2><v-text-field label="c" :rules="[isNumeric]"></v-text-field></v-flex>
+                      <v-flex xs12 sm6 md4 px-2><v-text-field label="learning rate, &alpha;" :rules="[isNumeric]"></v-text-field></v-flex>
+                    </v-layout>
+                  </v-container>
+                </v-card>
+              </v-flex>
+              <v-flex mb-2>
+                <v-card>
+                  <v-container class="body-2">
+                    <v-layout wrap>
+                      <v-flex xs12>Termination condition:</v-flex>
+                      <v-flex xs12 sm6 md4 px-2><v-text-field label="cost, J" :rules="[isNumeric]"></v-text-field></v-flex>
+                      <v-flex xs12 sm6 md4 px-2><v-text-field label="maximum epoch" :rules="[isNumeric]" type="number" v-model="maxEpoch"></v-text-field></v-flex>
                     </v-layout>
                   </v-container>
                 </v-card>
@@ -49,7 +61,14 @@
         }
       });
       var app = new Vue({
-        el: "#app"
+        el: "#app",
+        data: {
+          random_initialisation: false,
+          maxEpoch:10
+        },
+        methods: {
+          isNumeric: val => !isNaN(val) || `${val||'&lt;empty&gt;'} is not a number. Only numerical value is allowed.`
+        }
       });
     </script>
   </body>
