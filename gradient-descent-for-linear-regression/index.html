@@ -5,7 +5,6 @@
     <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900|Material+Icons" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/vuetify/dist/vuetify.min.css" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
-    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
   </head>
   <body>
     <div id="app">
@@ -23,25 +22,66 @@
                 <v-card>
                   <v-container class="body-2">
                     <v-layout wrap>
-                      <v-flex mb-2 xs12>CSV file: <input type="file"></v-flex>
-                      <v-flex xs12><v-divider></v-divider></v-flex>
-                      <v-flex mt-2 xs12>Initial values:</v-flex>
-                      <v-flex xs12><v-switch label="random" v-model="random_initialisation"></v-switch></v-flex>
-                      <v-flex xs12 sm6 md4 px-2><v-text-field label="m" :rules="[isNumeric]"></v-text-field></v-flex>
-                      <v-flex xs12 sm6 md4 px-2><v-text-field label="c" :rules="[isNumeric]"></v-text-field></v-flex>
-                      <v-flex xs12 sm6 md4 px-2><v-text-field label="learning rate, &alpha;" :rules="[isNumeric]"></v-text-field></v-flex>
+                      <v-flex xs12>CSV file: <input type="file" @change="getFileMeta"></v-flex>
+                      <v-flex xs12><v-switch label="header in file" v-model="data.header_in_file"></v-switch></v-flex>
+                      <v-flex xs12 sm6 px-2><v-btn block @click="readFile" :disabled="!data.file">load&nbsp;file</v-btn></v-flex>
+                      <v-flex xs12 sm6 px-2><v-btn block @click="display_data = !display_data" :disabled="data.data.length <= 0">{{ display_data ? 'hide' : 'show' }}&nbsp;data</v-btn></v-flex>
+                      <v-flex xs12 v-show="display_data && data.data.length > 0">
+                        <v-data-table
+                          :headers="data_col"
+                          :items="data.data"
+                        >
+                          <template v-slot:items="rows">
+                            <td v-for="it in rows.item">{{ it }}</td>
+                          </template>
+                        </v-data-table>
+                      </v-flex>
+                      <v-flex xs12 sm6 px-2 v-show="data.data.length > 0"><v-select :items="data_col" label="independent variable, x" v-model="data.horiz"></v-select></v-flex>
+                      <v-flex xs12 sm6 px-2 v-show="data.data.length > 0"><v-select :items="data_col" label="dependent variable, y" v-model="data.vert"></v-select></v-flex>
+                      <v-flex my-2 xs12><v-divider></v-divider></v-flex>
+                      <v-flex xs12>Initial values:</v-flex>
+                      <v-flex xs12 sm6 md4 px-2><v-text-field label="m" :rules="[isNumeric]" v-model.number="initial.m"></v-text-field></v-flex>
+                      <v-flex xs12 sm6 md4 px-2><v-text-field label="c" :rules="[isNumeric]" v-model.number="initial.c"></v-text-field></v-flex>
+                      <v-flex xs12 sm12 md4 px-2><v-btn block @click="randomise">randomise</v-btn></v-flex>
+                      <v-flex my-2 xs12><v-divider></v-divider></v-flex>
+                      <v-flex xs12><v-text-field label="learning rate, &alpha;" :rules="[isNumeric]" v-model.number="learning_rate"></v-text-field></v-flex>
+                      <v-flex my-2 xs12><v-divider></v-divider></v-flex>
+                      <v-flex xs12>Termination condition:</v-flex>
+                      <v-flex xs12 sm6 md4 px-2><v-text-field label="cost, J" :rules="[isNumeric]" v-model.number="termination.cost"></v-text-field></v-flex>
+                      <v-flex xs12 sm6 md4 px-2><v-text-field label="maximum epoch" :rules="[isNumeric]" type="number" v-model.number="termination.max_epoch"></v-text-field></v-flex>
                     </v-layout>
                   </v-container>
                 </v-card>
               </v-flex>
               <v-flex mb-2>
+                <v-flex xs12><v-btn block @click="startGD" :disabled="data.data.length <= 0">Start</v-btn></v-flex>
+              </v-flex>
+              <v-flex mb-2 v-if="gd_proc.epoch.length > 0">
                 <v-card>
                   <v-container class="body-2">
-                    <v-layout wrap>
-                      <v-flex xs12>Termination condition:</v-flex>
-                      <v-flex xs12 sm6 md4 px-2><v-text-field label="cost, J" :rules="[isNumeric]"></v-text-field></v-flex>
-                      <v-flex xs12 sm6 md4 px-2><v-text-field label="maximum epoch" :rules="[isNumeric]" type="number" v-model="maxEpoch"></v-text-field></v-flex>
+                    <v-layout row wrap>
+                      <v-flex xs12><v-select :items="[...Array(gd_proc.epoch.length).keys()]" label="epoch number" v-model="display_epoch"></v-select></v-flex>
+                      <!-- <v-flex xs12 sm4 px-2><v-btn block @click="showGraph">show&nbsp;graph</v-btn></v-flex> -->
                     </v-layout>
+                    <v-flex my-2><v-divider></v-divider></v-flex>
+                    <v-layout row wrap>
+                      <v-flex xs12 sm6 md4 px-2><v-text-field label="m" v-model.number="gd_proc.epoch[parseInt(display_epoch)].m" disabled></v-text-field></v-flex>
+                      <v-flex xs12 sm6 md4 px-2><v-text-field label="c" v-model.number="gd_proc.epoch[parseInt(display_epoch)].c" disabled></v-text-field></v-flex>
+                      <v-flex xs12 sm6 md4 px-2><v-text-field label="cost" v-model.number="gd_proc.epoch[parseInt(display_epoch)].cost" disabled></v-text-field></v-flex>
+                    </v-layout>
+                    <v-flex xs12>
+                      <v-data-table
+                        :headers="gd_proc.epoch[parseInt(display_epoch)].columns.map(v => ({text: v, value: v}))"
+                        :items="gd_proc.epoch[parseInt(display_epoch)].data"
+                      >
+                        <template v-slot:items="rows">
+                          <td v-for="it in rows.item">{{ it }}</td>
+                        </template>
+                      </v-data-table>
+                    </v-flex>
+                    <!-- <v-flex xs-12>
+                      <svg id="chart"></svg>
+                    </v-flex> -->
                   </v-container>
                 </v-card>
               </v-flex>
@@ -51,23 +91,135 @@
       </v-app>
     </div>
 
+    <style>
+      #chart { width: 100%; }
+    </style>
+
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vuetify/dist/vuetify.js"></script>
+    <!-- <script src="https://d3js.org/d3.v5.min.js"></script> -->
     <script>
-      MathJax.Hub.Config({
-        tex2jax: {
-          inlineMath: [['$','$'], ['\\(','\\)']],
-          processEscapes: true
-        }
-      });
       var app = new Vue({
         el: "#app",
         data: {
-          random_initialisation: false,
-          maxEpoch:10
+          data: {
+            file: null,
+            data: [],
+            columns: [],
+            header_in_file: false,
+            horiz: "",
+            vert: ""
+          },
+          initial: {
+            m: 0.01,
+            c: 0.01
+          },
+          learning_rate: 0.01,
+          termination: {
+            cost: 0.01,
+            max_epoch: 10
+          },
+          display_data: false,
+          gd_proc: {
+            data: {
+              file: null,
+              data: [],
+              columns: []
+            },
+            epoch: [],
+            learning_rate: 0,
+            termination: {
+              cost: 0,
+              max_epoch: 0
+            },
+            col: {
+              horiz: "",
+              vert: ""
+            }
+          },
+          display_epoch: 0
+        },
+        computed: {
+          data_col: function () {
+            if (this.data.data.length > 0) {
+              let dt = this.data.columns.length > 0 ? this.data.columns : [...Array(this.data.data[0].length).keys()];
+              return dt.map(v => ({
+                text: String(v),
+                value: String(v)
+              }))
+            };
+          }
         },
         methods: {
-          isNumeric: val => !isNaN(val) || `${val||'&lt;empty&gt;'} is not a number. Only numerical value is allowed.`
+          isNumeric: val => !isNaN(val) || `${val||'&lt;empty&gt;'} is not a number. Only numerical value is allowed.`,
+          randomise: function () {
+            this.$set(this.initial, 'm', Math.round(Math.random()*100)/100);
+            this.$set(this.initial, 'c', Math.round(Math.random()*100)/100);
+          },
+          getFileMeta: function (ev) {
+            this.$set(this.data, 'file', ev.target.files[0]);
+          },
+          readFile: function () {
+            this.$set(this.data, 'data', []);
+            this.$set(this.data, 'columns', []);
+            let reader = new FileReader();
+            reader.onload = this.loadFile;
+            reader.readAsText(this.data.file);
+          },
+          loadFile: function (ev) {
+            let allTextLines = ev.target.result.split(/\r\n|\n/);
+            let lines = allTextLines.map((l, i) => {
+              if (this.data.header_in_file && i == 0) {
+                this.$set(this.data, 'columns', l.split(','));
+              } else {
+                return [...l.split(',')];
+              }
+            });
+            this.$set(this.data, 'data', lines.filter(x => x));
+            this.$set(this.data, 'horiz', this.data_col[0].value);
+            this.$set(this.data, 'vert', this.data_col[1].value);
+            // console.log(this.data.columns,this.data.data);
+          },
+          startGD: function () {
+            this.$set(this.gd_proc.data, 'file', this.data.file.name);
+            this.$set(this.gd_proc, 'learning_rate', this.learning_rate);
+            this.$set(this.gd_proc.termination, 'cost', this.termination.cost);
+            this.$set(this.gd_proc.termination, 'max_epoch', this.termination.max_epoch);
+            this.$set(this.gd_proc.col, 'horiz', this.data.horiz);
+            this.$set(this.gd_proc.col, 'vert', this.data.vert);
+            this.$set(this.gd_proc.data, 'columns', [this.data.horiz, this.data.vert]);
+            let hi = this.data.columns.indexOf(this.data.horiz);
+            let vi = this.data.columns.indexOf(this.data.vert);
+            this.$set(this.gd_proc.data, 'data', this.data.data.map(v => [parseFloat(v[hi]), parseFloat(v[vi])]));
+            this.$set(this.gd_proc, 'epoch', []);
+            let m = this.initial.m;
+            let c = this.initial.c;
+            let epoch;
+            this.gd_proc.epoch.push(this.computeEpoch(m,c));
+            while (this.gd_proc.epoch.length < this.gd_proc.termination.max_epoch && this.gd_proc.epoch[this.gd_proc.epoch.length-1].cost > this.gd_proc.termination.cost) {
+              this.gd_proc.epoch.push(this.computeEpoch(...this.updateMandC(this.gd_proc.epoch[this.gd_proc.epoch.length-1])));
+            }
+          },
+          computeEpoch: function (m, c) {
+            let epoch = {
+              m: m,
+              c: c,
+              columns: this.gd_proc.data.columns.concat(['yh', 'y-yh']),
+            };
+            epoch.data = this.gd_proc.data.data.map(dt => {
+              let yh = m*dt[0] + c;
+              return [dt[0], dt[1], yh, dt[1]-yh];
+            });
+            epoch.cost = epoch.data.reduce((acc, dt) => dt[3]**2) / epoch.data.length;
+            return epoch;
+          },
+          updateMandC: function (epoch) {
+            let delJm = epoch.data.reduce((acc, dt) => dt[0] * (dt[1] - epoch.m * dt[0] - epoch.c)) * (-2) / epoch.data.length;
+            let delJc = epoch.data.reduce((acc, dt) => dt[1] - epoch.m * dt[0] - epoch.c) * (-2) / epoch.data.length;
+            let newm = epoch.m - this.gd_proc.learning_rate * delJm;
+            let newc = epoch.c - this.gd_proc.learning_rate * delJc;
+            return [newm, newc];
+          }
         }
       });
     </script>
