@@ -48,6 +48,7 @@
                       <v-flex my-2 xs12><v-divider></v-divider></v-flex>
                       <v-flex xs12>Termination condition:</v-flex>
                       <v-flex xs12 sm6 md4 px-2><v-text-field label="cost, J" :rules="[isNumeric]" v-model.number="termination.cost"></v-text-field></v-flex>
+                      <v-flex xs12 sm6 md4 px-2><v-text-field label="change in cost, &Delta;J" :rules="[isNumeric]" v-model.number="termination.change_in_cost"></v-text-field></v-flex>
                       <v-flex xs12 sm6 md4 px-2><v-text-field label="maximum epoch" :rules="[isNumeric]" type="number" v-model.number="termination.max_epoch"></v-text-field></v-flex>
                     </v-layout>
                   </v-container>
@@ -121,10 +122,11 @@
             m: 0.01,
             c: 0.01
           },
-          learning_rate: 0.01,
+          learning_rate: 0.1,
           termination: {
             cost: 0.01,
-            max_epoch: 10
+            max_epoch: 100,
+            change_in_cost: 0.001
           },
           display_data: false,
           gd_proc: {
@@ -198,6 +200,7 @@
             this.$set(this.gd_proc, 'learning_rate', this.learning_rate);
             this.$set(this.gd_proc.termination, 'cost', this.termination.cost);
             this.$set(this.gd_proc.termination, 'max_epoch', this.termination.max_epoch);
+            this.$set(this.gd_proc.termination, 'change_in_cost', this.termination.change_in_cost);
             this.$set(this.gd_proc.col, 'horiz', this.data.horiz);
             this.$set(this.gd_proc.col, 'vert', this.data.vert);
             this.$set(this.gd_proc.data, 'columns', [this.data.horiz, this.data.vert]);
@@ -209,7 +212,11 @@
             let c = this.initial.c;
             let epoch;
             this.gd_proc.epoch.push(this.computeEpoch(m,c));
-            while (this.gd_proc.epoch.length < this.gd_proc.termination.max_epoch && this.gd_proc.epoch[this.gd_proc.epoch.length-1].cost > this.gd_proc.termination.cost) {
+            while (
+              this.gd_proc.epoch.length < this.gd_proc.termination.max_epoch 
+              && this.gd_proc.epoch[this.gd_proc.epoch.length-1].cost > this.gd_proc.termination.cost
+              && (this.gd_proc.epoch.length > 1 ? Math.abs(this.gd_proc.epoch[this.gd_proc.epoch.length-1].cost - this.gd_proc.epoch[this.gd_proc.epoch.length-2].cost) > this.gd_proc.termination.change_in_cost : true)
+            ) {
               this.gd_proc.epoch.push(this.computeEpoch(...this.updateMandC(this.gd_proc.epoch[this.gd_proc.epoch.length-1])));
             }
           },
