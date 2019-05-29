@@ -60,9 +60,13 @@
                 <v-card>
                   <v-container class="body-2">
                     <v-layout row wrap>
-                      <v-flex xs12 sm8 px-2><v-select :items="[...Array(gd_proc.epoch.length).keys()]" label="epoch number" v-model="display_epoch"></v-select></v-flex>
+                      <v-flex xs12 sm8 px-2><v-slider label="epoch number" v-model="display_epoch" :min="0" :max="gd_proc.epoch.length-1" always-dirty thumb-label="always"></v-slider></v-flex>
                       <v-flex xs12 sm4 px-2><v-btn block @click="showGraph">show&nbsp;graph</v-btn></v-flex>
                     </v-layout>
+                    <!-- <v-layout row wrap>
+                      <v-flex xs12 sm8 px-2><v-select :items="[...Array(gd_proc.epoch.length).keys()]" label="epoch number" v-model="display_epoch"></v-select></v-flex>
+                      <v-flex xs12 sm4 px-2><v-btn block @click="showGraph">show&nbsp;graph</v-btn></v-flex>
+                    </v-layout> -->
                     <v-flex my-2><v-divider></v-divider></v-flex>
                     <v-layout row wrap>
                       <v-flex xs12 sm6 md4 px-2><v-text-field label="m" v-model.number="gd_proc.epoch[parseInt(display_epoch)].m" disabled></v-text-field></v-flex>
@@ -153,6 +157,11 @@
             };
           }
         },
+        watch: {
+          display_epoch: function () {
+            this.showGraph();
+          }
+        },
         methods: {
           isNumeric: val => !isNaN(val) || `${val||'&lt;empty&gt;'} is not a number. Only numerical value is allowed.`,
           randomise: function () {
@@ -184,6 +193,7 @@
             // console.log(this.data.columns,this.data.data);
           },
           startGD: function () {
+            this.display_epoch = 0;
             this.$set(this.gd_proc.data, 'file', this.data.file.name);
             this.$set(this.gd_proc, 'learning_rate', this.learning_rate);
             this.$set(this.gd_proc.termination, 'cost', this.termination.cost);
@@ -213,12 +223,12 @@
               let yh = m*dt[0] + c;
               return [dt[0], dt[1], yh, dt[1]-yh];
             });
-            epoch.cost = epoch.data.reduce((acc, dt) => dt[3]**2) / epoch.data.length;
+            epoch.cost = epoch.data.reduce((acc, dt) => acc + dt[3]**2, 0) / epoch.data.length;
             return epoch;
           },
           updateMandC: function (epoch) {
-            let delJm = epoch.data.reduce((acc, dt) => dt[0] * (dt[1] - epoch.m * dt[0] - epoch.c)) * (-2) / epoch.data.length;
-            let delJc = epoch.data.reduce((acc, dt) => dt[1] - epoch.m * dt[0] - epoch.c) * (-2) / epoch.data.length;
+            let delJm = epoch.data.reduce((acc, dt) => acc + dt[0] * (dt[1] - epoch.m * dt[0] - epoch.c), 0) * (-2) / epoch.data.length;
+            let delJc = epoch.data.reduce((acc, dt) => acc + dt[1] - epoch.m * dt[0] - epoch.c, 0) * (-2) / epoch.data.length;
             let newm = epoch.m - this.gd_proc.learning_rate * delJm;
             let newc = epoch.c - this.gd_proc.learning_rate * delJc;
             return [newm, newc];
