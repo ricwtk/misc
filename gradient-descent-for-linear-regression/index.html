@@ -60,8 +60,8 @@
                 <v-card>
                   <v-container class="body-2">
                     <v-layout row wrap>
-                      <v-flex xs12><v-select :items="[...Array(gd_proc.epoch.length).keys()]" label="epoch number" v-model="display_epoch"></v-select></v-flex>
-                      <!-- <v-flex xs12 sm4 px-2><v-btn block @click="showGraph">show&nbsp;graph</v-btn></v-flex> -->
+                      <v-flex xs12 sm8 px-2><v-select :items="[...Array(gd_proc.epoch.length).keys()]" label="epoch number" v-model="display_epoch"></v-select></v-flex>
+                      <v-flex xs12 sm4 px-2><v-btn block @click="showGraph">show&nbsp;graph</v-btn></v-flex>
                     </v-layout>
                     <v-flex my-2><v-divider></v-divider></v-flex>
                     <v-layout row wrap>
@@ -79,9 +79,9 @@
                         </template>
                       </v-data-table>
                     </v-flex>
-                    <!-- <v-flex xs-12>
+                    <v-flex xs-12>
                       <svg id="chart"></svg>
-                    </v-flex> -->
+                    </v-flex>
                   </v-container>
                 </v-card>
               </v-flex>
@@ -92,12 +92,15 @@
     </div>
 
     <style>
-      #chart { width: 100%; }
+      #chart { 
+        width: 100%; 
+        height: 300px;
+      }
     </style>
 
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vuetify/dist/vuetify.js"></script>
-    <!-- <script src="https://d3js.org/d3.v5.min.js"></script> -->
+    <script src="https://d3js.org/d3.v5.min.js"></script>
     <script>
       var app = new Vue({
         el: "#app",
@@ -219,7 +222,72 @@
             let newm = epoch.m - this.gd_proc.learning_rate * delJm;
             let newc = epoch.c - this.gd_proc.learning_rate * delJc;
             return [newm, newc];
-          }
+          },
+          showGraph: function () {
+            let chart = d3.select("#chart");
+            chart.selectAll("*").remove();
+            let getl = s => parseInt(window.getComputedStyle(document.getElementById("chart")).getPropertyValue(s)) || 0;
+            let dim = {
+              w: getl("width"),
+              h: getl("height"),
+              padding: {
+                left: 50,
+                bottom: 50,
+                right: 10,
+                top: 10
+              },
+              margin: {
+                left: 0,
+                bottom: 0,
+                right: 0,
+                top: 0
+              }
+            }
+            // chart.attr("width", dim.w)
+            //   .attr("height", dim.h);
+            let graph = chart.append("g")
+              .attr("transform", "translate(" + dim.margin.left + "," + dim.margin.top + ")");
+            let xAxis = d3.scaleLinear()
+              .domain([d3.min(this.gd_proc.data.data, d => d[0]), d3.max(this.gd_proc.data.data, d => d[0])])
+              .range([dim.padding.left, dim.w-dim.padding.right]);
+            let yAxis = d3.scaleLinear()
+              .domain([d3.min(this.gd_proc.data.data, d => d[1]), d3.max(this.gd_proc.data.data, d => d[1])])
+              .range([dim.h-dim.padding.bottom, dim.padding.top]);
+            graph.append("g")
+              .attr("class", "x axis")
+              .attr("transform", "translate(" + 0 + ", " + (dim.h-dim.padding.bottom) + ")")
+              .call(d3.axisBottom(xAxis));
+            graph.append("g")
+              .attr("class", "y axis")
+              .attr("transform", "translate(" + dim.padding.left + ", " + 0 + ")")
+              .call(d3.axisLeft(yAxis));
+            graph.selectAll(".dot")
+              .data(this.gd_proc.data.data)
+              .enter().append("circle")
+                .attr("class", "dot")
+                .attr("cx", d => xAxis(d[0]))
+                .attr("cy", d => yAxis(d[1]))
+                .attr("r", 5)
+                .attr("fill", "#9c27b0")
+                .attr("opacity", .8)
+                .on("mouseover", d => {
+                  this.showTooltip(d);
+                })
+                .on("mouseout", d => {
+                  this.hideTooltip();
+                });
+            graph.append("path")
+              .datum(this.gd_proc.data.data.map(dt => [dt[0], this.gd_proc.epoch[parseInt(this.display_epoch)].m * dt[0] + this.gd_proc.epoch[parseInt(this.display_epoch)].c]))
+              .attr("fill", "none")
+              .attr("stroke", "#009688")
+              .attr("stroke-width", 2)
+              .attr("stroke-linejoin", "round")
+              .attr("stroke-linecap", "round")
+              .attr("d", d3.line()
+                .x(d => xAxis(d[0]))
+                .y(d => yAxis(d[1]))
+              );
+          },
         }
       });
     </script>
