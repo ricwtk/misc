@@ -52,6 +52,7 @@
                         :href="cave.wumpus.dead ? 'img/dead.wumpus.svg' : 'img/wumpus.svg'" 
                         :height="m_unit-20" 
                         :width="m_unit-20"
+                        :opacity="cave.wumpus.dead ? 0.5 : 1"
                       ></image>
                       
                       <image v-if="dead_wumpus_indication.show"
