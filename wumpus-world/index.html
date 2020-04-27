@@ -227,256 +227,222 @@
             <v-dialog v-model="info_interface" scrollable content-class="info-interface">
               <v-card>
                 <v-card-title><v-icon>mdi-information</v-icon>&nbsp;Info</v-card-title>
-                <v-divider></v-divider>
-                <v-card-text>
-                  <v-row><v-col class="title pb-0">Purpose of the game</v-col></v-row>
-                  <v-row>
-                    <v-col class="pt-0">
-                      The archer <img src="img/archer.svg"> 
-                      <ul>
-                        <li>starts at (0,0) of the cave of room, </li>
-                        <li>aiming to get the gold <img src="img/gold.svg">, </li>
-                        <li>while avoiding the pits <img src="img/pit.svg"> and the wumpus <img src="img/wumpus.svg">.</li>
-                      </ul>
-                    </v-col>
-                  </v-row>
+                <v-card-text class="pt-3">
+                  <v-expansion-panels>
+                    <v-expansion-panel>
+                      <v-expansion-panel-header class="font-weight-bold">Purpose of the game</v-expansion-panel-header>
+                      <v-expansion-panel-content>
+                        The archer <img src="img/archer.svg"> 
+                        <ul>
+                          <li>starts at (0,0) of the cave of room, </li>
+                          <li>aiming to get the gold <img src="img/gold.svg">, </li>
+                          <li>while avoiding the pits <img src="img/pit.svg"> and the wumpus <img src="img/wumpus.svg">.</li>
+                        </ul>
+                      </v-expansion-panel-content>
+                    </v-expansion-panel>
 
-                  <v-row><v-col class="title pb-0">Layout of cave</v-col></v-row>
-                  <v-row>
-                    <v-col class="py-0">
-                      The cave is a {{ cave.size[0] }}-by-{{ cave.size[1] }} grid.
-                    </v-col>
-                  </v-row>
-                  <v-row>
-                    <v-col class="py-0">
-                      <v-simple-table>
-                        <template v-slot:default>
-                          <thead>
-                            <tr>
-                              <th>Component</th>
-                              <th>Appearance in the cave</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            <tr>
-                              <td>gold <img src="img/gold.svg"></td>
-                              <td>1, randomly appears in cell other than (0,0)</td>
-                            </tr>
-                            <tr>
-                              <td>wumpus <img src="img/wumpus.svg"></td>
-                              <td>1, randomly appears in cell other than (0,0)</td>
-                            </tr>
-                            <tr>
-                              <td>pits <img src="img/pit.svg"></td>
-                              <td>multiple, each cell has probability of 0.2 to be a pit</td>
-                            </tr>
-                          </tbody>
-                        </template>
-                      </v-simple-table>
-                    </v-col>
-                  </v-row>
-                  <v-row>
-                    <v-col class="pt-0">
-                      Gold, pit, and wumpus will not appear in the same cell, and they will not be in (0,0).
-                    </v-col>
-                  </v-row>
+                    <v-expansion-panel>
+                      <v-expansion-panel-header class="font-weight-bold">Layout of cave</v-expansion-panel-header>
+                      <v-expansion-panel-content>
+                        The cave is a {{ cave.size[0] }}-by-{{ cave.size[1] }} grid.
+                        <v-simple-table>
+                          <template v-slot:default>
+                            <thead>
+                              <tr>
+                                <th>Component</th>
+                                <th>Appearance in the cave</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td>gold <img src="img/gold.svg"></td>
+                                <td>1, randomly appears in cell other than (0,0)</td>
+                              </tr>
+                              <tr>
+                                <td>wumpus <img src="img/wumpus.svg"></td>
+                                <td>1, randomly appears in cell other than (0,0)</td>
+                              </tr>
+                              <tr>
+                                <td>pits <img src="img/pit.svg"></td>
+                                <td>multiple, each cell has probability of 0.2 to be a pit</td>
+                              </tr>
+                            </tbody>
+                          </template>
+                        </v-simple-table>
+                        Gold, pit, and wumpus will not appear in the same cell, and they will not be in (0,0).
+                      </v-expansion-panel-content>
+                    </v-expansion-panel>
 
-                  <v-row><v-col class="title pb-0">Senses</v-col></v-row>
-                  <v-row>
-                    <v-col class="py-0">
-                      Breeze <img src="img/breeze.svg"> will be perceived when the archer <img src="img/archer.svg"> is next to a pit <img src="img/pit.svg">.
-                    </v-col>
-                  </v-row>
-                  <v-row>
-                    <v-col class="py-0">
-                      <svg width="100%" height="200px" viewBox="-100 300 200 300">
-                        <rect v-for="cell,c in [[0,0],[0,-1],[-1,0],[0,1],[1,0]]"
-                          :x="get_x_left(cell[0])" :y="get_y_top(cell[1])" 
-                          :width="m_unit" :height="m_unit" 
-                          fill="grey" fill-opacity=".1" 
-                          stroke="black" stroke-opacity=".2"
-                        ></rect>
-                        <image
-                          :x="get_x_left(0)+10" 
-                          :y="get_y_top(0)+10" 
-                          href="img/pit.svg" 
-                          :height="m_unit-20" 
-                          :width="m_unit-20"
-                        ></image>
-                        <image v-for="breeze,b in [[0,1],[0,-1],[1,0],[-1,0]]"
-                          :x="get_x_left(breeze[0])+10" 
-                          :y="get_y_top(breeze[1])+.7*m_unit" 
-                          href="img/breeze.svg" 
-                          :height=".3*m_unit-10" 
-                          :width="m_unit-20"
-                        ></image>
-                      </svg>
-                    </v-col>
-                  </v-row>
-                  <v-row>
-                    <v-col class="py-0">
-                      Stench <img src="img/stench.svg"> will be perceived when the archer <img src="img/archer.svg"> is next to the wumpus <img src="img/wumpus.svg">.
-                    </v-col>
-                  </v-row>
-                  <v-row>
-                    <v-col class="pt-0">
-                      <svg width="100%" height="200px" viewBox="-100 300 200 300">
-                        <rect v-for="cell,c in [[0,0],[0,-1],[-1,0],[0,1],[1,0]]"
-                          :x="get_x_left(cell[0])" :y="get_y_top(cell[1])" 
-                          :width="m_unit" :height="m_unit" 
-                          fill="grey" fill-opacity=".1" 
-                          stroke="black" stroke-opacity=".2"
-                        ></rect>
-                        <image
-                          :x="get_x_left(0)+10" 
-                          :y="get_y_top(0)+10" 
-                          href="img/wumpus.svg" 
-                          :height="m_unit-20" 
-                          :width="m_unit-20"
-                        ></image>
-                        <image v-for="stench,s in [[0,1],[0,-1],[1,0],[-1,0]]"
-                          :x="get_x_left(stench[0])+10" 
-                          :y="get_y_top(stench[1])+10" 
-                          href="img/stench.svg" 
-                          :height=".3*m_unit-10" 
-                          :width="m_unit-20"
-                        ></image>
-                      </svg>
-                    </v-col>
-                  </v-row>
+                    <v-expansion-panel>
+                      <v-expansion-panel-header class="font-weight-bold">Senses</v-expansion-panel-header>
+                      <v-expansion-panel-content>
+                        Breeze <img src="img/breeze.svg"> will be perceived when the archer <img src="img/archer.svg"> is next to a pit <img src="img/pit.svg">.
+                        <svg width="100%" height="200px" viewBox="-100 300 200 300">
+                          <rect v-for="cell,c in [[0,0],[0,-1],[-1,0],[0,1],[1,0]]"
+                            :x="get_x_left(cell[0])" :y="get_y_top(cell[1])" 
+                            :width="m_unit" :height="m_unit" 
+                            fill="grey" fill-opacity=".1" 
+                            stroke="black" stroke-opacity=".2"
+                          ></rect>
+                          <image
+                            :x="get_x_left(0)+10" 
+                            :y="get_y_top(0)+10" 
+                            href="img/pit.svg" 
+                            :height="m_unit-20" 
+                            :width="m_unit-20"
+                          ></image>
+                          <image v-for="breeze,b in [[0,1],[0,-1],[1,0],[-1,0]]"
+                            :x="get_x_left(breeze[0])+10" 
+                            :y="get_y_top(breeze[1])+.7*m_unit" 
+                            href="img/breeze.svg" 
+                            :height=".3*m_unit-10" 
+                            :width="m_unit-20"
+                          ></image>
+                        </svg>
+                        Stench <img src="img/stench.svg"> will be perceived when the archer <img src="img/archer.svg"> is next to the wumpus <img src="img/wumpus.svg">.
+                        <svg width="100%" height="200px" viewBox="-100 300 200 300">
+                          <rect v-for="cell,c in [[0,0],[0,-1],[-1,0],[0,1],[1,0]]"
+                            :x="get_x_left(cell[0])" :y="get_y_top(cell[1])" 
+                            :width="m_unit" :height="m_unit" 
+                            fill="grey" fill-opacity=".1" 
+                            stroke="black" stroke-opacity=".2"
+                          ></rect>
+                          <image
+                            :x="get_x_left(0)+10" 
+                            :y="get_y_top(0)+10" 
+                            href="img/wumpus.svg" 
+                            :height="m_unit-20" 
+                            :width="m_unit-20"
+                          ></image>
+                          <image v-for="stench,s in [[0,1],[0,-1],[1,0],[-1,0]]"
+                            :x="get_x_left(stench[0])+10" 
+                            :y="get_y_top(stench[1])+10" 
+                            href="img/stench.svg" 
+                            :height=".3*m_unit-10" 
+                            :width="m_unit-20"
+                          ></image>
+                        </svg>
+                      </v-expansion-panel-content>
+                    </v-expansion-panel>
 
-                  <v-row><v-col class="title pb-0">Actions</v-col></v-row>
-                  <v-row>
-                    <v-col class="py-0">
-                      As the archer is the agent, only the archer can perform actions.
-                    </v-col>
-                  </v-row>
-                  <v-row>
-                    <v-col class="py-0">
-                      <v-simple-table>
-                        <template v-slot:default>
-                          <thead>
-                            <tr>
-                              <th>Action</th>
-                              <th>Points</th>
-                              <th>Keyboard shortcut</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            <tr>
-                              <td>move forward to next room <v-icon>mdi-foot-print</v-icon></td>
-                              <td>-1</td>
-                              <td><v-icon>mdi-menu-up</v-icon></td>
-                            </tr>
-                            <tr>
-                              <td>turn left by 90&deg; <v-icon>mdi-rotate-left</v-icon></td>
-                              <td>-1</td>
-                              <td><v-icon>mdi-menu-left</v-icon></td>
-                            </tr>
-                            <tr>
-                              <td>turn right by 90&deg;<v-icon>mdi-rotate-right</v-icon></td>
-                              <td>-1</td>
-                              <td><v-icon>mdi-menu-right</v-icon></td>
-                            </tr>
-                            <tr>
-                              <td>shoot arrow <v-icon>mdi-ray-start-arrow</v-icon></td>
-                              <td>-10</td>
-                              <td>spacebar</td>
-                            </tr>
-                          </tbody>
-                        </template>
-                      </v-simple-table>
-                    </v-col>
-                  </v-row>
-                  <v-row>
-                    <v-col class="pt-0">
-                      If the wumpus is in one of the room that the arrow pass through, the wumpus will die. The archer has only 1 arrow.
-                    </v-col>
-                  </v-row>
+                    <v-expansion-panel>
+                      <v-expansion-panel-header class="font-weight-bold">Actions</v-expansion-panel-header>
+                      <v-expansion-panel-content>
+                        As the archer is the agent, only the archer can perform actions.
+                        <v-simple-table>
+                          <template v-slot:default>
+                            <thead>
+                              <tr>
+                                <th>Action</th>
+                                <th>Points</th>
+                                <th>Keyboard shortcut</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td>move forward to next room <v-icon>mdi-foot-print</v-icon></td>
+                                <td>-1</td>
+                                <td><v-icon>mdi-menu-up</v-icon></td>
+                              </tr>
+                              <tr>
+                                <td>turn left by 90&deg; <v-icon>mdi-rotate-left</v-icon></td>
+                                <td>-1</td>
+                                <td><v-icon>mdi-menu-left</v-icon></td>
+                              </tr>
+                              <tr>
+                                <td>turn right by 90&deg;<v-icon>mdi-rotate-right</v-icon></td>
+                                <td>-1</td>
+                                <td><v-icon>mdi-menu-right</v-icon></td>
+                              </tr>
+                              <tr>
+                                <td>shoot arrow <v-icon>mdi-ray-start-arrow</v-icon></td>
+                                <td>-10</td>
+                                <td>spacebar</td>
+                              </tr>
+                            </tbody>
+                          </template>
+                        </v-simple-table>
+                        If the wumpus is in one of the room that the arrow pass through, the wumpus will die. The archer has only 1 arrow.
+                      </v-expansion-panel-content>
+                    </v-expansion-panel>
 
-                  <v-row><v-col class="title pb-0">End game</v-col></v-row>
-                  <v-row>
-                    <v-col class="py-0">
-                      The game is over when the archer dies, or reaches the gold.
-                    </v-col>
-                  </v-row>
-                  <v-row>
-                    <v-col class="pt-0">
-                      <v-simple-table>
-                        <template v-slot:default>
-                          <thead>
-                            <tr>
-                              <th>Event</th>
-                              <th>Points</th>
-                              <th>Status</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            <tr>
-                              <td>fall into a pit</td>
-                              <td>-1000</td>
-                              <td>you lose, the archer is dead</td>
-                            </tr>
-                            <tr>
-                              <td>being eaten by the wumpus</td>
-                              <td>-1000</td>
-                              <td>you lose, the archer is dead</td>
-                            </tr>
-                            <tr>
-                              <td>reach the gold</td>
-                              <td>1000</td>
-                              <td>you win, the archer is alive and have the gold</td>
-                            </tr>
-                          </tbody>
-                        </template>
-                      </v-simple-table>
-                    </v-col>
-                  </v-row>
+                    <v-expansion-panel>
+                      <v-expansion-panel-header class="font-weight-bold">End game</v-expansion-panel-header>
+                      <v-expansion-panel-content>
+                        The game is over when the archer dies, or reaches the gold.
+                        <v-simple-table>
+                          <template v-slot:default>
+                            <thead>
+                              <tr>
+                                <th>Event</th>
+                                <th>Points</th>
+                                <th>Status</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td>fall into a pit</td>
+                                <td>-1000</td>
+                                <td>you lose, the archer is dead</td>
+                              </tr>
+                              <tr>
+                                <td>being eaten by the wumpus</td>
+                                <td>-1000</td>
+                                <td>you lose, the archer is dead</td>
+                              </tr>
+                              <tr>
+                                <td>reach the gold</td>
+                                <td>1000</td>
+                                <td>you win, the archer is alive and have the gold</td>
+                              </tr>
+                            </tbody>
+                          </template>
+                        </v-simple-table>
+                      </v-expansion-panel-content>
+                    </v-expansion-panel>
 
-                  <v-row><v-col class="title pb-0">Other controls</v-col></v-row>
-                  <v-row>
-                    <v-col class="py-0">
-                      Additional controls are as follows.
-                    </v-col>
-                  </v-row>
-                  <v-row>
-                    <v-col class="pt-0">
-                      <v-simple-table>
-                        <template v-slot:default>
-                          <thead>
-                            <tr>
-                              <th>Control</th>
-                              <th>Function</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            <tr>
-                              <td><v-icon>mdi-information</v-icon></td>
-                              <td>show this information overlay</td>
-                            </tr>
-                            <tr>
-                              <td><v-icon>mdi-restart</v-icon></td>
-                              <td>reset the game, the cave is unchanged</td>
-                            </tr>
-                            <tr>
-                              <td><v-icon>mdi-restore-alert</v-icon></td>
-                              <td>regenerate the cave</td>
-                            </tr>
-                            <tr>
-                              <td><v-icon>mdi-eye</v-icon></td>
-                              <td>show everything in the cave</td>
-                            </tr>
-                            <tr>
-                              <td><v-icon>mdi-eye-off</v-icon></td>
-                              <td>hide components in the unexplored rooms</td>
-                            </tr>
-                          </tbody>
-                        </template>
-                      </v-simple-table>
-                    </v-col>
-                  </v-row>
+                    <v-expansion-panel>
+                      <v-expansion-panel-header class="font-weight-bold">Other controls</v-expansion-panel-header>
+                      <v-expansion-panel-content>
+                        Additional controls are as follows.
+                        <v-simple-table>
+                          <template v-slot:default>
+                            <thead>
+                              <tr>
+                                <th>Control</th>
+                                <th>Function</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td><v-icon>mdi-information</v-icon></td>
+                                <td>show this information overlay</td>
+                              </tr>
+                              <tr>
+                                <td><v-icon>mdi-restart</v-icon></td>
+                                <td>reset the game, the cave is unchanged</td>
+                              </tr>
+                              <tr>
+                                <td><v-icon>mdi-restore-alert</v-icon></td>
+                                <td>regenerate the cave</td>
+                              </tr>
+                              <tr>
+                                <td><v-icon>mdi-eye</v-icon></td>
+                                <td>show everything in the cave</td>
+                              </tr>
+                              <tr>
+                                <td><v-icon>mdi-eye-off</v-icon></td>
+                                <td>hide components in the unexplored rooms</td>
+                              </tr>
+                            </tbody>
+                          </template>
+                        </v-simple-table>
+                      </v-expansion-panel-content>
+                    </v-expansion-panel>
+                  </v-expansion-panels>
+
                 </v-card-text>
-                <v-divider></v-divider>
+
                 <v-card-actions>
                   <v-spacer></v-spacer>
                   <v-btn @click.stop="info_interface=false">Close</v-btn>
