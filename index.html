@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="https://cdn.materialdesignicons.com/5.0.45/css/materialdesignicons.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+    <title>Navigate misc</title>
+  </head>
+  <body>
+    <div id="app">
+      <v-app>
+        <v-content>
+          <v-container>
+            <v-card>
+              <v-card-title>Navigating misc</v-card-title>
+              <v-card-text>
+                <v-list-item v-for="l,i in list" :key="'list-'+i" :href="l.link">
+                  <v-list-item-content>
+                    <v-list-item-title>{{ l.title }}</v-list-item-title>
+                    <v-list-item-subtitle>{{ l.subtitle }}</v-list-item-subtitle>
+                  </v-list-item-content>
+                </v-list-item>
+              </v-card-text>
+            </v-card>
+          </v-container>
+        </v-content>
+      </v-app>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+    <script>
+      new Vue({
+        el: '#app',
+        vuetify: new Vuetify(),
+        data: {
+          list: [
+            {
+              title: "Gradient descent for linear regression",
+              link: "./gradient-descent-for-linear-regression",
+              subtitle: "Fundamental of machine learning"
+            }, {
+              title: "Wumpus world",
+              link: "./wumpus-world",
+              subtitle: "Knowledge-based agent"
+            }
+          ]
+        }
+      });
+    </script>
+  </body>
+</html>
