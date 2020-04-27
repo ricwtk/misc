@@ -86,7 +86,7 @@ let vm = new Vue({
           text: `the archer moves to ${this.cave.archer.position}`
         });
         // death check (pit, wumpus)
-        if (this.is_a_pit(this.cave.archer.position[0],this.cave.archer.position[1]) || this.is_wumpus(this.cave.archer.position[0],this.cave.archer.position[1])) {
+        if (this.is_a_pit(this.cave.archer.position[0],this.cave.archer.position[1]) || (!this.cave.wumpus.dead && this.is_wumpus(this.cave.archer.position[0],this.cave.archer.position[1])) ) {
           this.cave.archer.dead = true;
           this.cave.archer.facing = 'e';
           this.points += -1000;
