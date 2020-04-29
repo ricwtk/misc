@@ -81,7 +81,7 @@
                           :width="m_unit-20"
                         ></image>
                         <image v-for="breeze,b in [[0,1],[0,-1],[1,0],[-1,0]]" :key="`pit${p}breeze${b}`" 
-                          v-if="(is_explored(pit[0]+breeze[0], pit[1]+breeze[1]) || show_answer) && (pit[0]+breeze[0])<cave.size[0] && (pit[0]+breeze[0])>-1 && (pit[1]+breeze[1])<cave.size[1] && (pit[1]+breeze[1])>-1 && !is_a_pit(pit[0]+breeze[0],pit[1]+breeze[1]) && !is_wumpus(pit[0]+breeze[0],pit[1]+breeze[1])" 
+                          v-if="(is_explored(pit[0]+breeze[0], pit[1]+breeze[1]) || show_answer) && (pit[0]+breeze[0])<cave.size[0] && (pit[0]+breeze[0])>-1 && (pit[1]+breeze[1])<cave.size[1] && (pit[1]+breeze[1])>-1 && !is_a_pit(pit[0]+breeze[0],pit[1]+breeze[1])" 
                           :x="get_x_left(pit[0]+breeze[0])+10" 
                           :y="get_y_top(pit[1]+breeze[1])+.7*m_unit" 
                           href="img/breeze.svg" 
