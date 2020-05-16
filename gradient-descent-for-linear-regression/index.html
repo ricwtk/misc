@@ -2,6 +2,7 @@
 <html>
   <head>
     <meta charset='utf-8'>
+    <link rel="stylesheet" href="https://cdn.materialdesignicons.com/5.0.45/css/materialdesignicons.min.css">
     <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900|Material+Icons" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/vuetify/dist/vuetify.min.css" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
@@ -29,12 +30,8 @@
                       <v-flex xs12 v-show="display_data && data.data.length > 0">
                         <v-data-table
                           :headers="data_col"
-                          :items="data.data"
-                        >
-                          <template v-slot:items="rows">
-                            <td v-for="it in rows.item">{{ it }}</td>
-                          </template>
-                        </v-data-table>
+                          :items="data_for_table"
+                        ></v-data-table>
                       </v-flex>
                       <v-flex xs12 sm6 px-2 v-show="data.data.length > 0"><v-select :items="data_col" label="independent variable, x" v-model="data.horiz"></v-select></v-flex>
                       <v-flex xs12 sm6 px-2 v-show="data.data.length > 0"><v-select :items="data_col" label="dependent variable, y" v-model="data.vert"></v-select></v-flex>
@@ -60,33 +57,31 @@
               <v-flex mb-2 v-if="gd_proc.epoch.length > 0">
                 <v-card>
                   <v-container class="body-2">
-                    <v-layout row wrap>
-                      <v-flex xs12 sm8 px-2><v-slider label="epoch number" v-model="display_epoch" :min="0" :max="gd_proc.epoch.length-1" always-dirty thumb-label="always"></v-slider></v-flex>
-                      <v-flex xs12 sm4 px-2><v-btn block @click="showGraph">show&nbsp;graph</v-btn></v-flex>
-                    </v-layout>
-                    <!-- <v-layout row wrap>
-                      <v-flex xs12 sm8 px-2><v-select :items="[...Array(gd_proc.epoch.length).keys()]" label="epoch number" v-model="display_epoch"></v-select></v-flex>
-                      <v-flex xs12 sm4 px-2><v-btn block @click="showGraph">show&nbsp;graph</v-btn></v-flex>
-                    </v-layout> -->
+                    <v-flex xs12 title>Training result</v-flex>
+                    <v-flex xs12><v-slider label="epoch number" v-model="display_epoch" :min="0" :max="gd_proc.epoch.length-1" always-dirty thumb-label="always"></v-slider></v-flex>
                     <v-flex my-2><v-divider></v-divider></v-flex>
                     <v-layout row wrap>
                       <v-flex xs12 sm6 md4 px-2><v-text-field label="m" v-model.number="gd_proc.epoch[parseInt(display_epoch)].m" disabled></v-text-field></v-flex>
                       <v-flex xs12 sm6 md4 px-2><v-text-field label="c" v-model.number="gd_proc.epoch[parseInt(display_epoch)].c" disabled></v-text-field></v-flex>
                       <v-flex xs12 sm6 md4 px-2><v-text-field label="cost" v-model.number="gd_proc.epoch[parseInt(display_epoch)].cost" disabled></v-text-field></v-flex>
                     </v-layout>
+                    <v-flex xs12><v-btn block @click="display_epoch_table = !display_epoch_table" :disabled="epoch_table_col.length <= 0">{{ display_epoch_table ? 'hide' : 'show' }}&nbsp;data</v-btn></v-flex>
+                    <v-flex xs12 v-show="display_epoch_table">
+                      <v-data-table :headers="epoch_table_col" :items="epoch_table_data"></v-data-table>
+                    </v-flex>
                     <v-flex xs12>
-                      <v-data-table
-                        :headers="gd_proc.epoch[parseInt(display_epoch)].columns.map(v => ({text: v, value: v}))"
-                        :items="gd_proc.epoch[parseInt(display_epoch)].data"
-                      >
-                        <template v-slot:items="rows">
-                          <td v-for="it in rows.item">{{ it }}</td>
-                        </template>
-                      </v-data-table>
+                      <svg id="oneEpochChart" class="chart"></svg>
                     </v-flex>
-                    <v-flex xs-12>
-                      <svg id="chart"></svg>
-                    </v-flex>
+                  </v-container>
+                </v-card>
+              </v-flex>
+              <v-flex mb-2 v-if="gd_proc.epoch.length > 0">
+                <v-card>
+                  <v-container class="body-2">
+                    <v-flex xs12 title>Analysis of training</v-flex>
+                    <v-flex xs12><svg id="epochCostChart" class="chart"></svg></v-flex>
+                    <v-flex xs12><svg id="epochMChart" class="chart"></svg></v-flex>
+                    <v-flex xs12><svg id="epochCChart" class="chart"></svg></v-flex>
                   </v-container>
                 </v-card>
               </v-flex>
@@ -95,11 +90,19 @@
         </v-content>
       </v-app>
     </div>
+    <div class="tooltip" id="chartTooltip"></div>
 
     <style>
-      #chart { 
+      .chart { 
         width: 100%; 
         height: 300px;
+      }
+      .tooltip {
+        background-color: white;
+        padding: 5px;
+        overflow: visible;
+        white-space: nowrap;
+        position: absolute;
       }
     </style>
 
@@ -109,6 +112,7 @@
     <script>
       var app = new Vue({
         el: "#app",
+        vuetify: new Vuetify(),
         data: {
           data: {
             file: null,
@@ -129,6 +133,7 @@
             change_in_cost: 0.001
           },
           display_data: false,
+          display_epoch_table: true,
           gd_proc: {
             data: {
               file: null,
@@ -157,6 +162,30 @@
                 value: String(v)
               }))
             };
+          },
+          data_for_table: function () {
+            if (this.data.data.length > 0) {
+              return this.data.data.map(r => {
+                let item = {};
+                r.forEach((v,i) => {
+                  item[this.data_col[i].text] = v;
+                });
+                return item;
+              });
+            }
+          },
+          epoch_table_col: function () {
+            return this.gd_proc.epoch[parseInt(this.display_epoch)].columns.map(v => ({text: v, value: v}));
+          },
+          epoch_table_data: function () {
+            return this.gd_proc.epoch[parseInt(this.display_epoch)].data.map(r => {
+              let item = {};
+              r.forEach((v,i) => {
+                item[this.epoch_table_col[i].text] = v;
+              });
+              return item;
+            });
+              
           }
         },
         watch: {
@@ -189,7 +218,7 @@
                 return [...l.split(',')];
               }
             });
-            this.$set(this.data, 'data', lines.filter(x => x));
+            this.$set(this.data, 'data', lines.filter(x => x && x.length == this.data.columns.length));
             this.$set(this.data, 'horiz', this.data_col[0].value);
             this.$set(this.data, 'vert', this.data_col[1].value);
             // console.log(this.data.columns,this.data.data);
@@ -219,6 +248,10 @@
             ) {
               this.gd_proc.epoch.push(this.computeEpoch(...this.updateMandC(this.gd_proc.epoch[this.gd_proc.epoch.length-1])));
             }
+            this.$nextTick(() => { 
+              this.showGraph();
+              this.showAnalysis();
+            });
           },
           computeEpoch: function (m, c) {
             let epoch = {
@@ -240,16 +273,16 @@
             let newc = epoch.c - this.gd_proc.learning_rate * delJc;
             return [newm, newc];
           },
-          showGraph: function () {
-            let chart = d3.select("#chart");
+          getChartInfo: function (chartId) {
+            let chart = d3.select(`#${chartId}`);
             chart.selectAll("*").remove();
-            let getl = s => parseInt(window.getComputedStyle(document.getElementById("chart")).getPropertyValue(s)) || 0;
+            let getl = s => parseInt(window.getComputedStyle(document.getElementById(chartId)).getPropertyValue(s)) || 0;
             let dim = {
               w: getl("width"),
               h: getl("height"),
               padding: {
                 left: 50,
-                bottom: 50,
+                bottom: 30,
                 right: 10,
                 top: 10
               },
@@ -258,26 +291,45 @@
                 bottom: 0,
                 right: 0,
                 top: 0
+              },
+              label: {
+                bottom: 20,
+                left: 20
               }
             }
-            // chart.attr("width", dim.w)
-            //   .attr("height", dim.h);
-            let graph = chart.append("g")
-              .attr("transform", "translate(" + dim.margin.left + "," + dim.margin.top + ")");
+            return {
+              handle: chart,
+              dim: dim
+            }
+          },
+          showGraph: function () {
+            let chart = this.getChartInfo("oneEpochChart");
+            let graph = chart.handle.append("g")
+              .attr("transform", "translate(" + chart.dim.margin.left + "," + chart.dim.margin.top + ")");
             let xAxis = d3.scaleLinear()
               .domain([d3.min(this.gd_proc.data.data, d => d[0]), d3.max(this.gd_proc.data.data, d => d[0])])
-              .range([dim.padding.left, dim.w-dim.padding.right]);
+              .range([chart.dim.padding.left+chart.dim.label.left, chart.dim.w-chart.dim.padding.right]);
             let yAxis = d3.scaleLinear()
               .domain([d3.min(this.gd_proc.data.data, d => d[1]), d3.max(this.gd_proc.data.data, d => d[1])])
-              .range([dim.h-dim.padding.bottom, dim.padding.top]);
+              .range([chart.dim.h-chart.dim.padding.bottom-chart.dim.label.bottom, chart.dim.padding.top]);
             graph.append("g")
               .attr("class", "x axis")
-              .attr("transform", "translate(" + 0 + ", " + (dim.h-dim.padding.bottom) + ")")
+              .attr("transform", "translate(" + 0 + ", " + (chart.dim.h-chart.dim.padding.bottom-chart.dim.label.bottom) + ")")
               .call(d3.axisBottom(xAxis));
             graph.append("g")
               .attr("class", "y axis")
-              .attr("transform", "translate(" + dim.padding.left + ", " + 0 + ")")
+              .attr("transform", "translate(" + (chart.dim.padding.left+chart.dim.label.left) + ", " + 0 + ")")
               .call(d3.axisLeft(yAxis));
+            graph.append("text")
+              .attr("transform", "translate(" + (xAxis.range()[0]+xAxis.range()[1])/2 + ", " + (chart.dim.h-chart.dim.label.bottom) + ")")
+              .style("text-anchor", "middle")
+              .style("dominant-baseline", "hanging")
+              .text("x");
+            graph.append("text")
+              .attr("transform", `translate(${chart.dim.label.left},${(yAxis.range()[0]+yAxis.range()[1])/2}) rotate(-90)`)
+              .style("text-anchor", "middle")
+              .style("dominant-baseline", "baseline")
+              .text("y");
             graph.selectAll(".dot")
               .data(this.gd_proc.data.data)
               .enter().append("circle")
@@ -288,10 +340,19 @@
                 .attr("fill", "#9c27b0")
                 .attr("opacity", .8)
                 .on("mouseover", d => {
-                  this.showTooltip(d);
+                  let tooltip = d3.select("#chartTooltip");
+                  tooltip.html(`${d[0]}, ${d[1]}`)
+                    .style("left", `${d3.event.pageX-10}px`)
+                    .style("top", `${d3.event.pageY-40}px`);
+                  tooltip.transition()
+                    .duration(200)
+                    .style("opacity", 0.9);
                 })
                 .on("mouseout", d => {
-                  this.hideTooltip();
+                  d3.select("#chartTooltip")
+                    .transition()
+                    .duration(200)
+                    .style("opacity", 0);
                 });
             graph.append("path")
               .datum(this.gd_proc.data.data.map(dt => [dt[0], this.gd_proc.epoch[parseInt(this.display_epoch)].m * dt[0] + this.gd_proc.epoch[parseInt(this.display_epoch)].c]))
@@ -304,7 +365,191 @@
                 .x(d => xAxis(d[0]))
                 .y(d => yAxis(d[1]))
               );
+            graph.selectAll(".linedot")
+              .data(this.gd_proc.data.data.map(dt => [dt[0], this.gd_proc.epoch[parseInt(this.display_epoch)].m * dt[0] + this.gd_proc.epoch[parseInt(this.display_epoch)].c]))
+              .enter().append("circle")
+                .attr("class", "linedot")
+                .attr("cx", d => xAxis(d[0]))
+                .attr("cy", d => yAxis(d[1]))
+                .attr("r", 3)
+                .attr("fill", "#009688")
+                .attr("opacity", .8)
+                .on("mouseover", d => {
+                  let tooltip = d3.select("#chartTooltip");
+                  tooltip.html(`${d[0]}, ${Math.round(d[1]*1000)/1000}`)
+                    .style("left", `${d3.event.pageX-10}px`)
+                    .style("top", `${d3.event.pageY-40}px`);
+                  tooltip.transition()
+                    .duration(200)
+                    .style("opacity", 0.9);
+                })
+                .on("mouseout", d => {
+                  d3.select("#chartTooltip")
+                    .transition()
+                    .duration(200)
+                    .style("opacity", 0);
+                });
           },
+          showAnalysis: function () {
+            // value of cost
+            let chart = this.getChartInfo("epochCostChart");
+            let graph = chart.handle.append("g")
+              .attr("transform", "translate(" + chart.dim.margin.left + "," + chart.dim.margin.top + ")");
+            let xAxis = d3.scaleLinear()
+              .domain([d3.min(this.gd_proc.epoch, (d,i) => i), d3.max(this.gd_proc.epoch, (d,i) => i)])
+              .range([chart.dim.padding.left+chart.dim.label.left, chart.dim.w-chart.dim.padding.right]);
+            let yAxis = d3.scaleLinear()
+              .domain([d3.min(this.gd_proc.epoch, d => d.cost), d3.max(this.gd_proc.epoch, d => d.cost)])
+              .range([chart.dim.h-chart.dim.padding.bottom-chart.dim.label.bottom, chart.dim.padding.top]);
+            graph.append("g")
+              .attr("class", "x axis")
+              .attr("transform", "translate(" + 0 + ", " + (chart.dim.h-chart.dim.padding.bottom-chart.dim.label.bottom) + ")")
+              .call(d3.axisBottom(xAxis));
+            graph.append("g")
+              .attr("class", "y axis")
+              .attr("transform", "translate(" + (chart.dim.padding.left+chart.dim.label.left) + ", " + 0 + ")")
+              .call(d3.axisLeft(yAxis));
+            graph.append("text")
+              .attr("transform", "translate(" + (xAxis.range()[0]+xAxis.range()[1])/2 + ", " + (chart.dim.h-chart.dim.label.bottom) + ")")
+              .style("text-anchor", "middle")
+              .style("dominant-baseline", "hanging")
+              .text("Epoch Number");
+            graph.append("text")
+              .attr("transform", `translate(${chart.dim.label.left},${(yAxis.range()[0]+yAxis.range()[1])/2}) rotate(-90)`)
+              .style("text-anchor", "middle")
+              .style("dominant-baseline", "baseline")
+              .text("Cost");
+            graph.selectAll(".dot")
+              .data(this.gd_proc.epoch)
+              .enter().append("circle")
+                .attr("class", "dot")
+                .attr("cx", (d,i) => xAxis(i))
+                .attr("cy", d => yAxis(d.cost))
+                .attr("r", 5)
+                .attr("fill", "#9c27b0")
+                .attr("opacity", .8)
+                .on("mouseover", (d,i) => {
+                  let tooltip = d3.select("#chartTooltip");
+                  tooltip.html(`${i}, ${Math.round(d.cost*1000)/1000}`)
+                    .style("left", `${d3.event.pageX-10}px`)
+                    .style("top", `${d3.event.pageY-40}px`);
+                  tooltip.transition()
+                    .duration(200)
+                    .style("opacity", 0.9);
+                })
+                .on("mouseout", d => {
+                  d3.select("#chartTooltip")
+                    .transition()
+                    .duration(200)
+                    .style("opacity", 0);
+                });
+
+            // value of m
+            chart = this.getChartInfo("epochMChart");
+            graph = chart.handle.append("g")
+              .attr("transform", "translate(" + chart.dim.margin.left + "," + chart.dim.margin.top + ")");
+            xAxis = d3.scaleLinear()
+              .domain([d3.min(this.gd_proc.epoch, (d,i) => i), d3.max(this.gd_proc.epoch, (d,i) => i)])
+              .range([chart.dim.padding.left+chart.dim.label.left, chart.dim.w-chart.dim.padding.right]);
+            yAxis = d3.scaleLinear()
+              .domain([d3.min(this.gd_proc.epoch, d => d.m), d3.max(this.gd_proc.epoch, d => d.m)])
+              .range([chart.dim.h-chart.dim.padding.bottom-chart.dim.label.bottom, chart.dim.padding.top]);
+            graph.append("g")
+              .attr("class", "x axis")
+              .attr("transform", "translate(" + 0 + ", " + (chart.dim.h-chart.dim.padding.bottom-chart.dim.label.bottom) + ")")
+              .call(d3.axisBottom(xAxis));
+            graph.append("g")
+              .attr("class", "y axis")
+              .attr("transform", "translate(" + (chart.dim.padding.left+chart.dim.label.left) + ", " + 0 + ")")
+              .call(d3.axisLeft(yAxis));
+            graph.append("text")
+              .attr("transform", "translate(" + (xAxis.range()[0]+xAxis.range()[1])/2 + ", " + (chart.dim.h-chart.dim.label.bottom) + ")")
+              .style("text-anchor", "middle")
+              .style("dominant-baseline", "hanging")
+              .text("Epoch Number");
+            graph.append("text")
+              .attr("transform", `translate(${chart.dim.label.left},${(yAxis.range()[0]+yAxis.range()[1])/2}) rotate(-90)`)
+              .style("text-anchor", "middle")
+              .style("dominant-baseline", "baseline")
+              .text("m");
+            graph.selectAll(".dot")
+              .data(this.gd_proc.epoch)
+              .enter().append("circle")
+                .attr("class", "dot")
+                .attr("cx", (d,i) => xAxis(i))
+                .attr("cy", d => yAxis(d.m))
+                .attr("r", 5)
+                .attr("fill", "#9c27b0")
+                .attr("opacity", .8)
+                .on("mouseover", (d,i) => {
+                  let tooltip = d3.select("#chartTooltip");
+                  tooltip.html(`${i}, ${Math.round(d.m*1000)/1000}`)
+                    .style("left", `${d3.event.pageX-10}px`)
+                    .style("top", `${d3.event.pageY-40}px`);
+                  tooltip.transition()
+                    .duration(200)
+                    .style("opacity", 0.9);
+                })
+                .on("mouseout", d => {
+                  d3.select("#chartTooltip")
+                    .transition()
+                    .duration(200)
+                    .style("opacity", 0);
+                });
+
+            // value of c
+            chart = this.getChartInfo("epochCChart");
+            graph = chart.handle.append("g")
+              .attr("transform", "translate(" + chart.dim.margin.left + "," + chart.dim.margin.top + ")");
+            xAxis = d3.scaleLinear()
+              .domain([d3.min(this.gd_proc.epoch, (d,i) => i), d3.max(this.gd_proc.epoch, (d,i) => i)])
+              .range([chart.dim.padding.left+chart.dim.label.left, chart.dim.w-chart.dim.padding.right]);
+            yAxis = d3.scaleLinear()
+              .domain([d3.min(this.gd_proc.epoch, d => d.c), d3.max(this.gd_proc.epoch, d => d.c)])
+              .range([chart.dim.h-chart.dim.padding.bottom-chart.dim.label.bottom, chart.dim.padding.top]);
+            graph.append("g")
+              .attr("class", "x axis")
+              .attr("transform", "translate(" + 0 + ", " + (chart.dim.h-chart.dim.padding.bottom-chart.dim.label.bottom) + ")")
+              .call(d3.axisBottom(xAxis));
+            graph.append("g")
+              .attr("class", "y axis")
+              .attr("transform", "translate(" + (chart.dim.padding.left+chart.dim.label.left) + ", " + 0 + ")")
+              .call(d3.axisLeft(yAxis));
+            graph.append("text")
+              .attr("transform", "translate(" + (xAxis.range()[0]+xAxis.range()[1])/2 + ", " + (chart.dim.h-chart.dim.label.bottom) + ")")
+              .style("text-anchor", "middle")
+              .style("dominant-baseline", "hanging")
+              .text("Epoch Number");
+            graph.append("text")
+              .attr("transform", `translate(${chart.dim.label.left},${(yAxis.range()[0]+yAxis.range()[1])/2}) rotate(-90)`)
+              .style("text-anchor", "middle")
+              .style("dominant-baseline", "baseline")
+              .text("c");
+            graph.selectAll(".dot")
+              .data(this.gd_proc.epoch)
+              .enter().append("circle")
+                .attr("class", "dot")
+                .attr("cx", (d,i) => xAxis(i))
+                .attr("cy", d => yAxis(d.c))
+                .attr("r", 5)
+                .attr("fill", "#9c27b0")
+                .attr("opacity", .8)
+                .on("mouseover", (d,i) => {
+                  let tooltip = d3.select("#chartTooltip");
+                  tooltip.html(`${i}, ${Math.round(d.c*1000)/1000}`)
+                    .style("left", `${d3.event.pageX-10}px`)
+                    .style("top", `${d3.event.pageY-40}px`);
+                  tooltip.transition()
+                    .duration(200)
+                    .style("opacity", 0.9);
+                })
+                .on("mouseout", d => {
+                  d3.select("#chartTooltip")
+                    .transition()
+                    .duration(200)
+                    .style("opacity", 0);
+                });
+          }
         }
       });
     </script>
