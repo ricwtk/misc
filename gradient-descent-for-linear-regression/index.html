@@ -156,8 +156,7 @@
         computed: {
           data_col: function () {
             if (this.data.data.length > 0) {
-              let dt = this.data.columns.length > 0 ? this.data.columns : [...Array(this.data.data[0].length).keys()];
-              return dt.map(v => ({
+              return this.data.columns.map(v => ({
                 text: String(v),
                 value: String(v)
               }))
@@ -218,6 +217,9 @@
                 return [...l.split(',')];
               }
             });
+            if (!this.data.header_in_file) {
+              this.$set(this.data, 'columns', [...lines[0].keys()]);
+            }
             this.$set(this.data, 'data', lines.filter(x => x && x.length == this.data.columns.length));
             this.$set(this.data, 'horiz', this.data_col[0].value);
             this.$set(this.data, 'vert', this.data_col[1].value);
