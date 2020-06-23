@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/@mdi/font@5.x/css/materialdesignicons.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+  <title>Evaluation result of AI (2020 March) Assignment 1</title>
+</head>
+<body>
+  <div id="app">
+    <v-app>
+      <v-main>
+        <v-container class="fill-height flex-row align-content-start" fluid>
+          <v-row><v-col class="title text-center">Evaluation result of AI (2020 March) Assignment 1</v-col></v-row>
+          <v-row class="flex-grow-1 align-self-stretch">
+            <v-col>
+              <v-tabs v-model="tab" grow>
+                <v-tab>Group list</v-tab>
+                <v-tab>Functionality check</v-tab>
+                <v-tab>Maze</v-tab>
+                <v-tab>Expansion sequence</v-tab>
+                <v-tab>Solution</v-tab>
+                <!-- <v-tab>Comments</v-tab> -->
+              </v-tabs>
+              <v-tabs-items v-model="tab">
+                <v-tab-item>
+                  <v-data-iterator :items="grouplist" :search="grouplistfilter">
+                    <template v-slot:header>
+                      <v-toolbar class="my-2" color="primary" dark flat>
+                        <v-text-field v-model="grouplistfilter" clearable flat solo-inverted hide-details prepend-inner-icon="mdi-magnify" label="Search"></v-text-field>
+                      </v-toolbar>
+                    </template>
+                    <template v-slot:default="props">
+                      <v-row>
+                        <v-col v-for="item in props.items" :key="item.group" cols="12" sm="6" md="4" lg="3">
+                          <v-card>
+                            <v-card-title class="subheading font-weight-bold">
+                              {{ item.group }}
+                              <v-spacer></v-spacer>
+                              <v-icon>{{ item.icon }}</v-icon>
+                            </v-card-title>
+              
+                            <v-divider></v-divider>
+              
+                            <v-list dense>
+                              <v-list-item>
+                                <v-list-item-content>Members:</v-list-item-content>
+                              </v-list-item>
+                              <v-list-item v-for="member in item.members" :key="member[1]">
+                                <v-list-item-content class="py-0">
+                                  <v-row no-gutters>
+                                    <v-col>{{ titleCase(member[0]) }}</v-col>
+                                    <v-col cols="auto">{{ member[1] }}</v-col>
+                                  </v-row>
+                              </v-list-item>
+                            </v-list>
+                            
+                            <v-divider></v-divider>
+
+                            <v-card-actions>
+                              <v-spacer></v-spacer>
+                              <v-col cols="auto" class="font-weight-bold">{{ item.grade }}</v-col>
+                            </v-card-actions>
+                          </v-card>
+                        </v-col>
+                      </v-row>
+                    </template>
+                  </v-data-iterator>
+                </v-tab-item>
+                <v-tab-item>
+                  <v-data-iterator :items="functionalitychecklist" :search="functionalitychecklistfilter">
+                    <template v-slot:header>
+                      <v-toolbar class="my-2" color="primary" dark flat>
+                        <v-text-field v-model="functionalitychecklistfilter" clearable flat solo-inverted hide-details prepend-inner-icon="mdi-magnify" label="Search"></v-text-field>
+                      </v-toolbar>
+                    </template>
+                    <template v-slot:default="props">
+                      <v-simple-table>
+                        <template v-slot:default>
+                          <thead>
+                            <tr>
+                              <th></th>
+                              <th class="text-center" colspan="2">Group</th>
+                              <th class="text-center">Player</th>
+                              <th class="text-center">Maze</th>
+                              <th class="text-center">init</th>
+                              <th class="text-center">reset</th>
+                              <th class="text-center">set_maze</th>
+                              <th class="text-center">next_node</th>
+                              <th class="text-center">set_node_state</th>
+                              <th class="text-center">get_search_tree (intermediate)</th>
+                              <th class="text-center">get_search_tree</th>
+                              <th class="text-center">no infinite loop</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr v-for="item, i in props.items" :key="item.group + item.player + item.maze">
+                              <td class="text-end">{{ i+1 }}</td>
+                              <td>{{ item.group }}</td>
+                              <td class="text-center"><v-icon>{{ item.icon }}</v-icon></td>
+                              <td class="text-center">{{ item.player }}</td>
+                              <td class="text-center">{{ item.maze }}</td>
+                              <td v-for="error in ['init', 'reset', 'set_maze', 'next_node', 'set_node_state', 'intermediate_get_search_tree', 'get_search_tree', 'max_iter']"
+                                :key="error"
+                                class="text-center"
+                              >
+                                <v-icon :color="item.error[error].status ? 'red' : 'teal'" 
+                                  @click="item.error[error].status ? showSnackbar(item.error[error].msg) : ''">
+                                  {{ item.error[error].status ? "mdi-close" : "mdi-check" }}
+                                </v-icon>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </template>
+                      </v-simple-table>
+                    </template>
+                  </v-data-iterator>
+                </v-tab-item>
+                <v-tab-item>
+                  <v-toolbar class="my-2" color="primary" dark flat>
+                    <v-select dense
+                      :items="[...Array(mazes.length).keys()].map(x => x+1)" label="Maze" outlined hide-details v-model="mazeindex"
+                    ></v-select>
+                    <v-btn icon @click="mazeheight = Math.max(0, mazeheight - 10)"><v-icon>mdi-magnify-minus-outline</v-icon></v-btn>
+                    <v-btn icon @click="mazeheight = 500"><v-icon>mdi-magnify-remove-outline</v-icon></v-btn>
+                    <v-btn icon @click="mazeheight = mazeheight + 10"><v-icon>mdi-magnify-plus-outline</v-icon></v-btn>
+                  </v-toolbar>
+                  <v-row class="align-center">
+                    <v-spacer></v-spacer>
+                    <v-sheet width="20px" height="20px" color="red"></v-sheet>
+                    <v-col>entrance</v-col>
+                    <v-sheet width="20px" height="20px" color="green"></v-sheet>
+                    <v-col>exit</v-col>
+                    <v-spacer></v-spacer>
+                  </v-row>
+                  <svg :style="{ width: '100%', height: mazeheight + 'px' }" :view-box.camel="maze_view_box" v-if="mazes.length >= mazeindex">
+                    <rect :x="m_unit-0.5" :y="m_unit-0.5" :width="maze.n_col*m_unit+1" :height="maze.n_row*m_unit+1" fill="grey" fill-opacity="0.2" stroke="black" />
+                    <rect v-if="maze.entrance.length>0 && maze.entrance[0]<maze.n_col && maze.entrance[1]<maze.n_row" :x="get_x_left(maze.entrance[0])" v-if="maze.entrance[0]<maze.n_col && maze.entrance[1]<maze.n_row" :y="get_y_top(maze.entrance[1])" :width="m_unit" :height="m_unit" fill="red" />
+                    <rect v-for="e,i in maze.exits" :key="'exit'+i" v-if="e[0]<maze.n_col && e[1]<maze.n_row" :x="get_x_left(e[0])" :y="get_y_top(e[1])" :width="m_unit" :height="m_unit" fill="green" />
+                    <rect v-for="b,i in maze.borders.bottom" :key="'bot'+i" v-if="b[0]<maze.n_col && b[1]<maze.n_row" :x="get_x_left(b[0])-1" :y="get_y_bot(b[1])" :width="m_unit+2" height="2" />
+                    <rect v-for="r,i in maze.borders.right" :key="'rig'+i" v-if="r[0]<maze.n_col-1 && r[1]<maze.n_row" :x="get_x_right(r[0])" :y="get_y_top(r[1])-1" width="2" :height="m_unit+2" />
+                    <!-- <image :x="get_x_left(player_coord[0])+1" :y="get_y_top(player_coord[1])+1" :href="`https://cdn.jsdelivr.net/npm/@mdi/svg@5.x/svg/${player.icon.slice(4)}.svg`" :height="m_unit-2" :width="m_unit-2"></image> -->
+                    <!-- <path v-if="solution.found" :d="solution_path" fill="transparent" stroke="teal" :stroke-width=".1*m_unit" /> -->
+                    <text v-for="c in maze.n_col" :key="'col-label-'+c"
+                      :x="get_x_center(c-1)"
+                      :y="get_y_center(-1)"
+                      dominant-baseline="middle" text-anchor="middle"
+                    >{{ c-1 }}</text>
+                    <text v-for="r in maze.n_row" :key="'row-label-'+r"
+                      :x="get_x_center(-1)"
+                      :y="get_y_center(r-1)"
+                      dominant-baseline="middle" text-anchor="middle"
+                    >{{ r-1 }}</text>
+                  </svg>
+                </v-tab-item>
+                <v-tab-item>
+                  <v-toolbar class="mt-2" color="primary" dark flat>
+                    <v-select dense
+                      :items="grouplist.map(x => x.group)" label="Group" outlined hide-details v-model="exp_group"
+                    ></v-select>
+                  </v-toolbar>
+                  <v-toolbar class="mb-2" color="primary" dark flat v-if="exp_player_list.length > 0">
+                    <v-select dense
+                      :items="exp_player_list" label="Player" outlined hide-details v-model="exp_player"
+                    ></v-select>
+                  </v-toolbar>
+                  <v-toolbar flat>
+                    <v-spacer></v-spacer>
+                    <v-col cols="auto"><v-btn color="primary" @click="loadExpSeq">Load</v-btn></v-col>
+                  </v-toolbar>
+                  <v-alert type="error" v-if="load_expseq_error !== ''">
+                    {{ load_expseq_error }}
+                  </v-alert>
+                  <v-toolbar v-if="Object.keys(expseq).includes('maze')" flat>
+                    <v-select dense
+                      :items="[...Array(expseq.maze.length).keys()].map(x => x+1)" label="Maze" outlined hide-details v-model="exp_maze"
+                    ></v-select>
+                  </v-toolbar>
+                  <v-slider label="Expansion sequence" v-if="Object.keys(expseq).includes('maze') && expseq.maze[exp_maze-1].searchtree.length > 0" 
+                    v-model="expseq_n"
+                    min="0"
+                    :max="expseq.maze[exp_maze-1].searchtree.length-1" 
+                    ticks="always"
+                    tick-size="4"
+                    :tick-labels="[...Array(expseq.maze[exp_maze-1].expansionseq.length+1).keys()].map(x => x.toString())">
+                  </v-slider>
+                  <v-alert type="error" v-if="Object.keys(expseq).includes('maze') && expseq.maze[exp_maze-1].searchtree.length < 1">No search tree can be displayed</v-alert>
+                  <v-row class="align-center" v-if="search_tree.length > 0">
+                    <v-spacer></v-spacer>
+                    <v-sheet width="20px" height="20px" :color="color.nextexpand"></v-sheet>
+                    <v-col>next node to expand</v-col>
+                    <v-sheet width="20px" height="20px" :color="color.lastexpand"></v-sheet>
+                    <v-col>last expanded node</v-col>
+                    <v-spacer></v-spacer>
+                  </v-row>
+                  <v-row class="justify-center" v-if="search_tree.length > 0">
+                    <v-btn icon @click="stsvg.tree_width = Math.max(0, stsvg.tree_width - 5)"><v-icon>mdi-magnify-minus-outline</v-icon></v-btn>
+                    <v-btn icon @click="stsvg.tree_width = 100"><v-icon>mdi-magnify-remove-outline</v-icon></v-btn>
+                    <v-btn icon @click="stsvg.tree_width += 5"><v-icon>mdi-magnify-plus-outline</v-icon></v-btn>
+                  </v-row>
+                  <v-row>
+                    <v-col class="text-center" style="overflow-x: auto">
+                      <svg v-if="search_tree.length > 0" :style="{ width: stsvg.tree_width + '%' }" :view-box.camel="search_tree_view_box">
+                        <template v-for="layer,l in search_tree_array.slice(0,search_tree_array.length-1)">
+                          <template v-for="node,n in layer.flat(2)">
+                            <rect :key="'node-'+l+'-'+n" 
+                              :x="node_x[l][n]"
+                              :y="l*(stsvg.prop.node_height+stsvg.prop.link_height)"
+                              :width="stsvg.prop.node_width"
+                              :height="stsvg.prop.node_height"
+                              v-if="!(node < 1)"
+                              :stroke="node.removed ? 'red' : 'gray'"
+                              :fill="findNodeFill(node)"
+                            ></rect>
+                            <text v-if="!(node < 1)" :key="'nodelabel-'+l+'-'+n"
+                              :x="node_x[l][n] + .5*stsvg.prop.node_width"
+                              :y="l*(stsvg.prop.node_height+stsvg.prop.link_height) + .5*stsvg.prop.node_height"
+                              font-weight="thin"
+                              dominant-baseline="middle" text-anchor="middle"
+                            >{{ `${node.state[0]} • ${node.state[1]}` }}</text>
+                            <line v-if="(l > 0) && !(node < 1)" :key="'link-'+l+'-'+n" 
+                              :x1="linkage[l-1][n].parent_loc+.5*stsvg.prop.node_width"
+                              :y1="(l-1)*(stsvg.prop.node_height+stsvg.prop.link_height)+stsvg.prop.node_height"
+                              :x2="linkage[l-1][n].child_loc+.5*stsvg.prop.node_width"
+                              :y2="l*(stsvg.prop.node_height+stsvg.prop.link_height)"
+                              stroke="gray"
+                            />
+                            <text v-if="(l > 0) && !(node < 1)" :key="'linklabel-'+l+'-'+n"
+                              :x="(linkage[l-1][n].parent_loc+linkage[l-1][n].child_loc)/2 + .5*stsvg.prop.node_width"
+                              :y="l*(stsvg.prop.node_height+stsvg.prop.link_height) - .5*stsvg.prop.link_height"
+                              stroke="white"
+                              stroke-width=".5pt"
+                              font-weight="900"
+                              dominant-baseline="middle" text-anchor="middle"
+                            >{{ linkage[l-1][n].label }}</text>
+                          </template>
+                        </template>
+                      </svg>
+                    </v-col>
+                  </v-row>
+                </v-tab-item>
+                <v-tab-item>
+                  <v-toolbar class="mt-2" color="primary" dark flat v-if="solutionlist.length > 0">
+                    <v-select dense
+                      :items="[...Array(solutionlist.length).keys()].map(x => x+1)" label="Maze" outlined hide-details v-model="sol_mazeindex"
+                    ></v-select>
+                  </v-toolbar>
+                  <v-data-iterator v-if="solutionlist.length > 0" :items="solutionlist[sol_mazeindex-1]" :search="solutionlistfilter" :sort-by="solutionlistsortby" :sort-desc="solutionlistsortdesc">
+                    <template v-slot:header>
+                      <v-toolbar class="" color="primary" dark flat>
+                        <v-text-field v-model="solutionlistfilter" clearable flat solo-inverted hide-details prepend-inner-icon="mdi-magnify" label="Search"></v-text-field>
+                      </v-toolbar>
+                      <v-toolbar class="mb-2" color="primary" dark flat>
+                        <v-select v-model="solutionlistsort" flat solo-inverted hide-details prepend-inner-icon="mdi-sort" label="Sort by" :items="['Group','Player','Path length']"></v-select>
+                        <v-btn icon @click="solutionlistsortdesc = !solutionlistsortdesc"><v-icon>{{ solutionlistsortdescicon }}</v-icon></v-btn>
+                      </v-toolbar>
+                    </template>
+                    <template v-slot:default="props">
+                      <v-simple-table>
+                        <template v-slot:default>
+                          <thead>
+                            <tr>
+                              <th></th>
+                              <th class="text-center" colspan="2">Group</th>
+                              <th class="text-center">Player</th>
+                              <th class="text-center">Path length</th>
+                              <th class="text-center">Solution</th>
+                              <th class="text-center">Correct initial</th>
+                              <th class="text-center">Correct final</th>
+                              <th class="text-center">Show</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <template v-for="item, i in props.items">
+                              <tr :key="item.group + item.player" @click="item.show = !item.show">
+                                <td class="text-end">{{ i+1 }}</td>
+                                <td>{{ item.group }}</td>
+                                <td class="text-center"><v-icon>{{ item.icon }}</v-icon></td>
+                                <td class="text-center">{{ item.player }}</td>
+                                <td class="text-center">{{ item.pathLength }}</td>
+                                <td class="text-start">
+                                  <template v-for="s,i in item.solution">
+                                    <v-chip class="ma-1" label>{{ s[0] + " &middot; " + s[1] }}</v-chip>
+                                    {{ i < item.solution.length - 1 ? "&rarr;" : "" }}
+                                  </template>
+                                </td>
+                                <td class="text-center">
+                                  <v-icon :color="sol_checkEntrance(item.solution) ? 'teal' : 'red'">
+                                    {{ sol_checkEntrance(item.solution) ? "mdi-check" : "mdi-close" }}
+                                  </v-icon>
+                                </td>
+                                <td class="text-center">
+                                  <v-icon :color="sol_checkExit(item.solution) ? 'teal' : 'red'">
+                                    {{ sol_checkExit(item.solution) ? "mdi-check" : "mdi-close" }}
+                                  </v-icon>
+                                </td>
+                                <td class="text-center">
+                                  <v-btn v-if="!item.show" icon @click.stop="item.show = true"><v-icon>mdi-eye</v-icon></v-btn>
+                                  <v-btn v-if="item.show" icon @click.stop="item.show = false"><v-icon>mdi-eye-off</v-icon></v-btn>
+                                </td>
+                              </tr>
+                              <tr v-if="item.show">
+                                <td colspan="8">
+                                  <v-row>
+                                    <v-col class="text-center">
+                                      <v-btn icon @click="smsvg.mazeheight = Math.max(0, smsvg.mazeheight - 10)"><v-icon>mdi-magnify-minus-outline</v-icon></v-btn>
+                                      <v-btn icon @click="smsvg.mazeheight = 500"><v-icon>mdi-magnify-remove-outline</v-icon></v-btn>
+                                      <v-btn icon @click="smsvg.mazeheight = smsvg.mazeheight + 10"><v-icon>mdi-magnify-plus-outline</v-icon></v-btn>
+                                    </v-col>
+                                  </v-row>
+                                  <svg :style="{ width: '100%', height: smsvg.mazeheight + 'px' }" :view-box.camel="smsvg_view_box" v-if="mazes.length >= sol_mazeindex">
+                                    <rect :x="smsvg.m_unit-0.5" :y="smsvg.m_unit-0.5" :width="sol_maze.n_col*smsvg.m_unit+1" :height="sol_maze.n_row*smsvg.m_unit+1" fill="grey" fill-opacity="0.2" stroke="black" />
+                                    <rect v-if="sol_maze.entrance.length>0 && sol_maze.entrance[0]<sol_maze.n_col && sol_maze.entrance[1]<sol_maze.n_row" :x="sol_get_x_left(sol_maze.entrance[0])" v-if="sol_maze.entrance[0]<sol_maze.n_col && sol_maze.entrance[1]<sol_maze.n_row" :y="sol_get_y_top(sol_maze.entrance[1])" :width="smsvg.m_unit" :height="smsvg.m_unit" fill="red" />
+                                    <rect v-for="e,i in sol_maze.exits" :key="'exit'+i" v-if="e[0]<sol_maze.n_col && e[1]<sol_maze.n_row" :x="sol_get_x_left(e[0])" :y="sol_get_y_top(e[1])" :width="smsvg.m_unit" :height="smsvg.m_unit" fill="green" />
+                                    <rect v-for="b,i in sol_maze.borders.bottom" :key="'bot'+i" v-if="b[0]<sol_maze.n_col && b[1]<sol_maze.n_row" :x="sol_get_x_left(b[0])-1" :y="sol_get_y_bot(b[1])" :width="smsvg.m_unit+2" height="2" />
+                                    <rect v-for="r,i in sol_maze.borders.right" :key="'rig'+i" v-if="r[0]<sol_maze.n_col-1 && r[1]<sol_maze.n_row" :x="sol_get_x_right(r[0])" :y="sol_get_y_top(r[1])-1" width="2" :height="smsvg.m_unit+2" />
+                                    <image v-if="item.solution.length > 0" :x="sol_get_x_left(item.solution[item.solution.length-1][0])+1" :y="sol_get_y_top(item.solution[item.solution.length-1][1])+1" :href="`https://cdn.jsdelivr.net/npm/@mdi/svg@5.x/svg/${item.icon.slice(4)}.svg`" :height="smsvg.m_unit-2" :width="smsvg.m_unit-2"></image>
+                                    <path v-if="item.solution.length > 0" :d="getSolutionPath(item.solution)" fill="transparent" stroke="teal" :stroke-width=".1*smsvg.m_unit" />
+                                    <text v-for="c in sol_maze.n_col" :key="'col-label-'+c"
+                                      :x="sol_get_x_center(c-1)"
+                                      :y="sol_get_y_center(-1)"
+                                      dominant-baseline="middle" text-anchor="middle"
+                                    >{{ c-1 }}</text>
+                                    <text v-for="r in sol_maze.n_row" :key="'row-label-'+r"
+                                      :x="sol_get_x_center(-1)"
+                                      :y="sol_get_y_center(r-1)"
+                                      dominant-baseline="middle" text-anchor="middle"
+                                    >{{ r-1 }}</text>
+                                  </svg>
+                                </td>
+                              </tr>
+                            </template>
+                          </tbody>
+                        </template>
+                      </v-simple-table>
+                    </template>
+                  </v-data-iterator>
+                </v-tab-item>
+              </v-tabs-items>
+            </v-col>
+          </v-row>
+          <v-snackbar v-model="snackbar">
+            {{ sb_text }}
+            <template v-slot:action="{ attrs }">
+              <v-btn icon color="red" v-bind="attrs" @click="snackbar = false">
+                <v-icon>mdi-close</v-icon>
+              </v-btn>
+            </template>
+          </v-snackbar>
+        </v-container>
+      </v-main>
+    </v-app>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+  <script>
+    let vm = new Vue({
+      el: '#app',
+      vuetify: new Vuetify(),
+      data: {
+        tab: 0,
+        grouplist: [],
+        grouplistfilter: "",
+        functionalitychecklist: [],
+        functionalitychecklistfilter: "",
+        snackbar: false,
+        sb_text: "",
+        mazefiles: ["evaluation1.json", "evaluation2.json", "evaluation3.json"],
+        mazes: [],
+        mazeindex: 1,
+        m_unit: 100,
+        mazeheight: 500,
+        exp_group: "",
+        exp_player: "",
+        exp_maze: 1,
+        load_expseq_error: "",
+        expseq: {},
+        expseq_n: 0,
+        stsvg: {
+          prop: {
+            node_height: 50,
+            node_width: 50,
+            link_height: 50,
+            node_sep: 50 
+          },
+          tree_width: 80,
+        },
+        color: {
+          nextexpand: "#4DB6AC",
+          lastexpand: "#BA68C8"
+        },
+        solutionlist: [],
+        solutionlistfilter: "",
+        solutionlistsort: "Group",
+        sol_mazeindex: 1,
+        smsvg: {
+          mazeheight: 300,
+          m_unit: 100,
+        },
+        solutionlistsortdesc: false
+      },
+      mounted: function () {
+        this.getGroupList();
+        this.getFunctionalityCheckList();
+        this.getMazes();
+        this.getSolutionList();
+      },
+      computed: {
+        maze: function () {
+          return this.mazes[this.mazeindex-1];
+        },
+        sol_maze: function () {
+          return this.mazes[this.sol_mazeindex-1];
+        },
+        maze_view_box: function () {
+          return `0 0 ${(this.maze.n_col+2)*this.m_unit} ${(this.maze.n_row+2)*this.m_unit}`;
+        },
+        smsvg_view_box: function () {
+          return `0 ${0.75*this.smsvg.m_unit} ${(this.sol_maze.n_col+2)*this.smsvg.m_unit} ${(this.sol_maze.n_row+1.25)*this.smsvg.m_unit}`;
+        },
+        exp_player_list: function () {
+          let player_list = [];
+          if (this.exp_group !== "") {
+            this.functionalitychecklist.forEach(p => {
+              if (p.group == this.exp_group) {
+                if (p.player !== "") {
+                  player_list.push(p.player);
+                }
+              }
+            })
+          }
+          if (player_list.length == 0) { this.exp_player = ""; }
+          return player_list;
+        },
+        search_tree: function () {
+          let st = [];
+          if (Object.keys(this.expseq).length > 0) {
+            let searchtreelist = this.expseq.maze[this.exp_maze-1].searchtree;
+            if (this.expseq_n >= searchtreelist.length) {
+              this.expseq_n = searchtreelist.length - 1;
+            }
+            if (this.expseq_n > -1) {
+              st = this.expseq.maze[this.exp_maze-1].searchtree[this.expseq_n];
+            }
+          }
+          return st;
+        },
+        search_tree_view_box: function () {
+          let vb = "0 -5 0 0";
+          if (this.search_tree_array.length > 0) {
+            let width = this.search_tree_array[this.search_tree_array.length - 1].length * this.stsvg.prop.node_width
+                        + (this.search_tree_array[this.search_tree_array.length - 1].length - 1) * this.stsvg.prop.node_sep + 10;
+            let height = (this.search_tree_array.length - 1)* this.stsvg.prop.node_height
+                        + (this.search_tree_array.length - 2) * this.stsvg.prop.link_height + 10;
+            vb = `0 -5 ${width} ${height}`;
+          }
+          return vb;
+        },
+        search_tree_array: function () {
+          let st_arr = [];
+          if (this.search_tree.length > 0) {
+            st_arr.push([[this.search_tree.find(v => !v.parent)]]);
+            while (!st_arr[st_arr.length - 1].every(arr => arr.every(v => v < 1))) {
+              st_arr.push(
+                st_arr[st_arr.length - 1].flat()
+                .map(n => n < 1 ?
+                    [n - 1]
+                    : (n.children.length == 0 ? [0] : n.children.map(i => this.search_tree.find(v => v.id == i)).filter(v => v !== undefined))
+                )
+              );
+            }
+          }
+          return st_arr;
+        },
+        node_x: function () {
+          let x = [];
+          if (this.search_tree_array.length > 0) {
+            x.push(this.search_tree_array[this.search_tree_array.length - 2].flat().map((node,n) => n * (this.stsvg.prop.node_width + this.stsvg.prop.node_sep) + 5));
+            for ( let i = this.search_tree_array.length - 3; i > -1; i-- ) {
+              x.push(
+                this.search_tree_array[i].flat().map((node,n) => {
+                  let first_child_idx = this.search_tree_array[i+1].slice(0,n).reduce((acc,curr) => acc + curr.length, 0);
+                  let last_child_idx = first_child_idx + this.search_tree_array[i+1][n].length - 1;
+                  return (x[x.length - 1][first_child_idx] + x[x.length - 1][last_child_idx])/2;
+                })
+              );
+            }
+          }
+          return x.reverse();
+        },
+        linkage: function () {
+          let links = [];
+          if (this.search_tree_array.length > 0) {
+            for ( let i = this.search_tree_array.length - 2; i > 0; i-- ) {
+              links.push(
+                this.search_tree_array[i].flatMap((siblings,s) => {
+                  let parent = this.node_x[i-1][s];
+                  let parent_node = this.search_tree_array[i-1].flat()[s];
+                  return siblings.map((node,n) => {
+                    let node_idx = this.search_tree_array[i].slice(0,s).reduce((acc,curr) => acc + curr.length, 0) + n;
+                    return {
+                      parent_loc: parent,
+                      child_loc: this.node_x[i][node_idx],
+                      label: parent_node.actions ? parent_node.actions[n] : ''
+                    }
+                  });
+                })
+              );
+            }
+          }
+          return links.reverse();
+        },
+        solutionlistsortby: function () {
+          return this.solutionlistsort.split(" ").map((x,i) => i == 0 ? x.toLowerCase() : x[0].toUpperCase()+x.slice(1).toLowerCase()).join("");
+        },
+        solutionlistsortdescicon: function () {
+          let type = "";
+          if (["group", "player"].includes(this.solutionlistsortby)) { 
+            type = "alphabetical";
+          } else {
+            type = "numeric";
+          }
+          let dir = this.solutionlistsortdesc ? "descending" : "ascending";
+          return `mdi-sort-${type}-${dir}`;
+        }
+      },
+      methods: {
+        titleCase: function (string) {
+          return string.toLowerCase().split(" ").map(v => v.length > 0 && !["bin", "a/l"].includes(v) ? v[0].toUpperCase() + v.slice(1) : v).join(" ");
+        },
+        getGroupList: function () {
+          let req = new Request("group_grade.json");
+          fetch(req)
+          .then(r => r.json())
+          .then(r => this.grouplist = r);
+        },
+        getFunctionalityCheckList: function () {
+          let req = new Request("evaluation/functionalitycheck.json");
+          fetch(req)
+          .then(r => r.json())
+          .then(r => this.functionalitychecklist = r);
+        },
+        getMazes: function () {
+          if (this.mazes.length < this.mazefiles.length) {
+            let req = new Request(this.mazefiles[this.mazes.length]);
+            fetch(req)
+            .then(r => r.json())
+            .then(r => { this.mazes.push(r); })
+            .then(this.getMazes);
+          }
+        },
+        showSnackbar: function (message) {
+          this.sb_text = message;
+          this.snackbar = true;
+        },
+        get_y_top: function (r) { return ( this.maze.n_row - r ) * this.m_unit; },
+        get_y_bot: function (r) { return ( this.maze.n_row - r ) * this.m_unit + (this.m_unit - 1); },
+        get_y_center: function (r) { return ( this.maze.n_row - r ) * this.m_unit + .5 * this.m_unit; },
+        get_x_left: function (c) { return ( c + 1 ) * this.m_unit; },
+        get_x_right: function (c) { return ( c + 1 ) * this.m_unit + (this.m_unit - 1); },
+        get_x_center: function (c) { return ( c + 1 ) * this.m_unit + .5 * this.m_unit; },
+        sol_get_y_top: function (r) { return ( this.sol_maze.n_row - r ) * this.smsvg.m_unit; },
+        sol_get_y_bot: function (r) { return ( this.sol_maze.n_row - r ) * this.smsvg.m_unit + (this.smsvg.m_unit - 1); },
+        sol_get_y_center: function (r) { return ( this.sol_maze.n_row - r ) * this.smsvg.m_unit + .5 * this.smsvg.m_unit; },
+        sol_get_x_left: function (c) { return ( c + 1 ) * this.smsvg.m_unit; },
+        sol_get_x_right: function (c) { return ( c + 1 ) * this.smsvg.m_unit + (this.smsvg.m_unit - 1); },
+        sol_get_x_center: function (c) { return ( c + 1 ) * this.smsvg.m_unit + .5 * this.smsvg.m_unit; },
+        loadExpSeq: function () {
+          this.load_expseq_error = "";
+          if (this.exp_group == "") {
+            this.load_expseq_error = "No group is selected";
+          } else {
+            if (this.exp_player_list.length > 0 && this.exp_player == "") {
+              this.load_expseq_error = "No player is selected";
+            } else {
+              let folder = this.grouplist.filter(v => v.group == this.exp_group)[0].folder;
+              this.getResult(`${folder}_${this.exp_player}`);
+            }
+          }
+        },
+        getResult: function (player_result_file) {
+          let req = new Request(`evaluation/evaluationresults/${player_result_file}.json`);
+          fetch(req)
+          .then(r => r.json())
+          .then(r => {
+            this.expseq = r;
+          });
+        },
+        findNodeFill: function (node) {
+          color = "none";
+          if (this.expseq_n < this.expseq.maze[this.exp_maze-1].expansionseq.length) {
+            // check for next node to expand
+            if (JSON.stringify(this.expseq.maze[this.exp_maze-1].expansionseq[this.expseq_n]) == JSON.stringify(node.state) && !node.removed) {
+              color = this.color.nextexpand;
+            }
+          }
+          if (this.expseq_n > 0) {
+            // check for last expanded node
+            if (JSON.stringify(this.expseq.maze[this.exp_maze-1].expansionseq[this.expseq_n-1]) == JSON.stringify(node.state) && !node.removed) {
+              color = this.color.lastexpand;
+            }
+          }
+          return color;
+        },
+        getSolutionList: function () {
+          let req = new Request("evaluation/resultforeachmaze.json");
+          fetch(req)
+          .then(r => r.json())
+          .then(r => r.map(m => m.map(p => {
+            p.show = false;
+            p.pathLength = p.solution.length;
+            return p;
+          })))
+          .then(r => this.solutionlist = r);
+        },
+        getSolutionPath: function (solution) {
+          let path = `M ${this.sol_get_x_center(solution[0][0])} ${this.sol_get_y_center(solution[0][1])}`;
+          path += solution.slice(1).map(c => ` L ${this.sol_get_x_center(c[0])} ${this.sol_get_y_center(c[1])}`).join('');
+          return path;
+        },
+        sol_checkEntrance: function (solution) {
+          let check = false;
+          if (solution.length > 0) {
+            check = JSON.stringify(this.sol_maze.entrance) == JSON.stringify(solution[0]);
+          }
+          return check;
+        },
+        sol_checkExit: function (solution) {
+          let check = false;
+          if (solution.length > 0) {
+            check = this.sol_maze.exits.map(x => JSON.stringify(x)).includes(JSON.stringify(solution[solution.length - 1]));
+          }
+          return check;
+        }
+      }
+    })
+  </script>
+</body>
+</html>
