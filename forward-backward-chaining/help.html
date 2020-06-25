@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/@mdi/font@5.x/css/materialdesignicons.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+  <title>Help for Forward/Backward chaining</title>
+</head>
+<body>
+  <div id="app">
+    <v-app>
+      <v-main>
+        <v-container fluid style="max-width: 1200px">
+          <v-row><v-col class="title">Tutorial for Forward/Backward Chaining Platform</v-col></v-row>
+          <v-row>
+            <v-col cols="12" md="3" id="menu">
+              <v-list>
+                <v-list-item-group>
+                  <v-list-item href="#student-id">Set your student ID</v-list-item>
+                  <v-list-item href="#select-process">Select process to conduct</v-list-item>
+                  <v-list-item href="#edit-student-id-process">If my student ID or process is wrong</v-list-item>
+                  <v-list-item href="#initial-condition">Initial conditions</v-list-item>
+                  <v-list-item href="#next-step">Add a step</v-list-item>
+                  <v-list-item href="#working-memory">Step - Working memory</v-list-item>
+                  <v-list-item href="#add-rule">Step - Add fired rule</v-list-item>
+                  <v-list-item href="#insert-remove-rule">Step - Insert or remove fired rule</v-list-item>
+                  <v-list-item href="#remarks">Step - Remarks</v-list-item>
+                  <v-list-item href="#list-of-steps">Modify the steps</v-list-item>
+                  <v-list-item href="#done-download">I'm done and ready to submit</v-list-item>
+                  <v-list-item href="#computer-crashed">What if my computer crashed?</v-list-item>
+                </v-list-item-group>
+              </v-list>
+            </v-col>
+            <v-col cols="12" md="9">
+              
+              <v-card flat id="student-id">
+                <v-card-title>Provide your student ID <v-spacer></v-spacer> <v-btn href="#menu" icon><v-icon>mdi-format-list-bulleted</v-icon></v-btn></v-card-title>
+                <v-card-text>
+                  <svg width="100%" :view-box.camel="viewBox">
+                    <image href="./img/01.png" :width="displayImg.width" />
+                    <rect :x="convert(40)" :y="convert(265)" :width="convert(1175-40)" :height="convert(365-265)" :stroke="annotation.box.color" fill="none" :stroke-width="annotation.box.strokeWidth"/>
+                    <rect x="0" y="0" :width="displayImg.width" :height="displayImg.height" fill="none" :stroke="imgFrame.color" :stroke-width="imgFrame.strokeWidth"/>
+                  </svg>
+                  <v-alert elevation="2" border="left" dark :color="msg.alert">Any changes to the student ID will reset the data on the page. Double and triple check to make sure it is correct and do not require changes later.</v-alert>
+                </v-card-text>
+              </v-card>
+
+              <v-card flat id="select-process">
+                <v-card-title>Select the process you will be conducting <v-spacer></v-spacer> <v-btn href="#menu" icon><v-icon>mdi-format-list-bulleted</v-icon></v-btn></v-card-title>
+                <v-card-text>
+                  <svg width="100%" :view-box.camel="viewBox">
+                    <image href="./img/01.png" :width="displayImg.width" />
+                    <rect :x="convert(40)" :y="convert(370)" :width="convert(1175-40)" :height="convert(450-370)" :stroke="annotation.box.color" fill="none" :stroke-width="annotation.box.strokeWidth"/>
+                    <rect x="0" y="0" :width="displayImg.width" :height="displayImg.height" fill="none" :stroke="imgFrame.color" :stroke-width="imgFrame.strokeWidth"/>
+                  </svg>
+                  <v-alert elevation="2" border="left" colored-border :color="msg.process">Select forward or backward chaining process. This can be modified easily later.</v-alert>
+                  <v-alert elevation="2" border="left" colored-border :color="msg.process">Click <v-btn color="primary">OK</v-btn> to start providing your solution.</v-alert>
+                </v-card-text>
+              </v-card>
+
+              <v-card flat id="edit-student-id-process">
+                <v-card-title>Click <v-icon class="mx-2">mdi-pencil</v-icon> to modify student ID and/or process. <v-spacer></v-spacer> <v-btn href="#menu" icon><v-icon>mdi-format-list-bulleted</v-icon></v-btn></v-card-title>
+                <v-card-text>
+                  <svg width="100%" :view-box.camel="viewBox">
+                    <image href="./img/02.png" :width="displayImg.width" />
+                    <rect :x="convert(1040)" :y="convert(15)" :width="convert(1086-1040)" :height="convert(63-15)" :stroke="annotation.box.color" fill="none" :stroke-width="annotation.box.strokeWidth"/>
+                    <rect x="0" y="0" :width="displayImg.width" :height="displayImg.height" fill="none" :stroke="imgFrame.color" :stroke-width="imgFrame.strokeWidth"/>
+                  </svg>
+                </v-card-text>
+              </v-card>
+
+              <v-card flat id="initial-condition">
+                <v-card-title>Initial condition of your production system <v-spacer></v-spacer> <v-btn href="#menu" icon><v-icon>mdi-format-list-bulleted</v-icon></v-btn></v-card-title>
+                <v-card-text>
+                  <svg width="100%" :view-box.camel="viewBox">
+                    <image href="./img/02.png" :width="displayImg.width" />
+                    <rect :x="convert(125)" :y="convert(75)" :width="convert(1088-125)" :height="convert(278-75)" :stroke="annotation.box.color" fill="none" :stroke-width="annotation.box.strokeWidth"/>
+                    <rect x="0" y="0" :width="displayImg.width" :height="displayImg.height" fill="none" :stroke="imgFrame.color" :stroke-width="imgFrame.strokeWidth"/>
+                  </svg>
+                  <v-alert elevation="2" border="left" dark :color="msg.info">The initial facts in the working memory will be defined for you and you do not need to modify this part.</v-alert>
+                </v-card-text>
+              </v-card>
+
+              <v-card flat id="next-step">
+                <v-card-title>Next step <v-spacer></v-spacer> <v-btn href="#menu" icon><v-icon>mdi-format-list-bulleted</v-icon></v-btn></v-card-title>
+                <v-card-text>
+                  <svg width="100%" :view-box.camel="viewBox">
+                    <image href="./img/02.png" :width="displayImg.width" />
+                    <rect :x="convert(125)" :y="convert(280)" :width="convert(1088-125)" :height="convert(337-280)" :stroke="annotation.box.color" fill="none" :stroke-width="annotation.box.strokeWidth"/>
+                    <rect x="0" y="0" :width="displayImg.width" :height="displayImg.height" fill="none" :stroke="imgFrame.color" :stroke-width="imgFrame.strokeWidth"/>
+                  </svg>
+                  <v-alert elevation="2" border="left" colored-border :color="msg.process">Click <v-btn><v-icon>mdi-plus</v-icon></v-btn> to add new step.</v-alert>
+                </v-card-text>
+              </v-card>
+
+              <v-card flat id="working-memory">
+                <v-card-title>Working memory <v-spacer></v-spacer> <v-btn href="#menu" icon><v-icon>mdi-format-list-bulleted</v-icon></v-btn></v-card-title>
+                <v-card-text>
+                  <svg width="100%" :view-box.camel="viewBox">
+                    <image href="./img/03.png" :width="displayImg.width" />
+                    <rect :x="convert(40)" :y="convert(205)" :width="convert(1170-40)" :height="convert(307-205)" :stroke="annotation.box.color" fill="none" :stroke-width="annotation.box.strokeWidth"/>
+                    <rect x="0" y="0" :width="displayImg.width" :height="displayImg.height" fill="none" :stroke="imgFrame.color" :stroke-width="imgFrame.strokeWidth"/>
+                  </svg>
+                  <v-alert elevation="2" border="left" dark :color="msg.info">This box should contain all facts available in the current working memory.</v-alert>
+                  <v-alert elevation="2" border="left" colored-border :color="msg.process">Click in the selection box to add or remove facts from working memory.</v-alert>
+                </v-card-text>
+              </v-card>
+
+              <v-card flat id="add-rule">
+                <v-card-title>Add fired rule <v-spacer></v-spacer> <v-btn href="#menu" icon><v-icon>mdi-format-list-bulleted</v-icon></v-btn></v-card-title>
+                <v-card-text>
+                  <svg width="100%" :view-box.camel="viewBox">
+                    <image href="./img/03.png" :width="displayImg.width" />
+                    <rect :x="convert(40)" :y="convert(350)" :width="convert(1170-40)" :height="convert(405-350)" :stroke="annotation.box.color" fill="none" :stroke-width="annotation.box.strokeWidth"/>
+                    <rect x="0" y="0" :width="displayImg.width" :height="displayImg.height" fill="none" :stroke="imgFrame.color" :stroke-width="imgFrame.strokeWidth"/>
+                  </svg>
+                  <v-alert elevation="2" border="left" colored-border :color="msg.process">Click <v-btn><v-icon>mdi-plus</v-icon></v-btn> to add new fired rule.</v-alert>
+                </v-card-text>
+              </v-card>
+
+              <v-card flat id="add-rule-2">
+                <v-card-title>Add fired rule <v-spacer></v-spacer> <v-btn href="#menu" icon><v-icon>mdi-format-list-bulleted</v-icon></v-btn></v-card-title>
+                <v-card-text>
+                  <svg width="100%" :view-box.camel="viewBox">
+                    <image href="./img/05.png" :width="displayImg.width" />
+                    <rect :x="convert(40)" :y="convert(319)" :width="convert(1170-40)" :height="convert(372-319)" :stroke="annotation.box.color" fill="none" :stroke-width="annotation.box.strokeWidth"/>
+                    <rect x="0" y="0" :width="displayImg.width" :height="displayImg.height" fill="none" :stroke="imgFrame.color" :stroke-width="imgFrame.strokeWidth"/>
+                  </svg>
+                  <v-alert elevation="2" border="left" colored-border :color="msg.process">Select the rule that has been fired. Make sure you add the new fact(s) into the working memory.</v-alert>
+                  <v-alert elevation="2" border="left" dark :color="msg.info">The rules listed here are the rules being fired from the beginning of the forward/backward chaining process in sequence.</v-alert>
+                </v-card-text>
+              </v-card>
+
+              <v-card flat id="add-rule-3">
+                <v-card-title>Fired rule <v-spacer></v-spacer> <v-btn href="#menu" icon><v-icon>mdi-format-list-bulleted</v-icon></v-btn></v-card-title>
+                <v-card-text>
+                  <svg width="100%" :view-box.camel="viewBox">
+                    <image href="./img/06.png" :width="displayImg.width" />
+                    <rect :x="convert(40)" :y="convert(292)" :width="convert(1170-40)" :height="convert(396-292)" :stroke="annotation.box.color" fill="none" :stroke-width="annotation.box.strokeWidth"/>
+                    <rect x="0" y="0" :width="displayImg.width" :height="displayImg.height" fill="none" :stroke="imgFrame.color" :stroke-width="imgFrame.strokeWidth"/>
+                  </svg>
+                  <v-alert elevation="2" border="left" dark :color="msg.info">For example, if rule 3 is fired in step 1, and rule 1 is fired in step 2, you should have this in your step 2.</v-alert>
+                </v-card-text>
+              </v-card>
+
+              <v-card flat id="insert-remove-rule">
+                <v-card-title>Insert or remove fired rule <v-spacer></v-spacer> <v-btn href="#menu" icon><v-icon>mdi-format-list-bulleted</v-icon></v-btn></v-card-title>
+                <v-card-text>
+                  <svg width="100%" :view-box.camel="viewBox">
+                    <image href="./img/05.png" :width="displayImg.width" />
+                    <rect :x="convert(45)" :y="convert(325)" :width="convert(88-45)" :height="convert(368-325)" :stroke="annotation.box.color" fill="none" :stroke-width="annotation.box.strokeWidth"/>
+                    <rect :x="convert(1123)" :y="convert(325)" :width="convert(1166-1123)" :height="convert(368-325)" :stroke="annotation.box.color" fill="none" :stroke-width="annotation.box.strokeWidth"/>
+                    <rect x="0" y="0" :width="displayImg.width" :height="displayImg.height" fill="none" :stroke="imgFrame.color" :stroke-width="imgFrame.strokeWidth"/>
+                  </svg>
+                  <v-alert elevation="2" border="left" colored-border :color="msg.process">Click <v-icon class="mx-2">mdi-plus</v-icon> to insert a rule above the rule.</v-alert>
+                  <v-alert elevation="2" border="left" colored-border :color="msg.process">Click <v-icon class="mx-2">mdi-minus</v-icon> to remove the rule.</v-alert>
+                </v-card-text>
+              </v-card>
+
+              <v-card flat id="remarks">
+                <v-card-title>Remarks <v-spacer></v-spacer> <v-btn href="#menu" icon><v-icon>mdi-format-list-bulleted</v-icon></v-btn></v-card-title>
+                <v-card-text>
+                  <svg width="100%" :view-box.camel="viewBox">
+                    <image href="./img/05.png" :width="displayImg.width" />
+                    <rect :x="convert(40)" :y="convert(441)" :width="convert(1170-40)" :height="convert(631-441)" :stroke="annotation.box.color" fill="none" :stroke-width="annotation.box.strokeWidth"/>
+                    <rect x="0" y="0" :width="displayImg.width" :height="displayImg.height" fill="none" :stroke="imgFrame.color" :stroke-width="imgFrame.strokeWidth"/>
+                  </svg>
+                  <v-alert elevation="2" border="left" dark :color="msg.info">A remark is optional. You may use this to explain your step if you wish to.</v-alert>
+                </v-card-text>
+              </v-card>
+
+              <v-card flat id="list-of-steps">
+                <v-card-title>List of steps <v-spacer></v-spacer> <v-btn href="#menu" icon><v-icon>mdi-format-list-bulleted</v-icon></v-btn></v-card-title>
+                <v-card-text>
+                  <svg width="100%" :view-box.camel="viewBox">
+                    <image href="./img/07.png" :width="displayImg.width" />
+                    <rect :x="convert(142)" :y="convert(358)" :width="convert(185-142)" :height="convert(401-358)" :stroke="annotation.box.color" fill="none" :stroke-width="annotation.box.strokeWidth"/>
+                    <rect :x="convert(1025)" :y="convert(358)" :width="convert(1068-1025)" :height="convert(401-358)" :stroke="annotation.box.color" fill="none" :stroke-width="annotation.box.strokeWidth"/>
+                    <rect :x="convert(125)" :y="convert(280)" :width="convert(1088-125)" :height="convert(337-280)" :stroke="annotation.box.color" fill="none" :stroke-width="annotation.box.strokeWidth"/>
+                    <rect :x="convert(125)" :y="convert(580)" :width="convert(1088-125)" :height="convert(637-580)" :stroke="annotation.box.color" fill="none" :stroke-width="annotation.box.strokeWidth"/>
+                    <rect x="0" y="0" :width="displayImg.width" :height="displayImg.height" fill="none" :stroke="imgFrame.color" :stroke-width="imgFrame.strokeWidth"/>
+                  </svg>
+                  <v-alert elevation="2" border="left" colored-border :color="msg.process">Click <v-icon class="mx-2">mdi-plus</v-icon> to insert a step.</v-alert>
+                  <v-alert elevation="2" border="left" colored-border :color="msg.process">Click <v-icon class="mx-2">mdi-minus</v-icon> to remove the step.</v-alert>
+                  <v-alert elevation="2" border="left" colored-border :color="msg.process">Click <v-icon class="mx-2">mdi-pencil</v-icon> to edit the step.</v-alert>
+                </v-card-text>
+              </v-card>
+
+              <v-card flat id="done-download">
+                <v-card-title>When you are done <v-spacer></v-spacer> <v-btn href="#menu" icon><v-icon>mdi-format-list-bulleted</v-icon></v-btn></v-card-title>
+                <v-card-text>
+                  <svg width="100%" :view-box.camel="viewBox">
+                    <image href="./img/07.png" :width="displayImg.width" />
+                    <rect :x="convert(606)" :y="convert(706)" :width="convert(1088-606)" :height="convert(755-706)" :stroke="annotation.box.color" fill="none" :stroke-width="annotation.box.strokeWidth"/>
+                    <rect x="0" y="0" :width="displayImg.width" :height="displayImg.height" fill="none" :stroke="imgFrame.color" :stroke-width="imgFrame.strokeWidth"/>
+                  </svg>
+                  <v-alert elevation="2" border="left" colored-border :color="msg.process">Click <v-btn color="primary">Download</v-btn> to download the <code>json</code> file.</v-alert>
+                  <v-alert elevation="2" border="left" colored-border :color="msg.process">Submit the downloaded file through the submission link.</v-alert>
+                </v-card-text>
+              </v-card>
+
+              <v-card flat id="computer-crashed">
+                <v-card-title>What if my computer crashed? <v-spacer></v-spacer> <v-btn href="#menu" icon><v-icon>mdi-format-list-bulleted</v-icon></v-btn></v-card-title>
+                <v-card-text>
+                  <v-alert elevation="2" border="left" dark :color="msg.alert">If there is a risk of your computer being crashed, remember to download the file from time to time.</v-alert>
+                  <svg width="100%" :view-box.camel="viewBox">
+                    <image href="./img/08.png" :width="displayImg.width" />
+                    <rect :x="convert(126)" :y="convert(706)" :width="convert(608-126)" :height="convert(755-706)" :stroke="annotation.box.color" fill="none" :stroke-width="annotation.box.strokeWidth"/>
+                    <rect :x="convert(45)" :y="convert(390)" :width="convert(1175-45)" :height="convert(442-390)" :stroke="annotation.box.color" fill="none" :stroke-width="annotation.box.strokeWidth"/>
+                    <rect :x="convert(1095)" :y="convert(473)" :width="convert(1186-1095)" :height="convert(520-473)" :stroke="annotation.box.color" fill="none" :stroke-width="annotation.box.strokeWidth"/>
+                    <rect x="0" y="0" :width="displayImg.width" :height="displayImg.height" fill="none" :stroke="imgFrame.color" :stroke-width="imgFrame.strokeWidth"/>
+                  </svg>
+                  <v-alert elevation="2" border="left" colored-border :color="msg.process">Click <v-btn dark>Upload</v-btn> to view the upload file dialog.</v-alert>
+                  <v-alert elevation="2" border="left" colored-border :color="msg.process">Click the text field to select the <code>json</code> file that you have previously downloaded.</v-alert>
+                  <v-alert elevation="2" border="left" colored-border :color="msg.process">Click <v-btn color="primary">Upload</v-btn> to upload the file.</v-alert>
+                  <v-alert elevation="2" border="left" dark :color="msg.alert">This is not for your submission. Submit through the submission link provided for the assessment.</v-alert>
+                </v-card-text>
+              </v-card>
+            </v-col>
+          </v-row>
+        </v-container>
+      </v-main>
+    </v-app>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+  <script>
+    let vm = new Vue({
+      el: '#app',
+      vuetify: new Vuetify(),
+      data: {
+        actualImg: {
+          width: 1212,
+          height: 761
+        },
+        imgFrame: {
+          color: "",
+          strokeWidth: 3
+        },
+        annotation: {
+          box: {
+            color: "#F44336",
+            strokeWidth: 3
+          }
+        },
+        msg: {
+          alert: "#9C27B0",
+          info: "#607D8B",
+          process: "#795548"
+        }
+      },
+      mounted: function () {
+        this.imgFrame.color = this.$options.vuetify.framework.theme.themes.light.primary; 
+      },
+      computed: {
+        displayImg: function () {
+          let w = 500;
+          return {
+            width: w,
+            height: this.actualImg.height / this.actualImg.width * w
+          }
+        },
+        viewBox: function () {
+          return `0 0 ${this.displayImg.width} ${this.displayImg.height}`;
+        }
+      },
+      methods: {
+        convert: function (xory) {
+          return xory / this.actualImg.width * this.displayImg.width;
+        }
+      }
+    })
+  </script>
+</body>
+</html>
