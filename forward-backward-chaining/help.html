@@ -26,6 +26,7 @@
                   <v-list-item href="#working-memory">Step - Working memory</v-list-item>
                   <v-list-item href="#add-rule">Step - Add fired rule</v-list-item>
                   <v-list-item href="#insert-remove-rule">Step - Insert or remove fired rule</v-list-item>
+                  <v-list-item href="#add-goal">Step - Add goal or subgoal (backward chaining)</v-list-item>
                   <v-list-item href="#remarks">Step - Remarks</v-list-item>
                   <v-list-item href="#list-of-steps">Modify the steps</v-list-item>
                   <v-list-item href="#done-download">I'm done and ready to submit</v-list-item>
@@ -156,6 +157,34 @@
                   </svg>
                   <v-alert elevation="2" border="left" colored-border :color="msg.process">Click <v-icon class="mx-2">mdi-plus</v-icon> to insert a rule above the rule.</v-alert>
                   <v-alert elevation="2" border="left" colored-border :color="msg.process">Click <v-icon class="mx-2">mdi-minus</v-icon> to remove the rule.</v-alert>
+                </v-card-text>
+              </v-card>
+
+              <v-card flat id="add-goal">
+                <v-card-title>Add goal/subgoals (Backward chaining)<v-spacer></v-spacer> <v-btn href="#menu" icon><v-icon>mdi-format-list-bulleted</v-icon></v-btn></v-card-title>
+                <v-card-text>
+                  <svg width="100%" :view-box.camel="viewBox">
+                    <image href="./img/10.png" :width="displayImg.width" />
+                    <rect :x="convert(40)" :y="convert(400)" :width="convert(1172-40)" :height="convert(455-400)" :stroke="annotation.box.color" fill="none" :stroke-width="annotation.box.strokeWidth"/>
+                    <rect x="0" y="0" :width="displayImg.width" :height="displayImg.height" fill="none" :stroke="imgFrame.color" :stroke-width="imgFrame.strokeWidth"/>
+                  </svg>
+                  <v-alert elevation="2" border="left" dark :color="msg.info">For backward chaining process, there is the additional section to add goal/subgoals.</v-alert>
+                  <v-alert elevation="2" border="left" colored-border :color="msg.process">Click <v-icon class="mx-2">mdi-plus</v-icon> to add a goal or subgoal to the end of list.</v-alert>
+                </v-card-text>
+              </v-card>
+
+              <v-card flat id="add-goal-2">
+                <v-card-title>Add goal/subgoals (Backward chaining)<v-spacer></v-spacer> <v-btn href="#menu" icon><v-icon>mdi-format-list-bulleted</v-icon></v-btn></v-card-title>
+                <v-card-text>
+                  <svg width="100%" :view-box.camel="viewBox">
+                    <image href="./img/11.png" :width="displayImg.width" />
+                    <rect :x="convert(40)" :y="convert(365)" :width="convert(1172-40)" :height="convert(420-365)" :stroke="annotation.box.color" fill="none" :stroke-width="annotation.box.strokeWidth"/>
+                    <rect x="0" y="0" :width="displayImg.width" :height="displayImg.height" fill="none" :stroke="imgFrame.color" :stroke-width="imgFrame.strokeWidth"/>
+                  </svg>
+                  <v-alert elevation="2" border="left" colored-border :color="msg.process">Click the left selection box to choose the goal or subgoal.</v-alert>
+                  <v-alert elevation="2" border="left" colored-border :color="msg.process">Click the right selection box to choose the rule that will achieve the goal or subgoal.</v-alert>
+                  <v-alert elevation="2" border="left" dark :color="msg.info">Leave the right selection box blank if the rule to achieve the goal or subgoal has not been identified.</v-alert>
+                  <v-alert elevation="2" border="left" colored-border :color="msg.process">Click <v-icon class="mx-2">mdi-minus</v-icon> to remove the goal or subgoal.</v-alert>
                 </v-card-text>
               </v-card>
 
