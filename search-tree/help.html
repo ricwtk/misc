@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/@mdi/font@5.x/css/materialdesignicons.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+  <title>Help for Search Tree Construction</title>
+</head>
+<body>
+  <div id="app">
+    <v-app>
+      <v-main>
+        <v-container fluid style="max-width: 1200px">
+          <v-row><v-col class="title">Tutorial for Search Tree Platform</v-col></v-row>
+          <v-row>
+            <v-col cols="12" md="3" id="menu">
+              <v-list>
+                <v-list-item-group>
+                  <v-list-item href="#student-id">Set your student ID</v-list-item>
+                  <v-list-item href="#edit-student-id">If my student ID is wrong</v-list-item>
+                  <v-list-item href="#add-root-node">Add root node</v-list-item>
+                  <v-list-item href="#edit-node">Edit a node</v-list-item>
+                  <v-list-item href="#add-child">Add a child</v-list-item>
+                  <v-list-item href="#edit-information">Modify node information</v-list-item>
+                  <v-list-item href="#edit-state">Node information - state</v-list-item>
+                  <v-list-item href="#expansion-sequence">Node information - expansion sequence</v-list-item>
+                  <v-list-item href="#removed-node">Node information - removed node</v-list-item>
+                  <v-list-item href="#action-of-children">Node information - actions</v-list-item>
+                  <v-list-item href="#delete-node">Node information - delete a node</v-list-item>
+                  <v-list-item href="#done-download">I'm done and ready to submit</v-list-item>
+                  <v-list-item href="#computer-crashed">What if my computer crashed?</v-list-item>
+                </v-list-item-group>
+              </v-list>
+            </v-col>
+            <v-col cols="12" md="9">
+              
+              <v-card flat id="student-id">
+                <v-card-title>Provide your student ID <v-spacer></v-spacer> <v-btn href="#menu" icon><v-icon>mdi-format-list-bulleted</v-icon></v-btn></v-card-title>
+                <v-card-text>
+                  <svg width="100%" :view-box.camel="viewBox">
+                    <image href="./img/01.png" :width="displayImg.width" />
+                    <rect :x="convert(40)" :y="convert(280)" :width="convert(1175-40)" :height="convert(380-280)" :stroke="annotation.box.color" fill="none" :stroke-width="annotation.box.strokeWidth"/>
+                    <rect x="0" y="0" :width="displayImg.width" :height="displayImg.height" fill="none" :stroke="imgFrame.color" :stroke-width="imgFrame.strokeWidth"/>
+                  </svg>
+                  <v-alert elevation="2" border="left" dark :color="msg.alert">Any change to the student ID will reset the data on the page. Double and triple check to make sure it is correct and do not require changes later.</v-alert>
+                </v-card-text>
+              </v-card>
+
+              <v-card flat id="edit-student-id">
+                <v-card-title>Click <v-icon class="mx-2">mdi-pencil</v-icon> to modify student ID <v-spacer></v-spacer> <v-btn href="#menu" icon><v-icon>mdi-format-list-bulleted</v-icon></v-btn></v-card-title>
+                <v-card-text>
+                  <svg width="100%" :view-box.camel="viewBox">
+                    <image href="./img/02.png" :width="displayImg.width" />
+                    <rect :x="convert(1160)" :y="convert(15)" :width="convert(1206-1160)" :height="convert(63-15)" :stroke="annotation.box.color" fill="none" :stroke-width="annotation.box.strokeWidth"/>
+                    <rect x="0" y="0" :width="displayImg.width" :height="displayImg.height" fill="none" :stroke="imgFrame.color" :stroke-width="imgFrame.strokeWidth"/>
+                  </svg>
+                  <v-alert elevation="2" border="left" dark :color="msg.alert">Be reminded: any change to the student ID will reset the data on the page. Double and triple check to make sure it is correct and do not require changes later.</v-alert>
+                </v-card-text>
+              </v-card>
+
+              <v-card flat id="add-root-node">
+                <v-card-title>Click <v-icon class="mx-2">mdi-plus</v-icon> to add the root node <v-spacer></v-spacer> <v-btn href="#menu" icon><v-icon>mdi-format-list-bulleted</v-icon></v-btn></v-card-title>
+                <v-card-text>
+                  <svg width="100%" :view-box.camel="viewBox">
+                    <image href="./img/02.png" :width="displayImg.width" />
+                    <rect :x="convert(400)" :y="convert(150)" :width="convert(810-400)" :height="convert(456-150)" :stroke="annotation.box.color" fill="none" :stroke-width="annotation.box.strokeWidth"/>
+                    <rect x="0" y="0" :width="displayImg.width" :height="displayImg.height" fill="none" :stroke="imgFrame.color" :stroke-width="imgFrame.strokeWidth"/>
+                  </svg>
+                </v-card-text>
+              </v-card>
+
+              <v-card flat id="root-node">
+                <v-card-title>Root node<v-spacer></v-spacer> <v-btn href="#menu" icon><v-icon>mdi-format-list-bulleted</v-icon></v-btn></v-card-title>
+                <v-card-text>
+                  <svg width="100%" :view-box.camel="viewBox">
+                    <image href="./img/03.png" :width="displayImg.width" />
+                    <rect :x="convert(436)" :y="convert(122)" :width="convert(675-436)" :height="convert(361-122)" :stroke="annotation.box.color" fill="none" :stroke-width="annotation.box.strokeWidth"/>
+                    <rect x="0" y="0" :width="displayImg.width" :height="displayImg.height" fill="none" :stroke="imgFrame.color" :stroke-width="imgFrame.strokeWidth"/>
+                  </svg>
+                  <v-alert elevation="2" border="left" dark :color="msg.info">Any new node added will have the state of "-1,-1".</v-alert>
+                </v-card-text>
+              </v-card>
+
+              <v-card flat id="edit-node">
+                <v-card-title>Edit node<v-spacer></v-spacer> <v-btn href="#menu" icon><v-icon>mdi-format-list-bulleted</v-icon></v-btn></v-card-title>
+                <v-card-text>
+                  <svg width="100%" :view-box.camel="viewBox">
+                    <image href="./img/04.png" :width="displayImg.width" />
+                    <rect :x="convert(436)" :y="convert(122)" :width="convert(675-436)" :height="convert(361-122)" :stroke="annotation.box.color" fill="none" :stroke-width="annotation.box.strokeWidth"/>
+                    <rect x="0" y="0" :width="displayImg.width" :height="displayImg.height" fill="none" :stroke="imgFrame.color" :stroke-width="imgFrame.strokeWidth"/>
+                  </svg>
+                  <v-alert elevation="2" border="left" colored-border :color="msg.process">Move your cursor to the node your want to edit, and click on <v-icon>mdi-pencil</v-icon> to edit information of the node.</v-alert>
+                </v-card-text>
+              </v-card>
+
+              <v-card flat id="add-child">
+                <v-card-title>Add child<v-spacer></v-spacer> <v-btn href="#menu" icon><v-icon>mdi-format-list-bulleted</v-icon></v-btn></v-card-title>
+                <v-card-text>
+                  <svg width="100%" :view-box.camel="viewBox">
+                    <image href="./img/05.png" :width="displayImg.width" />
+                    <rect :x="convert(436)" :y="convert(360)" :width="convert(675-436)" :height="convert(550-360)" :stroke="annotation.box.color" fill="none" :stroke-width="annotation.box.strokeWidth"/>
+                    <rect x="0" y="0" :width="displayImg.width" :height="displayImg.height" fill="none" :stroke="imgFrame.color" :stroke-width="imgFrame.strokeWidth"/>
+                  </svg>
+                  <v-alert elevation="2" border="left" colored-border :color="msg.process">Move your cursor to just below the parent node, and click on <v-icon>mdi-plus</v-icon> to add a child to the node.</v-alert>
+                </v-card-text>
+              </v-card>
+
+              <v-card flat id="one-child">
+                <v-card-title>New child<v-spacer></v-spacer> <v-btn href="#menu" icon><v-icon>mdi-format-list-bulleted</v-icon></v-btn></v-card-title>
+                <v-card-text>
+                  <svg width="100%" :view-box.camel="viewBox">
+                    <image href="./img/06.png" :width="displayImg.width" />
+                    <rect x="0" y="0" :width="displayImg.width" :height="displayImg.height" fill="none" :stroke="imgFrame.color" :stroke-width="imgFrame.strokeWidth"/>
+                  </svg>
+                  <v-alert elevation="2" border="left" dark :color="msg.info">A new child will have the state of "-1,-1" and action of "x".</v-alert>
+                </v-card-text>
+              </v-card>
+
+              <v-card flat id="multiple-children">
+                <v-card-title>Multiple children<v-spacer></v-spacer> <v-btn href="#menu" icon><v-icon>mdi-format-list-bulleted</v-icon></v-btn></v-card-title>
+                <v-card-text>
+                  <svg width="100%" :view-box.camel="viewBox">
+                    <image href="./img/07.png" :width="displayImg.width" />
+                    <rect x="0" y="0" :width="displayImg.width" :height="displayImg.height" fill="none" :stroke="imgFrame.color" :stroke-width="imgFrame.strokeWidth"/>
+                  </svg>
+                  <v-alert elevation="2" border="left" dark :color="msg.info">Additional children can be added in the same way.</v-alert>
+                </v-card-text>
+              </v-card>
+
+              <v-card flat id="edit-information">
+                <v-card-title>Node information dialog<v-spacer></v-spacer> <v-btn href="#menu" icon><v-icon>mdi-format-list-bulleted</v-icon></v-btn></v-card-title>
+                <v-card-text>
+                  <svg width="100%" :view-box.camel="viewBox">
+                    <image href="./img/08.png" :width="displayImg.width" />
+                    <rect x="0" y="0" :width="displayImg.width" :height="displayImg.height" fill="none" :stroke="imgFrame.color" :stroke-width="imgFrame.strokeWidth"/>
+                  </svg>
+                  <v-alert elevation="2" border="left" colored-border :color="msg.process">Clicking on <v-icon>mdi-pencil</v-icon> on a node brings up the node information dialog.</v-alert>
+                </v-card-text>
+              </v-card>
+
+              <v-card flat id="edit-state">
+                <v-card-title>Edit state<v-spacer></v-spacer> <v-btn href="#menu" icon><v-icon>mdi-format-list-bulleted</v-icon></v-btn></v-card-title>
+                <v-card-text>
+                  <svg width="100%" :view-box.camel="viewBox">
+                    <image href="./img/08.png" :width="displayImg.width" />
+                    <rect :x="convert(40)" :y="convert(140)" :width="convert(1172-40)" :height="convert(244-140)" :stroke="annotation.box.color" fill="none" :stroke-width="annotation.box.strokeWidth"/>
+                    <rect x="0" y="0" :width="displayImg.width" :height="displayImg.height" fill="none" :stroke="imgFrame.color" :stroke-width="imgFrame.strokeWidth"/>
+                  </svg>
+                  <v-alert elevation="2" border="left" dark :color="msg.info">This box contains the state of the node. Any string is allowed.</v-alert>
+                </v-card-text>
+              </v-card>
+
+              <v-card flat id="expansion-sequence">
+                <v-card-title>Edit expansion sequence<v-spacer></v-spacer> <v-btn href="#menu" icon><v-icon>mdi-format-list-bulleted</v-icon></v-btn></v-card-title>
+                <v-card-text>
+                  <svg width="100%" :view-box.camel="viewBox">
+                    <image href="./img/08.png" :width="displayImg.width" />
+                    <rect :x="convert(40)" :y="convert(245)" :width="convert(1172-40)" :height="convert(347-245)" :stroke="annotation.box.color" fill="none" :stroke-width="annotation.box.strokeWidth"/>
+                    <rect x="0" y="0" :width="displayImg.width" :height="displayImg.height" fill="none" :stroke="imgFrame.color" :stroke-width="imgFrame.strokeWidth"/>
+                  </svg>
+                  <v-alert elevation="2" border="left" dark :color="msg.info">Expansion sequence is the order of the nodes being expanded.</v-alert>
+                  <v-alert elevation="2" border="left" dark :color="msg.info">-1 for unexpanded node.</v-alert>
+                  <v-alert elevation="2" border="left" dark :color="msg.info">1 for the first expanded node, which should be the root node. 2 for the second expanded node, and so forth.</v-alert>
+                </v-card-text>
+              </v-card>
+
+              <v-card flat id="expansion-sequence-display">
+                <v-card-title>Display of the expansion sequence of a node<v-spacer></v-spacer> <v-btn href="#menu" icon><v-icon>mdi-format-list-bulleted</v-icon></v-btn></v-card-title>
+                <v-card-text>
+                  <svg width="100%" :view-box.camel="viewBox">
+                    <image href="./img/12.png" :width="displayImg.width" />
+                    <rect x="0" y="0" :width="displayImg.width" :height="displayImg.height" fill="none" :stroke="imgFrame.color" :stroke-width="imgFrame.strokeWidth"/>
+                  </svg>
+                </v-card-text>
+              </v-card>
+
+              <v-card flat id="removed-node">
+                <v-card-title>Removed node<v-spacer></v-spacer> <v-btn href="#menu" icon><v-icon>mdi-format-list-bulleted</v-icon></v-btn></v-card-title>
+                <v-card-text>
+                  <svg width="100%" :view-box.camel="viewBox">
+                    <image href="./img/08.png" :width="displayImg.width" />
+                    <rect :x="convert(37)" :y="convert(343)" :width="convert(240-37)" :height="convert(394-343)" :stroke="annotation.box.color" fill="none" :stroke-width="annotation.box.strokeWidth"/>
+                    <rect x="0" y="0" :width="displayImg.width" :height="displayImg.height" fill="none" :stroke="imgFrame.color" :stroke-width="imgFrame.strokeWidth"/>
+                  </svg>
+                  <v-alert elevation="2" border="left" dark :color="msg.info">A removed node is normally a node that leads to redundant path.</v-alert>
+                </v-card-text>
+              </v-card>
+
+              <v-card flat id="removed-node-display">
+                <v-card-title>Display of a removed node<v-spacer></v-spacer> <v-btn href="#menu" icon><v-icon>mdi-format-list-bulleted</v-icon></v-btn></v-card-title>
+                <v-card-text>
+                  <svg width="100%" :view-box.camel="viewBox">
+                    <image href="./img/09.png" :width="displayImg.width" />
+                    <rect x="0" y="0" :width="displayImg.width" :height="displayImg.height" fill="none" :stroke="imgFrame.color" :stroke-width="imgFrame.strokeWidth"/>
+                  </svg>
+                </v-card-text>
+              </v-card>
+
+              <v-card flat id="action-of-children">
+                <v-card-title>Assign action to child<v-spacer></v-spacer> <v-btn href="#menu" icon><v-icon>mdi-format-list-bulleted</v-icon></v-btn></v-card-title>
+                <v-card-text>
+                  <svg width="100%" :view-box.camel="viewBox">
+                    <image href="./img/08.png" :width="displayImg.width" />
+                    <rect :x="convert(40)" :y="convert(410)" :width="convert(1172-40)" :height="convert(577-410)" :stroke="annotation.box.color" fill="none" :stroke-width="annotation.box.strokeWidth"/>
+                    <rect x="0" y="0" :width="displayImg.width" :height="displayImg.height" fill="none" :stroke="imgFrame.color" :stroke-width="imgFrame.strokeWidth"/>
+                  </svg>
+                  <v-alert elevation="2" border="left" dark :color="msg.info">This section allows you to change the action label for the children of the node.</v-alert>
+                  <v-alert elevation="2" border="left" colored-border :color="msg.process">Click <v-icon>mdi-arrow-up-bold</v-icon> or <v-icon>mdi-arrow-down-bold</v-icon> to change the order of the children.</v-alert>
+                </v-card-text>
+              </v-card>
+
+              <v-card flat id="delete-node">
+                <v-card-title>Delete node<v-spacer></v-spacer> <v-btn href="#menu" icon><v-icon>mdi-format-list-bulleted</v-icon></v-btn></v-card-title>
+                <v-card-text>
+                  <svg width="100%" :view-box.camel="viewBox">
+                    <image href="./img/08.png" :width="displayImg.width" />
+                    <rect :x="convert(40)" :y="convert(577)" :width="convert(1172-40)" :height="convert(633-577)" :stroke="annotation.box.color" fill="none" :stroke-width="annotation.box.strokeWidth"/>
+                    <rect x="0" y="0" :width="displayImg.width" :height="displayImg.height" fill="none" :stroke="imgFrame.color" :stroke-width="imgFrame.strokeWidth"/>
+                  </svg>
+                  <v-alert elevation="2" border="left" colored-border :color="msg.process">Click <v-btn color="error" class="mx-2">delete</v-btn>to delete the node.</v-alert>
+                  <v-alert elevation="2" border="left" dark :color="msg.info">All successors (children, grandchildren, ...) will also be deleted.</v-alert>
+                </v-card-text>
+              </v-card>
+
+              <v-card flat id="done-download">
+                <v-card-title>When you are done <v-spacer></v-spacer> <v-btn href="#menu" icon><v-icon>mdi-format-list-bulleted</v-icon></v-btn></v-card-title>
+                <v-card-text>
+                  <svg width="100%" :view-box.camel="viewBox">
+                    <image href="./img/07.png" :width="displayImg.width" />
+                    <rect :x="convert(605)" :y="convert(665)" :width="convert(1207-605)" :height="convert(712-665)" :stroke="annotation.box.color" fill="none" :stroke-width="annotation.box.strokeWidth"/>
+                    <rect x="0" y="0" :width="displayImg.width" :height="displayImg.height" fill="none" :stroke="imgFrame.color" :stroke-width="imgFrame.strokeWidth"/>
+                  </svg>
+                  <v-alert elevation="2" border="left" colored-border :color="msg.process">Click <v-btn color="primary">Download</v-btn> to download the <code>json</code> file.</v-alert>
+                  <v-alert elevation="2" border="left" colored-border :color="msg.process">Submit the downloaded file through the submission link.</v-alert>
+                </v-card-text>
+              </v-card>
+
+              <v-card flat id="computer-crashed">
+                <v-card-title>What if my computer crashed? <v-spacer></v-spacer> <v-btn href="#menu" icon><v-icon>mdi-format-list-bulleted</v-icon></v-btn></v-card-title>
+                <v-card-text>
+                  <v-alert elevation="2" border="left" dark :color="msg.alert">If there is a risk of your computer being crashed, remember to download the file from time to time.</v-alert>
+                  <svg width="100%" :view-box.camel="viewBox">
+                    <image href="./img/10.png" :width="displayImg.width" />
+                    <rect :x="convert(47)" :y="convert(365)" :width="convert(1174-47)" :height="convert(423-365)" :stroke="annotation.box.color" fill="none" :stroke-width="annotation.box.strokeWidth"/>
+                    <rect :x="convert(5)" :y="convert(664)" :width="convert(608-5)" :height="convert(712-664)" :stroke="annotation.box.color" fill="none" :stroke-width="annotation.box.strokeWidth"/>
+                    <rect :x="convert(1095)" :y="convert(449)" :width="convert(1186-1095)" :height="convert(499-449)" :stroke="annotation.box.color" fill="none" :stroke-width="annotation.box.strokeWidth"/>
+                    <rect x="0" y="0" :width="displayImg.width" :height="displayImg.height" fill="none" :stroke="imgFrame.color" :stroke-width="imgFrame.strokeWidth"/>
+                  </svg>
+                  <v-alert elevation="2" border="left" colored-border :color="msg.process">Click <v-btn dark>Upload</v-btn> to view the upload file dialog.</v-alert>
+                  <v-alert elevation="2" border="left" colored-border :color="msg.process">Click the text field to select the <code>json</code> file that you have previously downloaded.</v-alert>
+                  <v-alert elevation="2" border="left" colored-border :color="msg.process">Click <v-btn color="primary">Upload</v-btn> to upload the file.</v-alert>
+                  <v-alert elevation="2" border="left" dark :color="msg.alert">This is not for your submission. Submit through the submission link provided for the assessment.</v-alert>
+                </v-card-text>
+              </v-card>
+
+            </v-col>
+          </v-row>
+        </v-container>
+      </v-main>
+    </v-app>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+  <script>
+    let vm = new Vue({
+      el: '#app',
+      vuetify: new Vuetify(),
+      data: {
+        actualImg: {
+          width: 1212,
+          height: 718
+        },
+        imgFrame: {
+          color: "",
+          strokeWidth: 3
+        },
+        annotation: {
+          box: {
+            color: "#F44336",
+            strokeWidth: 3
+          }
+        },
+        msg: {
+          alert: "#9C27B0",
+          info: "#607D8B",
+          process: "#795548"
+        }
+      },
+      mounted: function () {
+        this.imgFrame.color = this.$options.vuetify.framework.theme.themes.light.primary; 
+      },
+      computed: {
+        displayImg: function () {
+          let w = 500;
+          return {
+            width: w,
+            height: this.actualImg.height / this.actualImg.width * w
+          }
+        },
+        viewBox: function () {
+          return `0 0 ${this.displayImg.width} ${this.displayImg.height}`;
+        }
+      },
+      methods: {
+        convert: function (xory) {
+          return xory / this.actualImg.width * this.displayImg.width;
+        }
+      }
+    })
+  </script>
+</body>
+</html>
