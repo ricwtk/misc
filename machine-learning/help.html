@@ -74,7 +74,7 @@
                 <v-card-text>
                   <svg width="100%" :view-box.camel="viewBox">
                     <image href="./img/03.png" :width="displayImg.width" />
-                    <rect :x="convert(124)" :y="convert(151)" :width="convert(1090-124)" :height="convert(277-151)" :stroke="annotation.box.color" fill="none" :stroke-width="annotation.box.strokeWidth"/>
+                    <rect :x="convert(14)" :y="convert(305)" :width="convert(1196-14)" :height="convert(457-305)" :stroke="annotation.box.color" fill="none" :stroke-width="annotation.box.strokeWidth"/>
                     <rect x="0" y="0" :width="displayImg.width" :height="displayImg.height" fill="none" :stroke="imgFrame.color" :stroke-width="imgFrame.strokeWidth"/>
                   </svg>
                   <v-alert elevation="2" border="left" dark :color="msg.info">A text cell is used to provide textual information.</v-alert>
@@ -85,7 +85,7 @@
                 <v-card-title>Create a new empty table<v-spacer></v-spacer> <v-btn href="#menu" icon><v-icon>mdi-format-list-bulleted</v-icon></v-btn></v-card-title>
                 <v-card-text>
                   <svg width="100%" :view-box.camel="viewBox">
-                    <image href="./img/03.png" :width="displayImg.width" />
+                    <image href="./img/04.png" :width="displayImg.width" />
                     <rect :x="convert(704)" :y="convert(83)" :width="convert(894-704)" :height="convert(135-83)" :stroke="annotation.box.color" fill="none" :stroke-width="annotation.box.strokeWidth"/>
                     <rect x="0" y="0" :width="displayImg.width" :height="displayImg.height" fill="none" :stroke="imgFrame.color" :stroke-width="imgFrame.strokeWidth"/>
                   </svg>
@@ -97,8 +97,8 @@
                 <v-card-title>Table cell<v-spacer></v-spacer> <v-btn href="#menu" icon><v-icon>mdi-format-list-bulleted</v-icon></v-btn></v-card-title>
                 <v-card-text>
                   <svg width="100%" :view-box.camel="viewBox">
-                    <image href="./img/04.png" :width="displayImg.width" />
-                    <rect :x="convert(124)" :y="convert(151)" :width="convert(1090-124)" :height="convert(376-151)" :stroke="annotation.box.color" fill="none" :stroke-width="annotation.box.strokeWidth"/>
+                    <image href="./img/05.png" :width="displayImg.width" />
+                    <rect :x="convert(14)" :y="convert(256)" :width="convert(1196-14)" :height="convert(507-256)" :stroke="annotation.box.color" fill="none" :stroke-width="annotation.box.strokeWidth"/>
                     <rect x="0" y="0" :width="displayImg.width" :height="displayImg.height" fill="none" :stroke="imgFrame.color" :stroke-width="imgFrame.strokeWidth"/>
                   </svg>
                   <v-alert elevation="2" border="left" dark :color="msg.info">A table cell is used to provide tabular information.</v-alert>
@@ -114,7 +114,7 @@
                 <v-card-title>Insert the raw data<v-spacer></v-spacer> <v-btn href="#menu" icon><v-icon>mdi-format-list-bulleted</v-icon></v-btn></v-card-title>
                 <v-card-text>
                   <svg width="100%" :view-box.camel="viewBox">
-                    <image href="./img/04.png" :width="displayImg.width" />
+                    <image href="./img/06.png" :width="displayImg.width" />
                     <rect :x="convert(895)" :y="convert(83)" :width="convert(1080-895)" :height="convert(135-83)" :stroke="annotation.box.color" fill="none" :stroke-width="annotation.box.strokeWidth"/>
                     <rect x="0" y="0" :width="displayImg.width" :height="displayImg.height" fill="none" :stroke="imgFrame.color" :stroke-width="imgFrame.strokeWidth"/>
                   </svg>
@@ -127,8 +127,8 @@
                 <v-card-title>Raw data<v-spacer></v-spacer> <v-btn href="#menu" icon><v-icon>mdi-format-list-bulleted</v-icon></v-btn></v-card-title>
                 <v-card-text>
                   <svg width="100%" :view-box.camel="viewBox">
-                    <image href="./img/05.png" :width="displayImg.width" />
-                    <rect :x="convert(124)" :y="convert(151)" :width="convert(1090-124)" :height="convert(620-151)" :stroke="annotation.box.color" fill="none" :stroke-width="annotation.box.strokeWidth"/>
+                    <image href="./img/07.png" :width="displayImg.width" />
+                    <rect :x="convert(14)" :y="convert(134)" :width="convert(1196-14)" :height="convert(631-134)" :stroke="annotation.box.color" fill="none" :stroke-width="annotation.box.strokeWidth"/>
                     <rect x="0" y="0" :width="displayImg.width" :height="displayImg.height" fill="none" :stroke="imgFrame.color" :stroke-width="imgFrame.strokeWidth"/>
                   </svg>
                 </v-card-text>
@@ -138,11 +138,12 @@
                 <v-card-title>Generic cell controls<v-spacer></v-spacer> <v-btn href="#menu" icon><v-icon>mdi-format-list-bulleted</v-icon></v-btn></v-card-title>
                 <v-card-text>
                   <svg width="100%" :view-box.camel="viewBox">
-                    <image href="./img/05.png" :width="displayImg.width" />
+                    <image href="./img/08.png" :width="displayImg.width" />
                     <rect :x="convert(124)" :y="convert(151)" :width="convert(1090-124)" :height="convert(201-151)" :stroke="annotation.box.color" fill="none" :stroke-width="annotation.box.strokeWidth"/>
                     <rect x="0" y="0" :width="displayImg.width" :height="displayImg.height" fill="none" :stroke="imgFrame.color" :stroke-width="imgFrame.strokeWidth"/>
                   </svg>
                   <v-alert elevation="2" border="left" dark :color="msg.info">Controls of a cell are at the top of the cell.</v-alert>
+                  <v-alert elevation="2" border="left" colored-border :color="msg.process">Click <v-btn icon><v-icon>mdi-pencil</v-icon></v-btn> to edit a cell.</v-alert>
                   <v-alert elevation="2" border="left" colored-border :color="msg.process">Click <v-btn icon><v-icon>mdi-content-copy</v-icon></v-btn> to copy a cell.</v-alert>
                   <v-alert elevation="2" border="left" colored-border :color="msg.process">Click <v-btn icon><v-icon>mdi-chevron-up</v-icon></v-btn> to move a cell up.</v-alert>
                   <v-alert elevation="2" border="left" colored-border :color="msg.process">Click <v-btn icon><v-icon>mdi-chevron-down</v-icon></v-btn> to move a cell down.</v-alert>
@@ -154,7 +155,7 @@
                 <v-card-title>Paste the copied cell<v-spacer></v-spacer> <v-btn href="#menu" icon><v-icon>mdi-format-list-bulleted</v-icon></v-btn></v-card-title>
                 <v-card-text>
                   <svg width="100%" :view-box.camel="viewBox">
-                    <image href="./img/06.png" :width="displayImg.width" />
+                    <image href="./img/09.png" :width="displayImg.width" />
                     <rect :x="convert(882)" :y="convert(83)" :width="convert(1080-882)" :height="convert(135-83)" :stroke="annotation.box.color" fill="none" :stroke-width="annotation.box.strokeWidth"/>
                     <rect x="0" y="0" :width="displayImg.width" :height="displayImg.height" fill="none" :stroke="imgFrame.color" :stroke-width="imgFrame.strokeWidth"/>
                   </svg>
@@ -167,7 +168,7 @@
                 <v-card-title>When you are done <v-spacer></v-spacer> <v-btn href="#menu" icon><v-icon>mdi-format-list-bulleted</v-icon></v-btn></v-card-title>
                 <v-card-text>
                   <svg width="100%" :view-box.camel="viewBox">
-                    <image href="./img/06.png" :width="displayImg.width" />
+                    <image href="./img/09.png" :width="displayImg.width" />
                     <rect :x="convert(606)" :y="convert(706)" :width="convert(1088-606)" :height="convert(755-706)" :stroke="annotation.box.color" fill="none" :stroke-width="annotation.box.strokeWidth"/>
                     <rect x="0" y="0" :width="displayImg.width" :height="displayImg.height" fill="none" :stroke="imgFrame.color" :stroke-width="imgFrame.strokeWidth"/>
                   </svg>
@@ -181,7 +182,7 @@
                 <v-card-text>
                   <v-alert elevation="2" border="left" dark :color="msg.alert">If there is a risk of your computer being crashed, remember to download the file from time to time.</v-alert>
                   <svg width="100%" :view-box.camel="viewBox">
-                    <image href="./img/07.png" :width="displayImg.width" />
+                    <image href="./img/10.png" :width="displayImg.width" />
                     <rect :x="convert(126)" :y="convert(706)" :width="convert(608-126)" :height="convert(755-706)" :stroke="annotation.box.color" fill="none" :stroke-width="annotation.box.strokeWidth"/>
                     <rect :x="convert(45)" :y="convert(390)" :width="convert(1175-45)" :height="convert(442-390)" :stroke="annotation.box.color" fill="none" :stroke-width="annotation.box.strokeWidth"/>
                     <rect :x="convert(1095)" :y="convert(473)" :width="convert(1186-1095)" :height="convert(520-473)" :stroke="annotation.box.color" fill="none" :stroke-width="annotation.box.strokeWidth"/>
