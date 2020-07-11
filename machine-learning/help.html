@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/@mdi/font@5.x/css/materialdesignicons.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+  <title>Help for Machine Learning</title>
+</head>
+<body>
+  <div id="app">
+    <v-app>
+      <v-main>
+        <v-container fluid style="max-width: 1200px">
+          <v-row><v-col class="title">Tutorial for Machine Learning Platform</v-col></v-row>
+          <v-row>
+            <v-col cols="12" md="3" id="menu">
+              <v-list>
+                <v-list-item-group>
+                  <v-list-item href="#student-id">Set your student ID</v-list-item>
+                  <v-list-item href="#edit-student-id">If my student ID is wrong</v-list-item>
+                  <v-list-item href="#new-text">Provide textual information</v-list-item>
+                  <v-list-item href="#new-table">Provide tabular information</v-list-item>
+                  <v-list-item href="#insert-raw">Insert raw data</v-list-item>
+                  <v-list-item href="#cell-control">Generic cell controls</v-list-item>
+                  <v-list-item href="#paste-copied">Paste copied cell</v-list-item>
+                  <v-list-item href="#done-download">I'm done and ready to submit</v-list-item>
+                  <v-list-item href="#computer-crashed">What if my computer crashed?</v-list-item>
+                </v-list-item-group>
+              </v-list>
+            </v-col>
+            <v-col cols="12" md="9">
+              
+              <v-card flat id="student-id">
+                <v-card-title>Provide your student ID <v-spacer></v-spacer> <v-btn href="#menu" icon><v-icon>mdi-format-list-bulleted</v-icon></v-btn></v-card-title>
+                <v-card-text>
+                  <svg width="100%" :view-box.camel="viewBox">
+                    <image href="./img/01.png" :width="displayImg.width" />
+                    <rect :x="convert(40)" :y="convert(295)" :width="convert(1175-40)" :height="convert(395-295)" :stroke="annotation.box.color" fill="none" :stroke-width="annotation.box.strokeWidth"/>
+                    <rect x="0" y="0" :width="displayImg.width" :height="displayImg.height" fill="none" :stroke="imgFrame.color" :stroke-width="imgFrame.strokeWidth"/>
+                  </svg>
+                  <v-alert elevation="2" border="left" dark :color="msg.alert">Any changes to the student ID will reset the data on the page. Double and triple check to make sure it is correct and do not require changes later.</v-alert>
+                  <v-alert elevation="2" border="left" colored-border :color="msg.process">Click <v-btn color="primary">OK</v-btn> to start providing your solution.</v-alert>
+                </v-card-text>
+              </v-card>
+
+              <v-card flat id="edit-student-id">
+                <v-card-title>Click <v-icon class="mx-2">mdi-pencil</v-icon> to modify student ID <v-spacer></v-spacer> <v-btn href="#menu" icon><v-icon>mdi-format-list-bulleted</v-icon></v-btn></v-card-title>
+                <v-card-text>
+                  <svg width="100%" :view-box.camel="viewBox">
+                    <image href="./img/02.png" :width="displayImg.width" />
+                    <rect :x="convert(1040)" :y="convert(15)" :width="convert(1086-1040)" :height="convert(63-15)" :stroke="annotation.box.color" fill="none" :stroke-width="annotation.box.strokeWidth"/>
+                    <rect x="0" y="0" :width="displayImg.width" :height="displayImg.height" fill="none" :stroke="imgFrame.color" :stroke-width="imgFrame.strokeWidth"/>
+                  </svg>
+                </v-card-text>
+              </v-card>
+
+              <v-card flat id="new-text">
+                <v-card-title>Create a new text cell<v-spacer></v-spacer> <v-btn href="#menu" icon><v-icon>mdi-format-list-bulleted</v-icon></v-btn></v-card-title>
+                <v-card-text>
+                  <svg width="100%" :view-box.camel="viewBox">
+                    <image href="./img/02.png" :width="displayImg.width" />
+                    <rect :x="convert(580)" :y="convert(83)" :width="convert(704-580)" :height="convert(135-83)" :stroke="annotation.box.color" fill="none" :stroke-width="annotation.box.strokeWidth"/>
+                    <rect x="0" y="0" :width="displayImg.width" :height="displayImg.height" fill="none" :stroke="imgFrame.color" :stroke-width="imgFrame.strokeWidth"/>
+                  </svg>
+                  <v-alert elevation="2" border="left" colored-border :color="msg.process">Click <v-btn class="mx-1">Add text</v-btn> to create a new text cell.</v-alert>
+                  <v-alert elevation="2" border="left" dark :color="msg.info">Each block of information you are providing is called a cell.</v-alert>
+                </v-card-text>
+              </v-card>
+
+              <v-card flat id="text-cell">
+                <v-card-title>Text cell<v-spacer></v-spacer> <v-btn href="#menu" icon><v-icon>mdi-format-list-bulleted</v-icon></v-btn></v-card-title>
+                <v-card-text>
+                  <svg width="100%" :view-box.camel="viewBox">
+                    <image href="./img/03.png" :width="displayImg.width" />
+                    <rect :x="convert(124)" :y="convert(151)" :width="convert(1090-124)" :height="convert(277-151)" :stroke="annotation.box.color" fill="none" :stroke-width="annotation.box.strokeWidth"/>
+                    <rect x="0" y="0" :width="displayImg.width" :height="displayImg.height" fill="none" :stroke="imgFrame.color" :stroke-width="imgFrame.strokeWidth"/>
+                  </svg>
+                  <v-alert elevation="2" border="left" dark :color="msg.info">A text cell is used to provide textual information.</v-alert>
+                </v-card-text>
+              </v-card>
+
+              <v-card flat id="new-table">
+                <v-card-title>Create a new empty table<v-spacer></v-spacer> <v-btn href="#menu" icon><v-icon>mdi-format-list-bulleted</v-icon></v-btn></v-card-title>
+                <v-card-text>
+                  <svg width="100%" :view-box.camel="viewBox">
+                    <image href="./img/03.png" :width="displayImg.width" />
+                    <rect :x="convert(704)" :y="convert(83)" :width="convert(894-704)" :height="convert(135-83)" :stroke="annotation.box.color" fill="none" :stroke-width="annotation.box.strokeWidth"/>
+                    <rect x="0" y="0" :width="displayImg.width" :height="displayImg.height" fill="none" :stroke="imgFrame.color" :stroke-width="imgFrame.strokeWidth"/>
+                  </svg>
+                  <v-alert elevation="2" border="left" colored-border :color="msg.process">Click <v-btn class="mx-1">Add empty table</v-btn> to create a new empty table cell.</v-alert>
+                </v-card-text>
+              </v-card>
+
+              <v-card flat id="table-cell">
+                <v-card-title>Table cell<v-spacer></v-spacer> <v-btn href="#menu" icon><v-icon>mdi-format-list-bulleted</v-icon></v-btn></v-card-title>
+                <v-card-text>
+                  <svg width="100%" :view-box.camel="viewBox">
+                    <image href="./img/04.png" :width="displayImg.width" />
+                    <rect :x="convert(124)" :y="convert(151)" :width="convert(1090-124)" :height="convert(376-151)" :stroke="annotation.box.color" fill="none" :stroke-width="annotation.box.strokeWidth"/>
+                    <rect x="0" y="0" :width="displayImg.width" :height="displayImg.height" fill="none" :stroke="imgFrame.color" :stroke-width="imgFrame.strokeWidth"/>
+                  </svg>
+                  <v-alert elevation="2" border="left" dark :color="msg.info">A table cell is used to provide tabular information.</v-alert>
+                  <v-alert elevation="2" border="left" dark :color="msg.info">The first row (shaded) is the header of the table, i.e. the name of the columns.</v-alert>
+                  <v-alert elevation="2" border="left" colored-border :color="msg.process">Click <v-btn icon><v-icon>mdi-table-column-plus-after</v-icon></v-btn> to create an empty column to the right.</v-alert>
+                  <v-alert elevation="2" border="left" colored-border :color="msg.process">Click <v-btn icon><v-icon>mdi-table-row-plus-after</v-icon></v-btn> to create an empty row below a row.</v-alert>
+                  <v-alert elevation="2" border="left" colored-border :color="msg.process">Click <v-btn icon><v-icon>mdi-table-column-remove</v-icon></v-btn> to remove a column.</v-alert>
+                  <v-alert elevation="2" border="left" colored-border :color="msg.process">Click <v-btn icon><v-icon>mdi-table-row-remove</v-icon></v-btn> to remove a row.</v-alert>
+                </v-card-text>
+              </v-card>
+
+              <v-card flat id="insert-raw">
+                <v-card-title>Insert the raw data<v-spacer></v-spacer> <v-btn href="#menu" icon><v-icon>mdi-format-list-bulleted</v-icon></v-btn></v-card-title>
+                <v-card-text>
+                  <svg width="100%" :view-box.camel="viewBox">
+                    <image href="./img/04.png" :width="displayImg.width" />
+                    <rect :x="convert(895)" :y="convert(83)" :width="convert(1080-895)" :height="convert(135-83)" :stroke="annotation.box.color" fill="none" :stroke-width="annotation.box.strokeWidth"/>
+                    <rect x="0" y="0" :width="displayImg.width" :height="displayImg.height" fill="none" :stroke="imgFrame.color" :stroke-width="imgFrame.strokeWidth"/>
+                  </svg>
+                  <v-alert elevation="2" border="left" colored-border :color="msg.process">Click <v-btn class="mx-1">Insert raw data</v-btn> to insert the raw data.</v-alert>
+                  <v-alert elevation="2" border="left" dark :color="msg.info">Raw data is the data provided by the question. Normally provided as a table.</v-alert>
+                </v-card-text>
+              </v-card>
+
+              <v-card flat id="raw-data">
+                <v-card-title>Raw data<v-spacer></v-spacer> <v-btn href="#menu" icon><v-icon>mdi-format-list-bulleted</v-icon></v-btn></v-card-title>
+                <v-card-text>
+                  <svg width="100%" :view-box.camel="viewBox">
+                    <image href="./img/05.png" :width="displayImg.width" />
+                    <rect :x="convert(124)" :y="convert(151)" :width="convert(1090-124)" :height="convert(620-151)" :stroke="annotation.box.color" fill="none" :stroke-width="annotation.box.strokeWidth"/>
+                    <rect x="0" y="0" :width="displayImg.width" :height="displayImg.height" fill="none" :stroke="imgFrame.color" :stroke-width="imgFrame.strokeWidth"/>
+                  </svg>
+                </v-card-text>
+              </v-card>
+
+              <v-card flat id="cell-control">
+                <v-card-title>Generic cell controls<v-spacer></v-spacer> <v-btn href="#menu" icon><v-icon>mdi-format-list-bulleted</v-icon></v-btn></v-card-title>
+                <v-card-text>
+                  <svg width="100%" :view-box.camel="viewBox">
+                    <image href="./img/05.png" :width="displayImg.width" />
+                    <rect :x="convert(124)" :y="convert(151)" :width="convert(1090-124)" :height="convert(201-151)" :stroke="annotation.box.color" fill="none" :stroke-width="annotation.box.strokeWidth"/>
+                    <rect x="0" y="0" :width="displayImg.width" :height="displayImg.height" fill="none" :stroke="imgFrame.color" :stroke-width="imgFrame.strokeWidth"/>
+                  </svg>
+                  <v-alert elevation="2" border="left" dark :color="msg.info">Controls of a cell are at the top of the cell.</v-alert>
+                  <v-alert elevation="2" border="left" colored-border :color="msg.process">Click <v-btn icon><v-icon>mdi-content-copy</v-icon></v-btn> to copy a cell.</v-alert>
+                  <v-alert elevation="2" border="left" colored-border :color="msg.process">Click <v-btn icon><v-icon>mdi-chevron-up</v-icon></v-btn> to move a cell up.</v-alert>
+                  <v-alert elevation="2" border="left" colored-border :color="msg.process">Click <v-btn icon><v-icon>mdi-chevron-down</v-icon></v-btn> to move a cell down.</v-alert>
+                  <v-alert elevation="2" border="left" colored-border :color="msg.process">Click <v-btn icon><v-icon>mdi-minus</v-icon></v-btn> to remove a cell.</v-alert>
+                </v-card-text>
+              </v-card>
+
+              <v-card flat id="paste-copied">
+                <v-card-title>Paste the copied cell<v-spacer></v-spacer> <v-btn href="#menu" icon><v-icon>mdi-format-list-bulleted</v-icon></v-btn></v-card-title>
+                <v-card-text>
+                  <svg width="100%" :view-box.camel="viewBox">
+                    <image href="./img/06.png" :width="displayImg.width" />
+                    <rect :x="convert(882)" :y="convert(83)" :width="convert(1080-882)" :height="convert(135-83)" :stroke="annotation.box.color" fill="none" :stroke-width="annotation.box.strokeWidth"/>
+                    <rect x="0" y="0" :width="displayImg.width" :height="displayImg.height" fill="none" :stroke="imgFrame.color" :stroke-width="imgFrame.strokeWidth"/>
+                  </svg>
+                  <v-alert elevation="2" border="left" dark :color="msg.info">When a cell is copied, <v-btn light class="mx-1">Paste copied cell</v-btn> will be available.</v-alert>
+                  <v-alert elevation="2" border="left" colored-border :color="msg.process">Click <v-btn class="mx-1">Paste copied cell</v-btn> to insert the copied data.</v-alert>
+                </v-card-text>
+              </v-card>
+
+              <v-card flat id="done-download">
+                <v-card-title>When you are done <v-spacer></v-spacer> <v-btn href="#menu" icon><v-icon>mdi-format-list-bulleted</v-icon></v-btn></v-card-title>
+                <v-card-text>
+                  <svg width="100%" :view-box.camel="viewBox">
+                    <image href="./img/06.png" :width="displayImg.width" />
+                    <rect :x="convert(606)" :y="convert(706)" :width="convert(1088-606)" :height="convert(755-706)" :stroke="annotation.box.color" fill="none" :stroke-width="annotation.box.strokeWidth"/>
+                    <rect x="0" y="0" :width="displayImg.width" :height="displayImg.height" fill="none" :stroke="imgFrame.color" :stroke-width="imgFrame.strokeWidth"/>
+                  </svg>
+                  <v-alert elevation="2" border="left" colored-border :color="msg.process">Click <v-btn color="primary">Download</v-btn> to download the <code>json</code> file.</v-alert>
+                  <v-alert elevation="2" border="left" colored-border :color="msg.process">Submit the downloaded file through the submission link.</v-alert>
+                </v-card-text>
+              </v-card>
+
+              <v-card flat id="computer-crashed">
+                <v-card-title>What if my computer crashed? <v-spacer></v-spacer> <v-btn href="#menu" icon><v-icon>mdi-format-list-bulleted</v-icon></v-btn></v-card-title>
+                <v-card-text>
+                  <v-alert elevation="2" border="left" dark :color="msg.alert">If there is a risk of your computer being crashed, remember to download the file from time to time.</v-alert>
+                  <svg width="100%" :view-box.camel="viewBox">
+                    <image href="./img/07.png" :width="displayImg.width" />
+                    <rect :x="convert(126)" :y="convert(706)" :width="convert(608-126)" :height="convert(755-706)" :stroke="annotation.box.color" fill="none" :stroke-width="annotation.box.strokeWidth"/>
+                    <rect :x="convert(45)" :y="convert(390)" :width="convert(1175-45)" :height="convert(442-390)" :stroke="annotation.box.color" fill="none" :stroke-width="annotation.box.strokeWidth"/>
+                    <rect :x="convert(1095)" :y="convert(473)" :width="convert(1186-1095)" :height="convert(520-473)" :stroke="annotation.box.color" fill="none" :stroke-width="annotation.box.strokeWidth"/>
+                    <rect x="0" y="0" :width="displayImg.width" :height="displayImg.height" fill="none" :stroke="imgFrame.color" :stroke-width="imgFrame.strokeWidth"/>
+                  </svg>
+                  <v-alert elevation="2" border="left" colored-border :color="msg.process">Click <v-btn dark>Upload</v-btn> to view the upload file dialog.</v-alert>
+                  <v-alert elevation="2" border="left" colored-border :color="msg.process">Click the text field to select the <code>json</code> file that you have previously downloaded.</v-alert>
+                  <v-alert elevation="2" border="left" colored-border :color="msg.process">Click <v-btn color="primary">Upload</v-btn> to upload the file.</v-alert>
+                  <v-alert elevation="2" border="left" dark :color="msg.alert">This is not for your submission. Submit through the submission link provided for the assessment.</v-alert>
+                </v-card-text>
+              </v-card>
+            </v-col>
+          </v-row>
+        </v-container>
+      </v-main>
+    </v-app>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+  <script>
+    let vm = new Vue({
+      el: '#app',
+      vuetify: new Vuetify(),
+      data: {
+        actualImg: {
+          width: 1212,
+          height: 761
+        },
+        imgFrame: {
+          color: "",
+          strokeWidth: 3
+        },
+        annotation: {
+          box: {
+            color: "#F44336",
+            strokeWidth: 3
+          }
+        },
+        msg: {
+          alert: "#9C27B0",
+          info: "#607D8B",
+          process: "#795548"
+        }
+      },
+      mounted: function () {
+        this.imgFrame.color = this.$options.vuetify.framework.theme.themes.light.primary; 
+      },
+      computed: {
+        displayImg: function () {
+          let w = 500;
+          return {
+            width: w,
+            height: this.actualImg.height / this.actualImg.width * w
+          }
+        },
+        viewBox: function () {
+          return `0 0 ${this.displayImg.width} ${this.displayImg.height}`;
+        }
+      },
+      methods: {
+        convert: function (xory) {
+          return xory / this.actualImg.width * this.displayImg.width;
+        }
+      }
+    })
+  </script>
+</body>
+</html>
