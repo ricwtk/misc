@@ -18,7 +18,7 @@
               <v-card-text>
                 <v-list-item v-for="l,i in list" :key="'list-'+i" :href="l.link">
                   <v-list-item-content>
-                    <v-list-item-title>{{ l.title }}</v-list-item-title>
+                    <v-list-item-title v-html="l.title"></v-list-item-title>
                     <v-list-item-subtitle>{{ l.subtitle }}</v-list-item-subtitle>
                   </v-list-item-content>
                 </v-list-item>
@@ -49,13 +49,21 @@
               link: "./202003-ai-a1-results",
               subtitle: "Assignment result"
             }, {
-              title: "Forward/Backward chaining process constructor",
+              title: "<b>[202003 AI final platform]</b> Search tree constructor",
+              link: "./search-tree",
+              subtitle: "Construct a search tree"
+            }, {
+              title: "<b>[202003 AI final platform]</b> Frames constructor",
+              link: "./frames",
+              subtitle: "Construct frames"
+            }, {
+              title: "<b>[202003 AI final platform]</b> Forward/Backward chaining process constructor",
               link: "./forward-backward-chaining",
               subtitle: "Construct a forward/backward chaining process"
             }, {
-              title: "Search tree constructor",
-              link: "./search-tree",
-              subtitle: "Construct a search tree"
+              title: "<b>[202003 AI final platform]</b> Machine learning step-by-step constructor",
+              link: "./machine-learning",
+              subtitle: "Explain a machine learning process"
             }
           ]
         }
