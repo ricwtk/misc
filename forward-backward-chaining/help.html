@@ -20,6 +20,7 @@
                 <v-list-item-group>
                   <v-list-item href="#student-id">Set your student ID</v-list-item>
                   <v-list-item href="#select-process">Select process to conduct</v-list-item>
+                  <v-list-item href="#set-parameter">Set parameters of the problem</v-list-item>
                   <v-list-item href="#edit-student-id-process">If my student ID or process is wrong</v-list-item>
                   <v-list-item href="#initial-condition">Initial conditions</v-list-item>
                   <v-list-item href="#next-step">Add a step</v-list-item>
@@ -41,7 +42,7 @@
                 <v-card-text>
                   <svg width="100%" :view-box.camel="viewBox">
                     <image href="./img/01.png" :width="displayImg.width" />
-                    <rect :x="convert(40)" :y="convert(265)" :width="convert(1175-40)" :height="convert(365-265)" :stroke="annotation.box.color" fill="none" :stroke-width="annotation.box.strokeWidth"/>
+                    <rect :x="convert(40)" :y="convert(165)" :width="convert(1175-40)" :height="convert(262-165)" :stroke="annotation.box.color" fill="none" :stroke-width="annotation.box.strokeWidth"/>
                     <rect x="0" y="0" :width="displayImg.width" :height="displayImg.height" fill="none" :stroke="imgFrame.color" :stroke-width="imgFrame.strokeWidth"/>
                   </svg>
                   <v-alert elevation="2" border="left" dark :color="msg.alert">Any changes to the student ID will reset the data on the page. Double and triple check to make sure it is correct and do not require changes later.</v-alert>
@@ -53,11 +54,26 @@
                 <v-card-text>
                   <svg width="100%" :view-box.camel="viewBox">
                     <image href="./img/01.png" :width="displayImg.width" />
-                    <rect :x="convert(40)" :y="convert(370)" :width="convert(1175-40)" :height="convert(450-370)" :stroke="annotation.box.color" fill="none" :stroke-width="annotation.box.strokeWidth"/>
+                    <rect :x="convert(40)" :y="convert(268)" :width="convert(1175-40)" :height="convert(348-268)" :stroke="annotation.box.color" fill="none" :stroke-width="annotation.box.strokeWidth"/>
                     <rect x="0" y="0" :width="displayImg.width" :height="displayImg.height" fill="none" :stroke="imgFrame.color" :stroke-width="imgFrame.strokeWidth"/>
                   </svg>
                   <v-alert elevation="2" border="left" colored-border :color="msg.process">Select forward or backward chaining process. This can be modified easily later.</v-alert>
                   <v-alert elevation="2" border="left" colored-border :color="msg.process">Click <v-btn color="primary">OK</v-btn> to start providing your solution.</v-alert>
+                </v-card-text>
+              </v-card>
+
+              <v-card flat id="set-parameter">
+                <v-card-title>Set the parameters of the problem <v-spacer></v-spacer> <v-btn href="#menu" icon><v-icon>mdi-format-list-bulleted</v-icon></v-btn></v-card-title>
+                <v-card-text>
+                  <svg width="100%" :view-box.camel="viewBox">
+                    <image href="./img/01.png" :width="displayImg.width" />
+                    <rect :x="convert(40)" :y="convert(355)" :width="convert(1175-40)" :height="convert(520-355)" :stroke="annotation.box.color" fill="none" :stroke-width="annotation.box.strokeWidth"/>
+                    <rect x="0" y="0" :width="displayImg.width" :height="displayImg.height" fill="none" :stroke="imgFrame.color" :stroke-width="imgFrame.strokeWidth"/>
+                  </svg>
+                  <v-alert elevation="2" border="left" colored-border :color="msg.process">Select the number of possible facts in your problem.</v-alert>
+                  <v-alert elevation="2" border="left" dark :color="msg.info">The facts will be rendered as alphabets. For example, if you specify the number of possible facts to be 5, the facts you get are A, B, C, D, E.</v-alert>
+                  <v-alert elevation="2" border="left" colored-border :color="msg.process">Select the number of rules in your problem.</v-alert>
+                  <v-alert elevation="2" border="left" dark :color="msg.info">The rules will be rendered starting from rule 1, rule 2, and so forth.</v-alert>
                 </v-card-text>
               </v-card>
 
