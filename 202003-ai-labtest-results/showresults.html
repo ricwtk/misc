@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html style="overflow:auto">
+<head>
+  <meta charset="utf-8">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900&family=Roboto+Mono:300" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/@mdi/font@5.x/css/materialdesignicons.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+  <title>Lab Test Results</title>
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/atom-one-light.min.css">
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js"></script>
+  <style>
+    code { background-color: transparent !important; color: #383a42 !important; padding:0!important; } 
+  </style>
+</head>
+<body>
+  <div id="app">
+    <v-app>
+      <v-main>
+        <v-container fluid style="height: 100vh" class="d-flex flex-column">
+          <v-row class="flex-grow-0">
+            <v-col class="title">Lab Test (2020 03 AI)</v-col>
+          </v-row>
+          <v-card>
+            <v-card-text>
+              <v-data-iterator :items="data" :search="datafilter">
+                <template v-slot:header>
+                  <v-toolbar class="my-2" color="primary" dark flat>
+                    <v-text-field v-model="datafilter" clearable flat solo-inverted hide-details prepend-inner-icon="mdi-magnify" label="Search"></v-text-field>
+                  </v-toolbar>
+                </template>
+                <template v-slot:default="props">
+                  <v-simple-table>
+                    <template v-slot:default>
+                      <thead>
+                        <tr>
+                          <th class="text-center">id</th>
+                          <th class="text-center" v-for="tmplt in Object.keys(template)" :key="tmplt">{{ tmplt }}</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr v-for="item in props.items" :key="item.id" :class="findIndexFromId(item.id) == indextoshow ? 'grey lighten-4' : ''" @click="loadthis(findIndexFromId(item.id))">
+                          <td>{{ item.id }}</td>
+                          <td v-for="tpl in Object.keys(template)" class="text-center">
+                            <v-btn icon><v-icon :color="data[findIndexFromId(item.id)][tpl] ? 'success' : 'error'">{{ data[findIndexFromId(item.id)][tpl] ? 'mdi-check' : 'mdi-close' }}</v-icon></v-btn>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </template>
+                  </v-simple-table>
+                </template>
+              </v-data-iterator>
+            </v-card-text>
+          </v-card>
+
+          <v-dialog v-model="showdetails" content-class="elevation-0" fullscreen>
+            <v-card v-if="indextoshow > -1 && indextoshow < data.length" height="100%" class="d-flex flex-column">
+              <v-card-title>{{ data[indextoshow].id }}<v-spacer></v-spacer><v-btn icon><v-icon @click="showdetails = false">mdi-close</v-icon></v-btn></v-card-title>
+              <v-divider></v-divider>
+              <v-card-text style="overflow:hidden" class="d-flex flex-column">
+                <v-row class="flex-grow-0 align-center" v-if="data.length > indextoshow">
+                  <v-col cols="auto"><v-btn icon :disabled="indextoshow == 0" @click="indextoshow = indextoshow - 1"><v-icon>mdi-chevron-left</v-icon></v-btn></v-col>
+                  <v-col>
+                    <v-simple-table>
+                      <template v-slot:default>
+                        <thead>
+                          <tr>
+                            <th class="text-center">id</th>
+                            <th v-for="tpl in Object.keys(template)" class="text-center">{{ tpl }}</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>{{ data[indextoshow].id }}</td>
+                            <td v-for="tpl in Object.keys(template)" class="text-center">
+                              <v-btn icon><v-icon :color="data[indextoshow][tpl] ? 'success' : 'error'">{{ data[indextoshow][tpl] ? 'mdi-check' : 'mdi-close' }}</v-icon></v-btn>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </template>
+                    </v-simple-table>
+                  </v-col>
+                  <v-col cols="auto"><v-btn icon :disabled="indextoshow == data.length - 1" @click="indextoshow = indextoshow + 1"><v-icon>mdi-chevron-right</v-icon></v-btn></v-col>
+                </v-row>
+                <v-row style="overflow:hidden">
+                  <v-col style="overflow:hidden;height:100%" cols="6">
+                    <v-row style="overflow:auto;height:100%;" class="flex-nowrap" no-gutters>
+                      <v-col cols="1">
+                        <pre><code v-html="[...Array(pydata.split('\n').length-1).keys()].map(x => x+1).join('\n')"></code></pre>
+                      </v-col>
+                      <v-col cols="11"><pre><code class="python" v-html="pydata"></code></pre></v-col>
+                    </v-row>
+                  </v-col>
+                  <v-col style="height:100%" cols="6" class="py-0">
+                    <v-row style="overflow:auto;height:50%">
+                      <v-col style="height:100%"><pre><code class="plaintext" v-html="logdata"></code></pre></v-col>
+                    </v-row>
+                    <v-row style="overflow:auto;height:50%;position:relative;">
+                      <v-sheet :style="{ height: graphSize + '%', width: graphSize + '%'}">
+                        <v-img v-if="indextoshow < data.length" :src="`Results/${data[indextoshow].id}.png`" contain height="100%"></v-img>
+                      </v-sheet>
+                      <v-sheet style="position:sticky;left:0;bottom:0;">
+                        <v-btn icon @click="graphSize = graphSize + 5"><v-icon>mdi-magnify-plus</v-icon></v-btn>
+                        <v-btn icon @click="graphSize = 100"><v-icon>mdi-magnify-close</v-icon></v-btn>
+                        <v-btn icon @click="graphSize = Math.max(graphSize - 5,5)"><v-icon>mdi-magnify-minus</v-icon></v-btn>
+                      </v-sheet>
+                    </v-row>
+                  </v-col>
+                </v-row>
+              </v-card-text>
+            </v-card>
+          </v-dialog>
+        </v-container>
+      </v-main>
+    </v-app>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+  <script>
+    let vm = new Vue({
+      el: '#app',
+      vuetify: new Vuetify(),
+      data: {
+        file_socket: null,
+        data: [],
+        datafilter: "",
+        template: {},
+        showdetails: false,
+        indextoshow: -1,
+        changes: 0,
+        loaded: false,
+        logdata: "",
+        pydata: "",
+        graphSize: 100
+      },
+      mounted: function () {
+        let templatereq = new Request("markingtemplate.json");
+        fetch(templatereq)
+        .then(r => r.json())
+        .then(r => {
+          this.template = r;
+        });
+        let datareq = new Request("marking.json");
+        fetch(datareq)
+        .then(r => r.json())
+        .then(r => {
+          this.data = r;
+        });
+      },
+      watch: {
+        data: {
+          handler: function () {
+            this.changes += this.loaded ? 1 : 0;
+          },
+          deep: true
+        },
+        indextoshow: function (newVal) {
+          this.getDetails(newVal);
+        }
+      },
+      methods: {
+        loadthis: function (dataindex) {
+          this.showdetails = true;
+          this.indextoshow = dataindex;
+        },
+        getDetails: function (idx) {
+          let pyreq = new Request(`Submissions/${this.data[idx].id}.py`);
+          let logreq = new Request(`Results/${this.data[idx].id}.txt`);
+          Promise.all([fetch(pyreq), fetch(logreq)])
+          .then(rs => {
+            return Promise.all([rs[0].text(), rs[1].text()]);
+          })
+          .then(rs => {
+            this.pydata = rs[0];
+            this.logdata = rs[1];
+            this.$nextTick(() => { this.highlightSyntax(); });
+          })
+        },
+        highlightSyntax: function () {
+          let targets = document.querySelectorAll('code');
+          targets.forEach((target) => {
+            hljs.highlightBlock(target);
+          });
+        },
+        findIndexFromId: function (id) {
+          return this.data.findIndex(el => el.id == id);
+        },
+        downloadAsCsv: function () {
+          let data = JSON.parse(JSON.stringify(this.data));
+          data = data.map(el => {
+            el.sum = Object.keys(this.template).reduce((acc,cur) => acc + el[cur], 0);
+            return el;
+          });
+          let columns = Object.keys(data[0]);
+          let dldata = columns.join(",") + "\n" + data.map(el => columns.map(c => el[c]).join(",")).join("\n");
+          let j = document.createElement("a");
+          j.download = "marking.csv";
+          j.href = URL.createObjectURL(new Blob([dldata]));
+          j.click();
+        }
+      }
+    })
+  </script>
+</body>
+</html>
