@@ -1,0 +1,4 @@
+Error in file
+Exception type: SyntaxError
+Exception message: invalid syntax (17061672.py, line 4)
+Stack trace:

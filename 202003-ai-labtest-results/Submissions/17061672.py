@@ -57,6 +57,6 @@ for i in range(len(models)):
 	
 # plot the results
 pyplot.boxplot(results, labels=names, showmeans=True)
-pyplot.show()
+# pyplot.show()
 
 
