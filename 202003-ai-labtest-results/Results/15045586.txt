@@ -1,0 +1,294 @@
+Submissions/15045586.py:63: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+k = 3
+       target  predicted
+0  Glass type          6
+Accuracy: 0.7231
+Submissions/15045586.py:63: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+k = 5
+       target  predicted
+0  Glass type          5
+Accuracy: 0.7385
+Submissions/15045586.py:63: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+k = 7
+       target  predicted
+0  Glass type          5
+Accuracy: 0.7385
+Submissions/15045586.py:63: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+k = 9
+       target  predicted
+0  Glass type          5
+Accuracy: 0.7231
+Submissions/15045586.py:63: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+k = 11
+       target  predicted
+0  Glass type          5
+Accuracy: 0.7077
+Submissions/15045586.py:63: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+k = 13
+       target  predicted
+0  Glass type          5
+Accuracy: 0.7077
+Submissions/15045586.py:63: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+k = 15
+       target  predicted
+0  Glass type          5
+Accuracy: 0.7077
+Submissions/15045586.py:63: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+k = 17
+       target  predicted
+0  Glass type          5
+Accuracy: 0.7231
+Submissions/15045586.py:63: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+k = 19
+       target  predicted
+0  Glass type          5
+Accuracy: 0.7077
+Submissions/15045586.py:63: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+k = 21
+       target  predicted
+0  Glass type          7
+Accuracy: 0.6923
+Submissions/15045586.py:63: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+k = 23
+       target  predicted
+0  Glass type          7
+Accuracy: 0.6923
+Submissions/15045586.py:63: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+k = 25
+       target  predicted
+0  Glass type          7
+Accuracy: 0.6923
+Submissions/15045586.py:63: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+k = 27
+       target  predicted
+0  Glass type          7
+Accuracy: 0.6923
+Submissions/15045586.py:63: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+k = 29
+       target  predicted
+0  Glass type          7
+Accuracy: 0.6769
+Submissions/15045586.py:63: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+k = 31
+       target  predicted
+0  Glass type          7
+Accuracy: 0.6769
+Submissions/15045586.py:63: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+k = 33
+       target  predicted
+0  Glass type          7
+Accuracy: 0.6615
+Submissions/15045586.py:63: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+k = 35
+       target  predicted
+0  Glass type          7
+Accuracy: 0.6462
+Submissions/15045586.py:63: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+k = 37
+       target  predicted
+0  Glass type          7
+Accuracy: 0.6462
+Submissions/15045586.py:63: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+k = 39
+       target  predicted
+0  Glass type          7
+Accuracy: 0.6462
+Submissions/15045586.py:63: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+k = 41
+       target  predicted
+0  Glass type          7
+Accuracy: 0.6000
+Submissions/15045586.py:63: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+k = 43
+       target  predicted
+0  Glass type          7
+Accuracy: 0.5846
+Submissions/15045586.py:63: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+k = 45
+       target  predicted
+0  Glass type          7
+Accuracy: 0.5692
+Submissions/15045586.py:63: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+k = 47
+       target  predicted
+0  Glass type          7
+Accuracy: 0.5692
+Submissions/15045586.py:63: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+k = 49
+       target  predicted
+0  Glass type          7
+Accuracy: 0.5538
+Submissions/15045586.py:63: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+k = 51
+       target  predicted
+0  Glass type          7
+Accuracy: 0.5231
+Submissions/15045586.py:63: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+k = 53
+       target  predicted
+0  Glass type          7
+Accuracy: 0.4769
+Submissions/15045586.py:63: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+k = 55
+       target  predicted
+0  Glass type          7
+Accuracy: 0.4923
+Submissions/15045586.py:63: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+k = 57
+       target  predicted
+0  Glass type          7
+Accuracy: 0.4923
+Submissions/15045586.py:63: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+k = 59
+       target  predicted
+0  Glass type          7
+Accuracy: 0.4462
+Submissions/15045586.py:63: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+k = 61
+       target  predicted
+0  Glass type          7
+Accuracy: 0.4154
+Submissions/15045586.py:63: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+k = 63
+       target  predicted
+0  Glass type          7
+Accuracy: 0.4154
+Submissions/15045586.py:63: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+k = 65
+       target  predicted
+0  Glass type          1
+Accuracy: 0.4000
+Submissions/15045586.py:63: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+k = 67
+       target  predicted
+0  Glass type          1
+Accuracy: 0.4000
+Submissions/15045586.py:63: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+k = 69
+       target  predicted
+0  Glass type          1
+Accuracy: 0.4000
+Submissions/15045586.py:63: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+k = 71
+       target  predicted
+0  Glass type          1
+Accuracy: 0.3692
+Submissions/15045586.py:63: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+k = 73
+       target  predicted
+0  Glass type          1
+Accuracy: 0.3538
+Submissions/15045586.py:63: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+k = 75
+       target  predicted
+0  Glass type          1
+Accuracy: 0.3538
+Submissions/15045586.py:63: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+k = 77
+       target  predicted
+0  Glass type          1
+Accuracy: 0.3538
+Submissions/15045586.py:63: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+k = 79
+       target  predicted
+0  Glass type          1
+Accuracy: 0.3538
+Submissions/15045586.py:63: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+k = 81
+       target  predicted
+0  Glass type          1
+Accuracy: 0.3538
+Submissions/15045586.py:63: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+k = 83
+       target  predicted
+0  Glass type          1
+Accuracy: 0.3385
+Submissions/15045586.py:63: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+k = 85
+       target  predicted
+0  Glass type          1
+Accuracy: 0.3538
+Submissions/15045586.py:63: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+k = 87
+       target  predicted
+0  Glass type          1
+Accuracy: 0.3692
+Submissions/15045586.py:63: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+k = 89
+       target  predicted
+0  Glass type          1
+Accuracy: 0.3538
+Submissions/15045586.py:63: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+k = 91
+       target  predicted
+0  Glass type          1
+Accuracy: 0.3538
+Submissions/15045586.py:63: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+k = 93
+       target  predicted
+0  Glass type          1
+Accuracy: 0.3538
+Submissions/15045586.py:63: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+k = 95
+       target  predicted
+0  Glass type          1
+Accuracy: 0.3538
+Submissions/15045586.py:63: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+k = 97
+       target  predicted
+0  Glass type          1
+Accuracy: 0.3538
+Submissions/15045586.py:63: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+k = 99
+       target  predicted
+0  Glass type          1
+Accuracy: 0.3231

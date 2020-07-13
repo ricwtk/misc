@@ -1,0 +1,147 @@
+k value: 3
+Testing Data Accuracy: 0.6769
+
+k value: 5
+Testing Data Accuracy: 0.6615
+
+k value: 7
+Testing Data Accuracy: 0.6923
+
+k value: 9
+Testing Data Accuracy: 0.6769
+
+k value: 11
+Testing Data Accuracy: 0.6769
+
+k value: 13
+Testing Data Accuracy: 0.6769
+
+k value: 15
+Testing Data Accuracy: 0.6769
+
+k value: 17
+Testing Data Accuracy: 0.6769
+
+k value: 19
+Testing Data Accuracy: 0.6769
+
+k value: 21
+Testing Data Accuracy: 0.6769
+
+k value: 23
+Testing Data Accuracy: 0.6769
+
+k value: 25
+Testing Data Accuracy: 0.6769
+
+k value: 27
+Testing Data Accuracy: 0.6615
+
+k value: 29
+Testing Data Accuracy: 0.6615
+
+k value: 31
+Testing Data Accuracy: 0.6308
+
+k value: 33
+Testing Data Accuracy: 0.6308
+
+k value: 35
+Testing Data Accuracy: 0.6308
+
+k value: 37
+Testing Data Accuracy: 0.6308
+
+k value: 39
+Testing Data Accuracy: 0.6308
+
+k value: 41
+Testing Data Accuracy: 0.6462
+
+k value: 43
+Testing Data Accuracy: 0.6308
+
+k value: 45
+Testing Data Accuracy: 0.6308
+
+k value: 47
+Testing Data Accuracy: 0.6154
+
+k value: 49
+Testing Data Accuracy: 0.5692
+
+k value: 51
+Testing Data Accuracy: 0.5231
+
+k value: 53
+Testing Data Accuracy: 0.4615
+
+k value: 55
+Testing Data Accuracy: 0.4308
+
+k value: 57
+Testing Data Accuracy: 0.3846
+
+k value: 59
+Testing Data Accuracy: 0.3692
+
+k value: 61
+Testing Data Accuracy: 0.3692
+
+k value: 63
+Testing Data Accuracy: 0.3538
+
+k value: 65
+Testing Data Accuracy: 0.4000
+
+k value: 67
+Testing Data Accuracy: 0.4000
+
+k value: 69
+Testing Data Accuracy: 0.4154
+
+k value: 71
+Testing Data Accuracy: 0.4308
+
+k value: 73
+Testing Data Accuracy: 0.4000
+
+k value: 75
+Testing Data Accuracy: 0.3077
+
+k value: 77
+Testing Data Accuracy: 0.2769
+
+k value: 79
+Testing Data Accuracy: 0.3077
+
+k value: 81
+Testing Data Accuracy: 0.2462
+
+k value: 83
+Testing Data Accuracy: 0.2769
+
+k value: 85
+Testing Data Accuracy: 0.2769
+
+k value: 87
+Testing Data Accuracy: 0.2769
+
+k value: 89
+Testing Data Accuracy: 0.2769
+
+k value: 91
+Testing Data Accuracy: 0.2769
+
+k value: 93
+Testing Data Accuracy: 0.2769
+
+k value: 95
+Testing Data Accuracy: 0.2769
+
+k value: 97
+Testing Data Accuracy: 0.2769
+
+k value: 99
+Testing Data Accuracy: 0.2769
+

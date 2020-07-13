@@ -1,0 +1,29 @@
+Error in file
+Exception type: ValueError
+Exception message: Length of values does not match length of index
+Stack trace:
+File: Submissions/17000480.py
+Line: 30
+Func.Name: <module>
+Message: 'target': y_train
+
+File: /mnt/data/Linux/applications/anaconda3/lib/python3.7/site-packages/pandas/core/frame.py
+Line: 2938
+Func.Name: __setitem__
+Message: self._set_item(key, value)
+
+File: /mnt/data/Linux/applications/anaconda3/lib/python3.7/site-packages/pandas/core/frame.py
+Line: 3000
+Func.Name: _set_item
+Message: value = self._sanitize_column(key, value)
+
+File: /mnt/data/Linux/applications/anaconda3/lib/python3.7/site-packages/pandas/core/frame.py
+Line: 3636
+Func.Name: _sanitize_column
+Message: value = sanitize_index(value, self.index, copy=False)
+
+File: /mnt/data/Linux/applications/anaconda3/lib/python3.7/site-packages/pandas/core/internals/construction.py
+Line: 611
+Func.Name: sanitize_index
+Message: raise ValueError("Length of values does not match length of index")
+

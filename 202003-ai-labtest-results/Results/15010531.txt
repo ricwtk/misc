@@ -1,0 +1,196 @@
+For K-score =  3
+Accuracy: 0.7538
+For K-score =  4
+Accuracy: 0.7385
+For K-score =  5
+Accuracy: 0.7385
+For K-score =  6
+Accuracy: 0.7385
+For K-score =  7
+Accuracy: 0.7231
+For K-score =  8
+Accuracy: 0.7077
+For K-score =  9
+Accuracy: 0.7231
+For K-score =  10
+Accuracy: 0.6923
+For K-score =  11
+Accuracy: 0.6769
+For K-score =  12
+Accuracy: 0.7077
+For K-score =  13
+Accuracy: 0.7077
+For K-score =  14
+Accuracy: 0.7077
+For K-score =  15
+Accuracy: 0.7231
+For K-score =  16
+Accuracy: 0.7077
+For K-score =  17
+Accuracy: 0.7077
+For K-score =  18
+Accuracy: 0.7077
+For K-score =  19
+Accuracy: 0.6923
+For K-score =  20
+Accuracy: 0.7077
+For K-score =  21
+Accuracy: 0.6923
+For K-score =  22
+Accuracy: 0.6923
+For K-score =  23
+Accuracy: 0.6923
+For K-score =  24
+Accuracy: 0.6923
+For K-score =  25
+Accuracy: 0.6923
+For K-score =  26
+Accuracy: 0.6923
+For K-score =  27
+Accuracy: 0.6923
+For K-score =  28
+Accuracy: 0.6615
+For K-score =  29
+Accuracy: 0.6769
+For K-score =  30
+Accuracy: 0.6769
+For K-score =  31
+Accuracy: 0.6615
+For K-score =  32
+Accuracy: 0.6769
+For K-score =  33
+Accuracy: 0.6615
+For K-score =  34
+Accuracy: 0.6615
+For K-score =  35
+Accuracy: 0.6615
+For K-score =  36
+Accuracy: 0.6615
+For K-score =  37
+Accuracy: 0.6462
+For K-score =  38
+Accuracy: 0.6615
+For K-score =  39
+Accuracy: 0.6000
+For K-score =  40
+Accuracy: 0.6462
+For K-score =  41
+Accuracy: 0.5846
+For K-score =  42
+Accuracy: 0.5846
+For K-score =  43
+Accuracy: 0.5846
+For K-score =  44
+Accuracy: 0.5846
+For K-score =  45
+Accuracy: 0.5846
+For K-score =  46
+Accuracy: 0.5692
+For K-score =  47
+Accuracy: 0.5692
+For K-score =  48
+Accuracy: 0.5385
+For K-score =  49
+Accuracy: 0.5538
+For K-score =  50
+Accuracy: 0.5385
+For K-score =  51
+Accuracy: 0.5385
+For K-score =  52
+Accuracy: 0.4615
+For K-score =  53
+Accuracy: 0.4769
+For K-score =  54
+Accuracy: 0.4769
+For K-score =  55
+Accuracy: 0.4923
+For K-score =  56
+Accuracy: 0.4923
+For K-score =  57
+Accuracy: 0.4923
+For K-score =  58
+Accuracy: 0.4769
+For K-score =  59
+Accuracy: 0.4615
+For K-score =  60
+Accuracy: 0.4154
+For K-score =  61
+Accuracy: 0.4154
+For K-score =  62
+Accuracy: 0.4154
+For K-score =  63
+Accuracy: 0.4154
+For K-score =  64
+Accuracy: 0.4154
+For K-score =  65
+Accuracy: 0.4000
+For K-score =  66
+Accuracy: 0.4000
+For K-score =  67
+Accuracy: 0.4000
+For K-score =  68
+Accuracy: 0.4000
+For K-score =  69
+Accuracy: 0.4000
+For K-score =  70
+Accuracy: 0.3846
+For K-score =  71
+Accuracy: 0.3692
+For K-score =  72
+Accuracy: 0.3538
+For K-score =  73
+Accuracy: 0.3538
+For K-score =  74
+Accuracy: 0.3538
+For K-score =  75
+Accuracy: 0.3538
+For K-score =  76
+Accuracy: 0.3538
+For K-score =  77
+Accuracy: 0.3538
+For K-score =  78
+Accuracy: 0.3538
+For K-score =  79
+Accuracy: 0.3538
+For K-score =  80
+Accuracy: 0.3538
+For K-score =  81
+Accuracy: 0.3538
+For K-score =  82
+Accuracy: 0.3538
+For K-score =  83
+Accuracy: 0.3385
+For K-score =  84
+Accuracy: 0.3538
+For K-score =  85
+Accuracy: 0.3538
+For K-score =  86
+Accuracy: 0.3692
+For K-score =  87
+Accuracy: 0.3692
+For K-score =  88
+Accuracy: 0.3692
+For K-score =  89
+Accuracy: 0.3538
+For K-score =  90
+Accuracy: 0.3538
+For K-score =  91
+Accuracy: 0.3538
+For K-score =  92
+Accuracy: 0.3538
+For K-score =  93
+Accuracy: 0.3538
+For K-score =  94
+Accuracy: 0.3538
+For K-score =  95
+Accuracy: 0.3538
+For K-score =  96
+Accuracy: 0.3538
+For K-score =  97
+Accuracy: 0.3538
+For K-score =  98
+Accuracy: 0.3538
+For K-score =  99
+Accuracy: 0.3231
+For K-score =  100
+Accuracy: 0.3385

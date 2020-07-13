@@ -1,0 +1,44 @@
+Error in file
+Exception type: ValueError
+Exception message: Index data must be 1-dimensional
+Stack trace:
+File: Submissions/18015404.py
+Line: 29
+Func.Name: <module>
+Message: 'attributes': pd.DataFrame(data, columns=data),
+
+File: /mnt/data/Linux/applications/anaconda3/lib/python3.7/site-packages/pandas/core/frame.py
+Line: 432
+Func.Name: __init__
+Message: data, axes=dict(index=index, columns=columns), dtype=dtype, copy=copy
+
+File: /mnt/data/Linux/applications/anaconda3/lib/python3.7/site-packages/pandas/core/generic.py
+Line: 224
+Func.Name: _init_mgr
+Message: axe, axis=self._get_block_manager_axis(a), copy=False
+
+File: /mnt/data/Linux/applications/anaconda3/lib/python3.7/site-packages/pandas/core/internals/managers.py
+Line: 1215
+Func.Name: reindex_axis
+Message: new_index = ensure_index(new_index)
+
+File: /mnt/data/Linux/applications/anaconda3/lib/python3.7/site-packages/pandas/core/indexes/base.py
+Line: 5357
+Func.Name: ensure_index
+Message: return Index(index_like)
+
+File: /mnt/data/Linux/applications/anaconda3/lib/python3.7/site-packages/pandas/core/indexes/base.py
+Line: 420
+Func.Name: __new__
+Message: return Index(np.asarray(data), dtype=dtype, copy=copy, name=name, **kwargs)
+
+File: /mnt/data/Linux/applications/anaconda3/lib/python3.7/site-packages/pandas/core/indexes/base.py
+Line: 394
+Func.Name: __new__
+Message: return Float64Index(data, copy=copy, dtype=dtype, name=name)
+
+File: /mnt/data/Linux/applications/anaconda3/lib/python3.7/site-packages/pandas/core/indexes/numeric.py
+Line: 78
+Func.Name: __new__
+Message: raise ValueError("Index data must be 1-dimensional")
+

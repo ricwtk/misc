@@ -1,0 +1,14 @@
+{
+  "no error": false,
+  "train_test_split": false,
+  "70-30": false,
+  "correct input": false,
+  "correct target": false,
+  "KNeighborsClassifier": false,
+  ".fit": false,
+  ".fit data": false,
+  ".score": false,
+  ".score data": false,
+  "print accuracy with k": false,
+  "plot": false
+}

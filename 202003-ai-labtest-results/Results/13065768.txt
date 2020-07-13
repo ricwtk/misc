@@ -1,0 +1,34 @@
+Error in file
+Exception type: IndexError
+Exception message: single positional indexer is out-of-bounds
+Stack trace:
+File: Submissions/13065768.py
+Line: 31
+Func.Name: <module>
+Message: y = pd.DataFrame(data.iloc[:,10], columns=['target'])
+
+File: /mnt/data/Linux/applications/anaconda3/lib/python3.7/site-packages/pandas/core/indexing.py
+Line: 1762
+Func.Name: __getitem__
+Message: return self._getitem_tuple(key)
+
+File: /mnt/data/Linux/applications/anaconda3/lib/python3.7/site-packages/pandas/core/indexing.py
+Line: 2067
+Func.Name: _getitem_tuple
+Message: self._has_valid_tuple(tup)
+
+File: /mnt/data/Linux/applications/anaconda3/lib/python3.7/site-packages/pandas/core/indexing.py
+Line: 703
+Func.Name: _has_valid_tuple
+Message: self._validate_key(k, i)
+
+File: /mnt/data/Linux/applications/anaconda3/lib/python3.7/site-packages/pandas/core/indexing.py
+Line: 1994
+Func.Name: _validate_key
+Message: self._validate_integer(key, axis)
+
+File: /mnt/data/Linux/applications/anaconda3/lib/python3.7/site-packages/pandas/core/indexing.py
+Line: 2063
+Func.Name: _validate_integer
+Message: raise IndexError("single positional indexer is out-of-bounds")
+

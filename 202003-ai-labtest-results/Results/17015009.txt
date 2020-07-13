@@ -1,0 +1,147 @@
+       target  predicted
+0  Glass type          2
+Accuracy: 1.0000
+       target  predicted
+0  Glass type          2
+Accuracy: 1.0000
+       target  predicted
+0  Glass type          2
+Accuracy: 0.9692
+       target  predicted
+0  Glass type          2
+Accuracy: 1.0000
+       target  predicted
+0  Glass type          2
+Accuracy: 0.9846
+       target  predicted
+0  Glass type          2
+Accuracy: 0.9692
+       target  predicted
+0  Glass type          2
+Accuracy: 0.9385
+       target  predicted
+0  Glass type          2
+Accuracy: 0.8462
+       target  predicted
+0  Glass type          2
+Accuracy: 0.8462
+       target  predicted
+0  Glass type          2
+Accuracy: 0.8615
+       target  predicted
+0  Glass type          2
+Accuracy: 0.8462
+       target  predicted
+0  Glass type          2
+Accuracy: 0.8462
+       target  predicted
+0  Glass type          2
+Accuracy: 0.8308
+       target  predicted
+0  Glass type          2
+Accuracy: 0.8308
+       target  predicted
+0  Glass type          1
+Accuracy: 0.8000
+       target  predicted
+0  Glass type          1
+Accuracy: 0.7846
+       target  predicted
+0  Glass type          1
+Accuracy: 0.7846
+       target  predicted
+0  Glass type          1
+Accuracy: 0.7692
+       target  predicted
+0  Glass type          1
+Accuracy: 0.7692
+       target  predicted
+0  Glass type          1
+Accuracy: 0.7538
+       target  predicted
+0  Glass type          1
+Accuracy: 0.7692
+       target  predicted
+0  Glass type          1
+Accuracy: 0.7692
+       target  predicted
+0  Glass type          1
+Accuracy: 0.7692
+       target  predicted
+0  Glass type          1
+Accuracy: 0.7538
+       target  predicted
+0  Glass type          1
+Accuracy: 0.7692
+       target  predicted
+0  Glass type          1
+Accuracy: 0.7692
+       target  predicted
+0  Glass type          1
+Accuracy: 0.7538
+       target  predicted
+0  Glass type          1
+Accuracy: 0.7385
+       target  predicted
+0  Glass type          1
+Accuracy: 0.6615
+       target  predicted
+0  Glass type          1
+Accuracy: 0.6615
+       target  predicted
+0  Glass type          1
+Accuracy: 0.6000
+       target  predicted
+0  Glass type          1
+Accuracy: 0.5538
+       target  predicted
+0  Glass type          1
+Accuracy: 0.4000
+       target  predicted
+0  Glass type          1
+Accuracy: 0.3846
+       target  predicted
+0  Glass type          1
+Accuracy: 0.4000
+       target  predicted
+0  Glass type          1
+Accuracy: 0.3846
+       target  predicted
+0  Glass type          1
+Accuracy: 0.3846
+       target  predicted
+0  Glass type          1
+Accuracy: 0.3846
+       target  predicted
+0  Glass type          1
+Accuracy: 0.3846
+       target  predicted
+0  Glass type          1
+Accuracy: 0.3692
+       target  predicted
+0  Glass type          1
+Accuracy: 0.3846
+       target  predicted
+0  Glass type          1
+Accuracy: 0.3846
+       target  predicted
+0  Glass type          1
+Accuracy: 0.4000
+       target  predicted
+0  Glass type          1
+Accuracy: 0.3692
+       target  predicted
+0  Glass type          1
+Accuracy: 0.3692
+       target  predicted
+0  Glass type          1
+Accuracy: 0.3846
+       target  predicted
+0  Glass type          1
+Accuracy: 0.4000
+       target  predicted
+0  Glass type          1
+Accuracy: 0.3846
+       target  predicted
+0  Glass type          1
+Accuracy: 0.3385

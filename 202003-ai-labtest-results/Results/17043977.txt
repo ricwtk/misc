@@ -1,0 +1,14 @@
+Error in file
+Exception type: AttributeError
+Exception message: 'DataFrame' object has no attribute 'data'
+Stack trace:
+File: Submissions/17043977.py
+Line: 28
+Func.Name: <module>
+Message: dt = pd.DataFrame(data.data, columns=data.feature_names)
+
+File: /mnt/data/Linux/applications/anaconda3/lib/python3.7/site-packages/pandas/core/generic.py
+Line: 5274
+Func.Name: __getattr__
+Message: return object.__getattribute__(self, name)
+

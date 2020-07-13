@@ -1,0 +1,39 @@
+Error in file
+Exception type: KeyError
+Exception message: 'attributes'
+Stack trace:
+File: Submissions/18081331.py
+Line: 29
+Func.Name: <module>
+Message: input_columns = data['attributes'].columns[:2].tolist()
+
+File: /mnt/data/Linux/applications/anaconda3/lib/python3.7/site-packages/pandas/core/frame.py
+Line: 2800
+Func.Name: __getitem__
+Message: indexer = self.columns.get_loc(key)
+
+File: /mnt/data/Linux/applications/anaconda3/lib/python3.7/site-packages/pandas/core/indexes/base.py
+Line: 2648
+Func.Name: get_loc
+Message: return self._engine.get_loc(self._maybe_cast_indexer(key))
+
+File: pandas/_libs/index.pyx
+Line: 111
+Func.Name: pandas._libs.index.IndexEngine.get_loc
+Message: 
+
+File: pandas/_libs/index.pyx
+Line: 138
+Func.Name: pandas._libs.index.IndexEngine.get_loc
+Message: 
+
+File: pandas/_libs/hashtable_class_helper.pxi
+Line: 1619
+Func.Name: pandas._libs.hashtable.PyObjectHashTable.get_item
+Message: 
+
+File: pandas/_libs/hashtable_class_helper.pxi
+Line: 1627
+Func.Name: pandas._libs.hashtable.PyObjectHashTable.get_item
+Message: 
+

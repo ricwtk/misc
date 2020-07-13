@@ -1,0 +1,9 @@
+Error in file
+Exception type: NameError
+Exception message: name 'diabetes' is not defined
+Stack trace:
+File: Submissions/16023566.py
+Line: 29
+Func.Name: <module>
+Message: x_train = diabetes['train']['attributes'][input_columns]
+

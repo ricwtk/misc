@@ -1,0 +1,19 @@
+Error in file
+Exception type: ValueError
+Exception message: With n_samples=0, test_size=0.3 and train_size=None, the resulting train set will be empty. Adjust any of the aforementioned parameters.
+Stack trace:
+File: Submissions/18066233.py
+Line: 33
+Func.Name: <module>
+Message: x_train, x_test, y_train, y_test = train_test_split(dt['attributes'], dt['target'], test_size=0.3)
+
+File: /mnt/data/Linux/applications/anaconda3/lib/python3.7/site-packages/sklearn/model_selection/_split.py
+Line: 2122
+Func.Name: train_test_split
+Message: default_test_size=0.25)
+
+File: /mnt/data/Linux/applications/anaconda3/lib/python3.7/site-packages/sklearn/model_selection/_split.py
+Line: 1805
+Func.Name: _validate_shuffle_split
+Message: train_size)
+

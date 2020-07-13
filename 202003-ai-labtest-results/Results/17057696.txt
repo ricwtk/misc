@@ -1,0 +1,24 @@
+Error in file
+Exception type: ValueError
+Exception message: Found input variables with inconsistent numbers of samples: [8, 214]
+Stack trace:
+File: Submissions/17057696.py
+Line: 31
+Func.Name: <module>
+Message: x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.3)
+
+File: /mnt/data/Linux/applications/anaconda3/lib/python3.7/site-packages/sklearn/model_selection/_split.py
+Line: 2118
+Func.Name: train_test_split
+Message: arrays = indexable(*arrays)
+
+File: /mnt/data/Linux/applications/anaconda3/lib/python3.7/site-packages/sklearn/utils/validation.py
+Line: 248
+Func.Name: indexable
+Message: check_consistent_length(*result)
+
+File: /mnt/data/Linux/applications/anaconda3/lib/python3.7/site-packages/sklearn/utils/validation.py
+Line: 212
+Func.Name: check_consistent_length
+Message: " samples: %r" % [int(l) for l in lengths])
+

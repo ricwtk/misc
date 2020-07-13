@@ -1,0 +1,98 @@
+k_val = 3 ,
+Accuracy: 0.7231
+k_val = 5 ,
+Accuracy: 0.7385
+k_val = 7 ,
+Accuracy: 0.7385
+k_val = 9 ,
+Accuracy: 0.7231
+k_val = 11 ,
+Accuracy: 0.7077
+k_val = 13 ,
+Accuracy: 0.7077
+k_val = 15 ,
+Accuracy: 0.7077
+k_val = 17 ,
+Accuracy: 0.7231
+k_val = 19 ,
+Accuracy: 0.7077
+k_val = 21 ,
+Accuracy: 0.6923
+k_val = 23 ,
+Accuracy: 0.6923
+k_val = 25 ,
+Accuracy: 0.6923
+k_val = 27 ,
+Accuracy: 0.6923
+k_val = 29 ,
+Accuracy: 0.6769
+k_val = 31 ,
+Accuracy: 0.6769
+k_val = 33 ,
+Accuracy: 0.6615
+k_val = 35 ,
+Accuracy: 0.6462
+k_val = 37 ,
+Accuracy: 0.6462
+k_val = 39 ,
+Accuracy: 0.6462
+k_val = 41 ,
+Accuracy: 0.6
+k_val = 43 ,
+Accuracy: 0.5846
+k_val = 45 ,
+Accuracy: 0.5692
+k_val = 47 ,
+Accuracy: 0.5692
+k_val = 49 ,
+Accuracy: 0.5538
+k_val = 51 ,
+Accuracy: 0.5231
+k_val = 53 ,
+Accuracy: 0.4769
+k_val = 55 ,
+Accuracy: 0.4923
+k_val = 57 ,
+Accuracy: 0.4923
+k_val = 59 ,
+Accuracy: 0.4462
+k_val = 61 ,
+Accuracy: 0.4154
+k_val = 63 ,
+Accuracy: 0.4154
+k_val = 65 ,
+Accuracy: 0.4
+k_val = 67 ,
+Accuracy: 0.4
+k_val = 69 ,
+Accuracy: 0.4
+k_val = 71 ,
+Accuracy: 0.3692
+k_val = 73 ,
+Accuracy: 0.3538
+k_val = 75 ,
+Accuracy: 0.3538
+k_val = 77 ,
+Accuracy: 0.3538
+k_val = 79 ,
+Accuracy: 0.3538
+k_val = 81 ,
+Accuracy: 0.3538
+k_val = 83 ,
+Accuracy: 0.3385
+k_val = 85 ,
+Accuracy: 0.3538
+k_val = 87 ,
+Accuracy: 0.3692
+k_val = 89 ,
+Accuracy: 0.3538
+k_val = 91 ,
+Accuracy: 0.3538
+k_val = 93 ,
+Accuracy: 0.3538
+k_val = 95 ,
+Accuracy: 0.3538
+k_val = 97 ,
+Accuracy: 0.3538
+k_val = 99 ,
+Accuracy: 0.3231

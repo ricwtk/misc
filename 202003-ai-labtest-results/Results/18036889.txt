@@ -1,0 +1,64 @@
+        Na    Mg    Al     Si     K    Ca    Ba    Fe
+Id                                                   
+188  13.44  3.34  1.23  72.38  0.60  8.83  0.00  0.00
+175  12.85  1.61  2.17  72.18  0.76  9.70  0.24  0.51
+57   12.99  3.47  1.12  72.98  0.62  8.35  0.00  0.31
+185  17.38  0.00  0.34  75.41  0.00  6.65  0.00  0.00
+56   12.45  2.71  1.29  73.70  0.56  9.06  0.00  0.24
+..     ...   ...   ...    ...   ...   ...   ...   ...
+204  14.80  0.00  1.99  73.11  0.00  8.28  1.71  0.00
+138  12.89  3.62  1.57  72.96  0.61  8.11  0.00  0.00
+73   13.09  3.59  1.52  73.10  0.67  7.83  0.00  0.00
+141  13.33  3.54  1.61  72.54  0.68  8.11  0.00  0.00
+38   12.74  3.48  1.35  72.96  0.64  8.68  0.00  0.00
+
+[149 rows x 8 columns]
+Accuracy for each k with value of 3 is 0.7231
+Accuracy for each k with value of 5 is 0.7385
+Accuracy for each k with value of 7 is 0.7385
+Accuracy for each k with value of 9 is 0.7231
+Accuracy for each k with value of 11 is 0.7077
+Accuracy for each k with value of 13 is 0.7077
+Accuracy for each k with value of 15 is 0.7077
+Accuracy for each k with value of 17 is 0.7231
+Accuracy for each k with value of 19 is 0.7077
+Accuracy for each k with value of 21 is 0.6923
+Accuracy for each k with value of 23 is 0.6923
+Accuracy for each k with value of 25 is 0.6923
+Accuracy for each k with value of 27 is 0.6923
+Accuracy for each k with value of 29 is 0.6769
+Accuracy for each k with value of 31 is 0.6769
+Accuracy for each k with value of 33 is 0.6615
+Accuracy for each k with value of 35 is 0.6462
+Accuracy for each k with value of 37 is 0.6462
+Accuracy for each k with value of 39 is 0.6462
+Accuracy for each k with value of 41 is 0.6000
+Accuracy for each k with value of 43 is 0.5846
+Accuracy for each k with value of 45 is 0.5692
+Accuracy for each k with value of 47 is 0.5692
+Accuracy for each k with value of 49 is 0.5538
+Accuracy for each k with value of 51 is 0.5231
+Accuracy for each k with value of 53 is 0.4769
+Accuracy for each k with value of 55 is 0.4923
+Accuracy for each k with value of 57 is 0.4923
+Accuracy for each k with value of 59 is 0.4462
+Accuracy for each k with value of 61 is 0.4154
+Accuracy for each k with value of 63 is 0.4154
+Accuracy for each k with value of 65 is 0.4000
+Accuracy for each k with value of 67 is 0.4000
+Accuracy for each k with value of 69 is 0.4000
+Accuracy for each k with value of 71 is 0.3692
+Accuracy for each k with value of 73 is 0.3538
+Accuracy for each k with value of 75 is 0.3538
+Accuracy for each k with value of 77 is 0.3538
+Accuracy for each k with value of 79 is 0.3538
+Accuracy for each k with value of 81 is 0.3538
+Accuracy for each k with value of 83 is 0.3385
+Accuracy for each k with value of 85 is 0.3538
+Accuracy for each k with value of 87 is 0.3692
+Accuracy for each k with value of 89 is 0.3538
+Accuracy for each k with value of 91 is 0.3538
+Accuracy for each k with value of 93 is 0.3538
+Accuracy for each k with value of 95 is 0.3538
+Accuracy for each k with value of 97 is 0.3538
+Accuracy for each k with value of 99 is 0.3231

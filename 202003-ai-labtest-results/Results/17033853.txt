@@ -1,0 +1,99 @@
+k = 3
+Accuracy: 0.7231
+k = 5
+Accuracy: 0.7385
+k = 7
+Accuracy: 0.7385
+k = 9
+Accuracy: 0.7231
+k = 11
+Accuracy: 0.7077
+k = 13
+Accuracy: 0.7077
+k = 15
+Accuracy: 0.7077
+k = 17
+Accuracy: 0.7231
+k = 19
+Accuracy: 0.7077
+k = 21
+Accuracy: 0.6923
+k = 23
+Accuracy: 0.6923
+k = 25
+Accuracy: 0.6923
+k = 27
+Accuracy: 0.6923
+k = 29
+Accuracy: 0.6769
+k = 31
+Accuracy: 0.6769
+k = 33
+Accuracy: 0.6615
+k = 35
+Accuracy: 0.6462
+k = 37
+Accuracy: 0.6462
+k = 39
+Accuracy: 0.6462
+k = 41
+Accuracy: 0.6000
+k = 43
+Accuracy: 0.5846
+k = 45
+Accuracy: 0.5692
+k = 47
+Accuracy: 0.5692
+k = 49
+Accuracy: 0.5538
+k = 51
+Accuracy: 0.5231
+k = 53
+Accuracy: 0.4769
+k = 55
+Accuracy: 0.4923
+k = 57
+Accuracy: 0.4923
+k = 59
+Accuracy: 0.4462
+k = 61
+Accuracy: 0.4154
+k = 63
+Accuracy: 0.4154
+k = 65
+Accuracy: 0.4000
+k = 67
+Accuracy: 0.4000
+k = 69
+Accuracy: 0.4000
+k = 71
+Accuracy: 0.3692
+k = 73
+Accuracy: 0.3538
+k = 75
+Accuracy: 0.3538
+k = 77
+Accuracy: 0.3538
+k = 79
+Accuracy: 0.3538
+k = 81
+Accuracy: 0.3538
+k = 83
+Accuracy: 0.3385
+k = 85
+Accuracy: 0.3538
+k = 87
+Accuracy: 0.3692
+k = 89
+Accuracy: 0.3538
+k = 91
+Accuracy: 0.3538
+k = 93
+Accuracy: 0.3538
+k = 95
+Accuracy: 0.3538
+k = 97
+Accuracy: 0.3538
+k = 99
+Accuracy: 0.3231
+[3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 27, 29, 31, 33, 35, 37, 39, 41, 43, 45, 47, 49, 51, 53, 55, 57, 59, 61, 63, 65, 67, 69, 71, 73, 75, 77, 79, 81, 83, 85, 87, 89, 91, 93, 95, 97, 99]

@@ -1,0 +1,147 @@
+Submissions/17028754.py:31: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+When k =  3 	 accuracy is:  0.7230769230769231
+Submissions/17028754.py:31: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+When k =  5 	 accuracy is:  0.7384615384615385
+Submissions/17028754.py:31: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+When k =  7 	 accuracy is:  0.7384615384615385
+Submissions/17028754.py:31: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+When k =  9 	 accuracy is:  0.7230769230769231
+Submissions/17028754.py:31: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+When k =  11 	 accuracy is:  0.7076923076923077
+Submissions/17028754.py:31: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+When k =  13 	 accuracy is:  0.7076923076923077
+Submissions/17028754.py:31: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+When k =  15 	 accuracy is:  0.7076923076923077
+Submissions/17028754.py:31: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+When k =  17 	 accuracy is:  0.7230769230769231
+Submissions/17028754.py:31: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+When k =  19 	 accuracy is:  0.7076923076923077
+Submissions/17028754.py:31: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+When k =  21 	 accuracy is:  0.6923076923076923
+Submissions/17028754.py:31: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+When k =  23 	 accuracy is:  0.6923076923076923
+Submissions/17028754.py:31: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+When k =  25 	 accuracy is:  0.6923076923076923
+Submissions/17028754.py:31: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+When k =  27 	 accuracy is:  0.6923076923076923
+Submissions/17028754.py:31: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+When k =  29 	 accuracy is:  0.676923076923077
+Submissions/17028754.py:31: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+When k =  31 	 accuracy is:  0.676923076923077
+Submissions/17028754.py:31: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+When k =  33 	 accuracy is:  0.6615384615384615
+Submissions/17028754.py:31: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+When k =  35 	 accuracy is:  0.6461538461538462
+Submissions/17028754.py:31: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+When k =  37 	 accuracy is:  0.6461538461538462
+Submissions/17028754.py:31: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+When k =  39 	 accuracy is:  0.6461538461538462
+Submissions/17028754.py:31: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+When k =  41 	 accuracy is:  0.6
+Submissions/17028754.py:31: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+When k =  43 	 accuracy is:  0.5846153846153846
+Submissions/17028754.py:31: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+When k =  45 	 accuracy is:  0.5692307692307692
+Submissions/17028754.py:31: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+When k =  47 	 accuracy is:  0.5692307692307692
+Submissions/17028754.py:31: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+When k =  49 	 accuracy is:  0.5538461538461539
+Submissions/17028754.py:31: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+When k =  51 	 accuracy is:  0.5230769230769231
+Submissions/17028754.py:31: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+When k =  53 	 accuracy is:  0.47692307692307695
+Submissions/17028754.py:31: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+When k =  55 	 accuracy is:  0.49230769230769234
+Submissions/17028754.py:31: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+When k =  57 	 accuracy is:  0.49230769230769234
+Submissions/17028754.py:31: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+When k =  59 	 accuracy is:  0.4461538461538462
+Submissions/17028754.py:31: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+When k =  61 	 accuracy is:  0.4153846153846154
+Submissions/17028754.py:31: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+When k =  63 	 accuracy is:  0.4153846153846154
+Submissions/17028754.py:31: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+When k =  65 	 accuracy is:  0.4
+Submissions/17028754.py:31: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+When k =  67 	 accuracy is:  0.4
+Submissions/17028754.py:31: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+When k =  69 	 accuracy is:  0.4
+Submissions/17028754.py:31: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+When k =  71 	 accuracy is:  0.36923076923076925
+Submissions/17028754.py:31: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+When k =  73 	 accuracy is:  0.35384615384615387
+Submissions/17028754.py:31: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+When k =  75 	 accuracy is:  0.35384615384615387
+Submissions/17028754.py:31: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+When k =  77 	 accuracy is:  0.35384615384615387
+Submissions/17028754.py:31: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+When k =  79 	 accuracy is:  0.35384615384615387
+Submissions/17028754.py:31: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+When k =  81 	 accuracy is:  0.35384615384615387
+Submissions/17028754.py:31: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+When k =  83 	 accuracy is:  0.3384615384615385
+Submissions/17028754.py:31: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+When k =  85 	 accuracy is:  0.35384615384615387
+Submissions/17028754.py:31: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+When k =  87 	 accuracy is:  0.36923076923076925
+Submissions/17028754.py:31: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+When k =  89 	 accuracy is:  0.35384615384615387
+Submissions/17028754.py:31: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+When k =  91 	 accuracy is:  0.35384615384615387
+Submissions/17028754.py:31: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+When k =  93 	 accuracy is:  0.35384615384615387
+Submissions/17028754.py:31: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+When k =  95 	 accuracy is:  0.35384615384615387
+Submissions/17028754.py:31: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+When k =  97 	 accuracy is:  0.35384615384615387
+Submissions/17028754.py:31: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+When k =  99 	 accuracy is:  0.3230769230769231

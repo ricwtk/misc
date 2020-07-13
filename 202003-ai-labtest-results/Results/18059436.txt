@@ -1,0 +1,9 @@
+Error in file
+Exception type: NameError
+Exception message: name 'data' is not defined
+Stack trace:
+File: Submissions/18059436.py
+Line: 5
+Func.Name: <module>
+Message: data=pd.DataFrame(data)
+

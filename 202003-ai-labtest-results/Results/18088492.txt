@@ -1,0 +1,69 @@
+Submissions/18088492.py:48: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  knc.fit(x_train, y_train)
+       target  SSpredicted
+0  Glass type            6
+Accuracy: 0.7231
+Error in file
+Exception type: ValueError
+Exception message: query data dimension must match training data dimension
+Stack trace:
+File: Submissions/18088492.py
+Line: 83
+Func.Name: <module>
+Message: z = knc.predict(list(zip(xx.ravel(), yy.ravel())))
+
+File: /mnt/data/Linux/applications/anaconda3/lib/python3.7/site-packages/sklearn/neighbors/_classification.py
+Line: 173
+Func.Name: predict
+Message: neigh_dist, neigh_ind = self.kneighbors(X)
+
+File: /mnt/data/Linux/applications/anaconda3/lib/python3.7/site-packages/sklearn/neighbors/_base.py
+Line: 663
+Func.Name: kneighbors
+Message: for s in gen_even_slices(X.shape[0], n_jobs)
+
+File: /mnt/data/Linux/applications/anaconda3/lib/python3.7/site-packages/joblib/parallel.py
+Line: 1004
+Func.Name: __call__
+Message: if self.dispatch_one_batch(iterator):
+
+File: /mnt/data/Linux/applications/anaconda3/lib/python3.7/site-packages/joblib/parallel.py
+Line: 835
+Func.Name: dispatch_one_batch
+Message: self._dispatch(tasks)
+
+File: /mnt/data/Linux/applications/anaconda3/lib/python3.7/site-packages/joblib/parallel.py
+Line: 754
+Func.Name: _dispatch
+Message: job = self._backend.apply_async(batch, callback=cb)
+
+File: /mnt/data/Linux/applications/anaconda3/lib/python3.7/site-packages/joblib/_parallel_backends.py
+Line: 209
+Func.Name: apply_async
+Message: result = ImmediateResult(func)
+
+File: /mnt/data/Linux/applications/anaconda3/lib/python3.7/site-packages/joblib/_parallel_backends.py
+Line: 590
+Func.Name: __init__
+Message: self.results = batch()
+
+File: /mnt/data/Linux/applications/anaconda3/lib/python3.7/site-packages/joblib/parallel.py
+Line: 256
+Func.Name: __call__
+Message: for func, args, kwargs in self.items]
+
+File: /mnt/data/Linux/applications/anaconda3/lib/python3.7/site-packages/joblib/parallel.py
+Line: 256
+Func.Name: <listcomp>
+Message: for func, args, kwargs in self.items]
+
+File: /mnt/data/Linux/applications/anaconda3/lib/python3.7/site-packages/sklearn/neighbors/_base.py
+Line: 490
+Func.Name: _tree_query_parallel_helper
+Message: return tree.query(*args, **kwargs)
+
+File: sklearn/neighbors/_binary_tree.pxi
+Line: 1319
+Func.Name: sklearn.neighbors._kd_tree.BinaryTree.query
+Message: 
+

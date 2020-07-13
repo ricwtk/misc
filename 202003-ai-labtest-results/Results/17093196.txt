@@ -1,0 +1,14 @@
+Error in file
+Exception type: AttributeError
+Exception message: 'DataFrame' object has no attribute 'target'
+Stack trace:
+File: Submissions/17093196.py
+Line: 31
+Func.Name: <module>
+Message: data['Glass type'] = data.target
+
+File: /mnt/data/Linux/applications/anaconda3/lib/python3.7/site-packages/pandas/core/generic.py
+Line: 5274
+Func.Name: __getattr__
+Message: return object.__getattribute__(self, name)
+

@@ -1,0 +1,19 @@
+Error in file
+Exception type: ValueError
+Exception message: Unknown label type: 'continuous'
+Stack trace:
+File: Submissions/17024340.py
+Line: 19
+Func.Name: <module>
+Message: knn.fit(x_test, y_test)
+
+File: /mnt/data/Linux/applications/anaconda3/lib/python3.7/site-packages/sklearn/neighbors/_base.py
+Line: 1144
+Func.Name: fit
+Message: check_classification_targets(y)
+
+File: /mnt/data/Linux/applications/anaconda3/lib/python3.7/site-packages/sklearn/utils/multiclass.py
+Line: 169
+Func.Name: check_classification_targets
+Message: raise ValueError("Unknown label type: %r" % y_type)
+
