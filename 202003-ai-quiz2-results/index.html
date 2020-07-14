@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html style="overflow:auto">
+<head>
+  <meta charset="utf-8">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900&family=Roboto+Mono:300" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/@mdi/font@5.x/css/materialdesignicons.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+  <title>Quiz 2 Results</title>
+</head>
+<body>
+  <div id="app">
+    <v-app>
+      <v-main>
+        <v-container fluid style="height: 100vh" class="d-flex flex-column">
+          <v-row class="flex-grow-0">
+            <v-col class="title">Quiz 2 (2020 03 AI)</v-col>
+          </v-row>
+          <v-card v-if="data.length > 0">
+            <v-card-text>
+              <v-data-iterator :items="data" :search="datafilter">
+                <template v-slot:header>
+                  <v-toolbar class="my-2" color="primary" dark flat>
+                    <v-text-field v-model="datafilter" clearable flat solo-inverted hide-details prepend-inner-icon="mdi-magnify" label="Search"></v-text-field>
+                  </v-toolbar>
+                </template>
+                <template v-slot:default="props">
+                  <v-simple-table>
+                    <template v-slot:default>
+                      <thead>
+                        <tr>
+                          <th class="text-center">id</th>
+                          <th class="text-center" v-for="tmplt in Object.keys(template)" :key="tmplt">{{ tmplt }}</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr v-for="item in props.items" :key="item.id" :class="findIndexFromId(item.id) == indextoshow ? 'grey lighten-4' : ''" @click="loadthis(findIndexFromId(item.id))">
+                          <td>{{ item.id }}</td>
+                          <td v-for="tpl in Object.keys(template)" class="text-center" :style="item[tpl].type == 'text' ? { 'max-width': '200px' } : { }">
+                            <v-btn v-if="item[tpl].type == 'boolean'" icon><v-icon :color="item[tpl].value ? 'success' : 'error'">{{ item[tpl].value ? 'mdi-check' : 'mdi-close' }}</v-icon></v-btn>
+                            <template v-if="item[tpl].type !== 'boolean'">{{ item[tpl].value }}</template>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </template>
+                  </v-simple-table>
+                </template>
+              </v-data-iterator>
+            </v-card-text>
+          </v-card>
+
+          <v-dialog v-model="showdetails" content-class="elevation-0" fullscreen>
+            <v-card v-if="indextoshow > -1 && indextoshow < data.length" height="100%" class="d-flex flex-column">
+              <v-card-title>{{ data[indextoshow].id }}<v-spacer></v-spacer><v-btn icon @click="showdetails = false"><v-icon>mdi-close</v-icon></v-btn></v-card-title>
+              <v-divider></v-divider>
+              <v-card-text style="overflow:hidden" class="d-flex flex-column">
+                <v-row class="flex-grow-0 align-center">
+                  <v-col cols="auto"><v-btn icon :disabled="indextoshow == 0" @click="indextoshow = indextoshow - 1"><v-icon>mdi-chevron-left</v-icon></v-btn></v-col>
+                  <v-col>
+                    <v-simple-table>
+                      <template v-slot:default>
+                        <thead>
+                          <tr>
+                            <th class="text-center">id</th>
+                            <th v-for="tpl in Object.keys(template)" class="text-center">{{ tpl }}</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>{{ data[indextoshow].id }}</td>
+                            <td v-for="tpl in Object.keys(template)" class="text-center" :style="data[indextoshow][tpl].type == 'text' ? { 'max-width': '200px' } : { }">
+                              <v-btn v-if="data[indextoshow][tpl].type == 'boolean'" icon><v-icon :color="data[indextoshow][tpl].value ? 'success' : 'error'">{{ data[indextoshow][tpl].value ? 'mdi-check' : 'mdi-close' }}</v-icon></v-btn>
+                              <template v-if="data[indextoshow][tpl].type !== 'boolean'">{{ data[indextoshow][tpl].value }}</template>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </template>
+                    </v-simple-table>
+                  </v-col>
+                  <v-col cols="auto"><v-btn icon :disabled="indextoshow == data.length - 1" @click="indextoshow = indextoshow + 1"><v-icon>mdi-chevron-right</v-icon></v-btn></v-col>
+                </v-row>
+                <v-row style="overflow:hidden">
+                  <v-col style="overflow:hidden;height:100%" cols="6" class="py-0 d-flex flex-column">
+                    <v-row><v-col>Student solution (originality check: <b>{{ studentdata.originalitycheck }}</b>)</v-col></v-row>
+                    <v-row style="overflow:auto" ref="studentscroll">
+                      <v-col>
+                        <template v-for="d,i in studentdata.data">
+                          <v-row :key="i"><v-col>
+                            <v-card>
+                              <v-card-title class="subtitle-1 py-0">
+                                <v-col>{{ i == 0 ? "At initial" : `Step ${i}` }}</v-col>
+                              </v-card-title>
+                              <v-divider></v-divider>
+                              <v-card-text>
+                                <template v-for="el,ei in studentdata.data_details" v-if="el.available.includes(studentdata.process)">
+                                  <v-row :key="`${i}-${ei}`" no-gutters><v-col class="subtitle-2">{{ el.label }}</v-col></v-row>
+                                  <v-row v-if="el.type.includes('text')" no-gutters>
+                                    <v-col class="pl-3">{{ d[ei] }}</v-col>
+                                  </v-row>
+                                  <v-row v-if="el.type.includes('choice')" no-gutters>
+                                    <v-col class="pl-3">
+                                      <v-chip class="mx-1" v-for="val,vi in d[ei]" :key="`${i}-${ei}-${vi}`">{{ val }}</v-chip>
+                                    </v-col>
+                                  </v-row>
+                                  <template v-if="el.type == 'edit-edit pairs'">
+                                    <v-row v-for="val,vi in d[ei]" :key="`${i}-${ei}-${vi}`">
+                                      <v-col md="2" class="text-end my-0 py-1">{{ vi == 0 ? 'Goal' : `Subgoal ${vi}` }}</v-col>
+                                      <v-col class="my-0 py-1">{{ `${val[0]} ${val[1] == "" ? '' : '(provided by ' + val[1] + ')'}` }}</v-col>
+                                    </v-row>
+                                  </template>
+                                </template>
+                              </v-card-text>
+                            </v-card>
+                          </v-col></v-row>
+                        </template>
+                      </v-col>
+                    </v-row>
+                  </v-col>
+                  <v-col style="overflow:hidden;height:100%" cols="6" class="py-0 d-flex flex-column">
+                    <v-row><v-col>Sample solution</v-col></v-row>
+                    <v-row style="overflow:auto" ref="solutionscroll">
+                      <v-col>
+                        <template v-for="d,i in sampledata.data">
+                          <v-row :key="i"><v-col>
+                            <v-card>
+                              <v-card-title class="subtitle-1 py-0">
+                                <v-col>{{ i == 0 ? "At initial" : `Step ${i}` }}</v-col>
+                              </v-card-title>
+                              <v-divider></v-divider>
+                              <v-card-text>
+                                <template v-for="el,ei in sampledata.data_details" v-if="el.available.includes(sampledata.process)">
+                                  <v-row :key="`${i}-${ei}`" no-gutters><v-col class="subtitle-2">{{ el.label }}</v-col></v-row>
+                                  <v-row v-if="el.type.includes('text')" no-gutters>
+                                    <v-col class="pl-3">{{ d[ei] }}</v-col>
+                                  </v-row>
+                                  <v-row v-if="el.type.includes('choice')" no-gutters>
+                                    <v-col class="pl-3">
+                                      <v-chip class="mx-1" v-for="val,vi in d[ei]" :key="`${i}-${ei}-${vi}`">{{ val }}</v-chip>
+                                    </v-col>
+                                  </v-row>
+                                  <template v-if="el.type == 'edit-edit pairs'">
+                                    <v-row v-for="val,vi in d[ei]" :key="`${i}-${ei}-${vi}`">
+                                      <v-col md="2" class="text-end my-0 py-1">{{ vi == 0 ? 'Goal' : `Subgoal ${vi}` }}</v-col>
+                                      <v-col class="my-0 py-1">{{ `${val[0]} ${val[1] == "" ? '' : '(provided by ' + val[1] + ')'}` }}</v-col>
+                                    </v-row>
+                                  </template>
+                                </template>
+                              </v-card-text>
+                            </v-card>
+                          </v-col></v-row>
+                        </template>
+                      </v-col>  
+                    </v-row>
+                  </v-col>
+                </v-row>
+              </v-card-text>
+            </v-card>
+          </v-dialog>
+        </v-container>
+      </v-main>
+    </v-app>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+  <script>
+    let vm = new Vue({
+      el: '#app',
+      vuetify: new Vuetify(),
+      data: {
+        file_socket: null,
+        data: [],
+        datafilter: "",
+        template: {},
+        showdetails: false,
+        indextoshow: -1,
+        changes: 0,
+        loaded: false,
+        studentdata: "",
+        sampledata: "",
+      },
+      mounted: function () {
+        let templatereq = new Request("markingtemplate.json");
+        fetch(templatereq)
+        .then(r => r.json())
+        .then(r => {
+          this.template = r;
+        });
+        let datareq = new Request("marking.json");
+        fetch(datareq)
+        .then(r => r.json())
+        .then(r => {
+          this.data = r;
+        });
+      },
+      watch: {
+        data: {
+          handler: function () {
+            this.changes += this.loaded ? 1 : 0;
+          },
+          deep: true
+        },
+        indextoshow: function (newVal) {
+          this.getDetails(newVal);
+          this.$nextTick(() => {
+            this.$refs.studentscroll.scrollTop = 0;
+            this.$refs.solutionscroll.scrollTop = 0;
+          });
+        }
+      },
+      methods: {
+        loadthis: function (dataindex) {
+          this.showdetails = true;
+          this.indextoshow = dataindex;
+        },
+        getDetails: function (idx) {
+          let studentreq = new Request(`Json/${this.data[idx].id}.json`);
+          let specificsamplereq = new Request(`Json/answer_${this.data[idx].id}.json`);
+          let samplereq = new Request(`Json/answer.json`);
+          Promise.all([
+            fetch(studentreq), 
+            fetch(samplereq).catch(error => fetch(samplereq))
+          ])
+          .then(rs => {
+            return Promise.all([rs[0].json(), rs[1].json()]);
+          })
+          .then(rs => {
+            this.studentdata = rs[0];
+            this.sampledata = rs[1];
+          });
+        },
+        findIndexFromId: function (id) {
+          return this.data.findIndex(el => el.id == id);
+        }
+      }
+    })
+  </script>
+</body>
+</html>

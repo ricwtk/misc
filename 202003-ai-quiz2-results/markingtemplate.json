@@ -1,0 +1,10 @@
+{
+  "r1 for K": { "type": "boolean", "value": false },
+  "r7 for W": { "type": "boolean", "value": false },
+  "r10 for R": { "type": "boolean", "value": false },
+  "r4 for H": { "type": "boolean", "value": false },
+  "r3 for C": { "type": "boolean", "value": false },
+  "C as decision": { "type": "boolean", "value": false },
+  "number of errors": { "type": "number", "value": 0 },
+  "comment": { "type": "text", "value": "" }
+}
