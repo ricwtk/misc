@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Perceptron Simulation</title>
+  <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/@mdi/font@5.x/css/materialdesignicons.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+</head>
+<body>
+  <div id="app">
+    <v-app>
+      <v-app-bar app color="teal" dark>
+        <v-toolbar-title>
+          Perceptron Simulation
+        </v-toolbar-title>
+      </v-app-bar>
+      <v-main>
+        <v-container fill-height fluid class="align-stretch pt-0 pb-0">
+          <v-row no-gutters>
+            <v-col class="d-flex flex-column">
+              <v-row class="flex-grow-0 justify-center">
+                <v-col v-for="c in controls" cols="auto" class="mx-2" :key="c.label" :title="c.label">
+                  <v-row class="justify-center"><v-btn fab dark :color="c.color" elevation="2"><v-icon>{{ c.icon }}</v-icon></v-btn></v-row>
+                </v-col>
+                <v-col class="d-flex align-center">
+                  <v-slider hide-details label="Epoch"></v-slider>
+                </v-col>
+              </v-row>
+              <v-row class="align-self-stretch">
+                <v-col>
+                  table
+                </v-col>
+                <v-col>
+                  <v-row>
+                    <v-col>
+                      graph
+                    </v-col>
+                  </v-row>
+                </v-col>
+              </v-row>
+            </v-col>
+          </v-row>
+        </v-container>
+      </v-main>
+    </v-app>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+  <script>
+    new Vue({
+      el: '#app',
+      vuetify: new Vuetify(),
+      data: {
+        controls: [{
+          icon: "mdi-chevron-right",
+          label: "Run 1 iter.",
+          color: "teal"
+        },{
+          icon: "mdi-play",
+          label: "Run 1 epoch",
+          color: "teal"
+        },{
+          icon: "mdi-skip-forward",
+          label: "Run 10 epoch",
+          color: "teal"
+        }]
+      }
+    })
+  </script>
+</body>
+</html>
