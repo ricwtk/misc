@@ -10,10 +10,12 @@
 <body>
   <div id="app">
     <v-app>
-      <v-app-bar app color="teal" dark>
+      <v-app-bar app color="primary" dark>
         <v-toolbar-title>
           Perceptron Simulation
         </v-toolbar-title>
+        <v-spacer></v-spacer>
+        <v-btn icon @click="settings.show = true"><v-icon>mdi-cog</v-icon></v-btn>
       </v-app-bar>
       <v-main>
         <v-container fill-height fluid class="align-stretch pt-0 pb-0">
@@ -41,6 +43,26 @@
               </v-row>
             </v-col>
           </v-row>
+
+          <v-dialog v-model="settings.show" scrollable>
+            <v-card>
+              <v-card-title>Initial values</v-card-title>
+              <v-divider></v-divider>
+              <v-card-text>
+                <v-list rounded>
+                  <v-list-item v-for="p in Object.keys(settings.parameters)" :key="p">
+                    <v-text-field :label="p" v-model="settings.parameters[p]" hide-details></v-text-field>
+                  </v-list-item>
+                </v-list>
+              </v-card-text>
+              <v-divider></v-divider>
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn color="primary">Set</v-btn>
+                <v-btn>Cancel</v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
         </v-container>
       </v-main>
     </v-app>
@@ -49,23 +71,41 @@
   <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
   <script>
-    new Vue({
+    let vm = new Vue({
       el: '#app',
-      vuetify: new Vuetify(),
+      vuetify: new Vuetify({
+        theme: {
+          themes: {
+            light: {
+              primary: "#009688",
+              secondary: "#80CBC4",
+              accent: "#1DE9B6"
+            }
+          }
+        }
+      }),
       data: {
         controls: [{
           icon: "mdi-chevron-right",
           label: "Run 1 iter.",
-          color: "teal"
+          color: "secondary"
         },{
           icon: "mdi-play",
           label: "Run 1 epoch",
-          color: "teal"
+          color: "primary"
         },{
           icon: "mdi-skip-forward",
           label: "Run 10 epoch",
-          color: "teal"
-        }]
+          color: "secondary"
+        }],
+        settings: {
+          show: false,
+          parameters: {
+            w1: Math.random(),
+            w2: Math.random(),
+            theta: Math.random()
+          }
+        },
       }
     })
   </script>
