@@ -7,52 +7,77 @@
   <link href="https://cdn.jsdelivr.net/npm/@mdi/font@5.x/css/materialdesignicons.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+  <style>
+    html { overflow: auto; }
+    .epoch-end { border-bottom-width: 3px!important; border-bottom-color: teal!important; }
+  </style>
 </head>
 <body>
   <div id="app">
     <v-app>
-      <v-app-bar app color="primary" dark>
-        <v-toolbar-title>
-          Perceptron Simulation
-        </v-toolbar-title>
-        <v-spacer></v-spacer>
-        <v-btn icon @click="settings.show = true"><v-icon>mdi-cog</v-icon></v-btn>
-      </v-app-bar>
       <v-main>
-        <v-container fill-height fluid class="align-stretch pt-0 pb-0">
-          <v-row no-gutters>
-            <v-col class="d-flex flex-column">
-              <v-row class="flex-grow-0 justify-center">
-                <v-col v-for="c in controls" cols="auto" class="mx-2" :key="c.label" :title="c.label">
-                  <v-row class="justify-center"><v-btn fab dark :color="c.color" elevation="2" @click="c.fcn"><v-icon>{{ c.icon }}</v-icon></v-btn></v-row>
-                </v-col>
-                <v-col class="d-flex align-center">
-                  <v-slider hide-details label="Epoch"></v-slider>
+        <v-sheet width="100vw" style="position:sticky;top:0">
+          <v-toolbar color="primary" dark flat>
+            <v-toolbar-title>
+              Perceptron Simulation
+            </v-toolbar-title>
+            <v-spacer></v-spacer>
+            <v-btn icon @click="settings.show = true"><v-icon>mdi-cog</v-icon></v-btn>
+          </v-toolbar>
+          <v-toolbar color="primary" dark flat>
+            <v-col v-for="c in controls" cols="auto" class="mx-2" :key="c.label" :title="c.label">
+              <v-row class="justify-center"><v-btn light elevation="2" @click="c.fcn"><v-icon :color="c.color">{{ c.icon }}</v-icon></v-btn></v-row>
+            </v-col>
+            <v-col class="d-flex align-center">
+              <v-slider hide-details="auto" label="Epoch" :min="epochMin" :max="epochMax" thumb-label="always" thumb-color="secondary" v-model="display.epoch"></v-slider>
+            </v-col>
+          </v-toolbar>
+        </v-sheet>
+        <v-container fluid class="align-content-start py-0">
+          <v-row>
+            <v-col>
+              <v-row>
+                <v-col>
+                  graph
                 </v-col>
               </v-row>
-              <v-row class="align-self-stretch">
-                <v-col>
-                  table
-                </v-col>
-                <v-col>
-                  <v-row>
-                    <v-col>
-                      graph
-                    </v-col>
-                  </v-row>
-                </v-col>
-              </v-row>
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col>
+              <v-simple-table>
+                <template v-slot:default>
+                  <thead>
+                    <tr v-if="training.results.content.length > 0">
+                      <th class="text-center epoch-end">Epoch</th>
+                      <th v-for="col,i in training.results.header" :key="`tableheader-${i}`" class="text-center epoch-end">{{ col }}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="row,i in training.results.content.slice(0,display.epoch*training.data.length)">
+                      <td class="text-center" :class=" i % training.data.length == training.data.length - 1 ? 'epoch-end' : '' ">{{ i % training.data.length == 0 ? i/training.data.length + 1 : "" }}</td>
+                      <td class="text-center" v-for="col,j in row" :key="`tableitem-${i}-${j}`" :class=" i % training.data.length == training.data.length - 1 ? 'epoch-end' : '' ">{{ Number(col).toFixed(4) }}</td>
+                    </tr>
+                  </tbody>
+                </template>
+              </v-simple-table>
             </v-col>
           </v-row>
 
           <v-dialog v-model="settings.show" scrollable>
             <v-card>
-              <v-card-title>Initial values</v-card-title>
+              <v-card-title>Parameter values</v-card-title>
               <v-divider></v-divider>
               <v-card-text>
                 <v-list rounded>
-                  <v-list-item v-for="p in Object.keys(settings.parameters)" :key="p">
-                    <v-text-field :label="p" v-model="settings.parameters[p]" hide-details></v-text-field>
+                  <v-list-item v-for="w,wi in settings.parameters.weights" :key="`weight-${wi}`">
+                    <v-text-field :label="`Weight ${wi+1}`" v-model="settings.parameters.weights[wi]" hide-details></v-text-field>
+                  </v-list-item>
+                  <v-list-item>
+                    <v-text-field label="Θ" v-model="settings.parameters.theta" hide-details></v-text-field>
+                  </v-list-item>
+                  <v-list-item>
+                    <v-text-field label="α" v-model="settings.parameters.alpha" hide-details></v-text-field>
                   </v-list-item>
                 </v-list>
               </v-card-text>
@@ -123,8 +148,23 @@
           labels: ['x1', 'x2', 'y'],
           inputs: [0, 1],
           output: 2,
-          current_data_idx: 0
+          current_data_idx: 0,
+          results: {
+            header: [],
+            content: []
+          }
         },
+        display: {
+          epoch: 1
+        }
+      },
+      computed: {
+        epochMin: function () {
+          return Math.min(this.epochMax, 1);
+        },
+        epochMax: function () {
+          return Math.ceil(this.training.results.content.length / this.training.data.length);
+        }
       },
       mounted: function () {
         this.training.weights = this.settings.parameters.weights.map(x => x);
@@ -135,17 +175,38 @@
           return Math.min(1, Math.max(0, Math.ceil(X)));
         },
         runIter: function (n=1) {
+          if (this.training.results.header.length == 0) { 
+            this.training.results.header = this.training.labels;
+            this.training.results.header.push(...this.training.weights.map((w,i) => `w${i+1}`));
+            this.training.results.header.push('Θ');
+            this.training.results.header.push(...[`calculated ${this.training.labels[this.training.output]}`, 'error']);
+            this.training.results.header.push(...this.training.weights.map((w,i) => `Δw${i+1}`));
+            this.training.results.header.push('ΔΘ');
+            this.training.results.header.push(...this.training.weights.map((w,i) => `w${i+1}'`));
+            this.training.results.header.push("Θ'");
+          }
           [...Array(n).keys()].forEach(() => {
+            let res = [];
             dt = this.training.data[this.training.current_data_idx]
+            res.push(...dt);
+            res.push(...this.training.weights);
+            res.push(this.training.theta);
             op = this.calcOutput(dt);
+            res.push(op);
             e = this.calcError(op, this.training.data[this.training.current_data_idx][this.training.output]);
+            res.push(e);
             dw = this.calcWeightCorrections(dt, e);
-            console.log(dt, op, e, dw);
+            res.push(...dw);
+            dt = this.calcThetaCorrection(e);
+            res.push(dt);
             this.training.weights = this.training.weights.map((w,i) => w + dw[i]);
-            console.log(this.training.weights);
+            res.push(...this.training.weights);
+            this.training.theta = this.training.theta + dt;
+            res.push(this.training.theta);
             this.training.current_data_idx = ( this.training.current_data_idx + 1 )% this.training.data.length;
-            console.log(this.training.current_data_idx);
+            this.training.results.content.push(res);
           });
+          this.display.epoch = this.epochMax;
         },
         runEpoch: function (n=1) {
           [...Array(n).keys()].forEach(() => {
@@ -161,8 +222,10 @@
           return expop - calcop;
         },
         calcWeightCorrections: function (dt, e) {
-          // console.log(dt, e, this.settings.parameters.alpha);
           return this.training.weights.map((w,i) => this.settings.parameters.alpha * dt[i] * e);
+        },
+        calcThetaCorrection: function (e) {
+          return this.settings.parameters.alpha * -1 * e;
         }
       }
     })
