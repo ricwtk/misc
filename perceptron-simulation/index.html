@@ -2,6 +2,7 @@
 <html>
 <head>
   <meta charset="utf-8">
+  <link rel="icon" href="icon.png" type="image/x-icon" />
   <title>Perceptron Simulation</title>
   <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/@mdi/font@5.x/css/materialdesignicons.min.css" rel="stylesheet">
@@ -16,7 +17,7 @@
   <div id="app">
     <v-app>
       <v-main>
-        <v-sheet width="100vw" style="position:sticky;top:0">
+        <v-sheet width="100vw" style="position:sticky;top:0;z-index:100;">
           <v-toolbar color="primary" dark flat>
             <v-toolbar-title>
               Perceptron Simulation
@@ -36,11 +37,37 @@
         <v-container fluid class="align-content-start py-0">
           <v-row>
             <v-col>
-              <v-row>
-                <v-col>
-                  graph
-                </v-col>
-              </v-row>
+              <v-card dark color="primary">
+                <v-card-title>Graph</v-card-title>
+                <v-tabs background-color="primary" center-active dark v-model="graph.tab">
+                  <v-tab>Decision regions</v-tab>
+                  <v-tab>Weights</v-tab>
+                  <v-tab>Error</v-tab>
+                </v-tabs>
+                <v-tabs-items v-model="graph.tab">
+                  <v-tab-item>
+                    <v-card flat>
+                      <v-card-text>
+                        <svg id="g-decision-regions" width="100%" :height="`${graph.height}px`" :view-box.camel="graph.view_box.join(' ')"></svg>
+                      </v-card-text>
+                    </v-card>
+                  </v-tab-item>
+                  <v-tab-item>
+                    <v-card flat>
+                      <v-card-text>
+                        <svg id="g-weights" width="100%" :height="`${graph.height}px`" viewBox="0 0 1000 800"></svg>
+                      </v-card-text>
+                    </v-card>
+                  </v-tab-item>
+                  <v-tab-item>
+                    <v-card flat>
+                      <v-card-text>
+                        <svg id="g-error" width="100%" :height="`${graph.height}px`" viewBox="0 0 1000 800"></svg>
+                      </v-card-text>
+                    </v-card>
+                  </v-tab-item>
+                </v-tabs-items>
+              </v-card>
             </v-col>
           </v-row>
           <v-row>
@@ -56,7 +83,7 @@
                   <tbody>
                     <tr v-for="row,i in training.results.content.slice(0,display.epoch*training.data.length)">
                       <td class="text-center" :class=" i % training.data.length == training.data.length - 1 ? 'epoch-end' : '' ">{{ i % training.data.length == 0 ? i/training.data.length + 1 : "" }}</td>
-                      <td class="text-center" v-for="col,j in row" :key="`tableitem-${i}-${j}`" :class=" i % training.data.length == training.data.length - 1 ? 'epoch-end' : '' ">{{ Number(col).toFixed(4) }}</td>
+                      <td class="text-center" v-for="col,j in row" :key="`tableitem-${i}-${j}`" :class=" i % training.data.length == training.data.length - 1 ? 'epoch-end' : '' ">{{ j > 2 ? Number(col).toFixed(4) : col }}</td>
                     </tr>
                   </tbody>
                 </template>
@@ -97,6 +124,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+  <script src="https://d3js.org/d3.v6.min.js"></script>
   <script>
     let vm = new Vue({
       el: '#app',
@@ -156,6 +184,23 @@
         },
         display: {
           epoch: 1
+        },
+        graph: {
+          tab: 0,
+          height: 500,
+          view_box: [0,0,1000,800],
+          decision_regions: {
+            x: {
+              min: -1,
+              max: 2,
+              count: 50
+            },
+            y: {
+              min: -1,
+              max: 2,
+              count: 50
+            }
+          }
         }
       },
       computed: {
@@ -169,6 +214,10 @@
       mounted: function () {
         this.training.weights = this.settings.parameters.weights.map(x => x);
         this.training.theta = this.settings.parameters.theta;
+      },
+      watch: {
+        "display.epoch": function () { this.updateGraph(); },
+        "graph.tab": function () { this.updateGraph(); }
       },
       methods: {
         activationFcn: function (X) {
@@ -218,6 +267,11 @@
           y = y - this.training.theta;
           return this.activationFcn(y);
         },
+        calcOutputWithWeights: function (dt, weights, theta) {
+          y = weights.reduce((acc,w,i) => { return acc + w * dt[this.training.inputs[i]]; }, 0);
+          y = y - theta;
+          return this.activationFcn(y);
+        },
         calcError: function (calcop, expop) {
           return expop - calcop;
         },
@@ -226,6 +280,57 @@
         },
         calcThetaCorrection: function (e) {
           return this.settings.parameters.alpha * -1 * e;
+        },
+        updateGraph: function () {
+          if (this.graph.tab == 0) { this.drawDecisionRegions(); }
+        },
+        drawDecisionRegions: function () {
+          let gdr = d3.select("#g-decision-regions");
+          let range = {
+            x: [...Array(this.graph.decision_regions.x.count).keys()].map(xi => this.graph.decision_regions.x.min + xi * (this.graph.decision_regions.x.max - this.graph.decision_regions.x.min)/this.graph.decision_regions.x.count),
+            y: [...Array(this.graph.decision_regions.y.count).keys()].map(yi => this.graph.decision_regions.y.min + yi * (this.graph.decision_regions.y.max - this.graph.decision_regions.y.min)/this.graph.decision_regions.y.count)
+          };
+          let data = [];
+          let showing_iter = Math.min(this.display.epoch * this.training.data.length, this.training.results.content.length - 1);
+          if (showing_iter < 0) { return ;}
+          range.x.forEach(x => {
+            range.y.forEach(y => {
+              data.push({
+                x: x,
+                y: y,
+                o: this.calcOutputWithWeights([x, y], this.training.results.content[showing_iter].slice(3,5), this.training.results.content[showing_iter][5])
+              });
+            })
+          });
+          let scale = {
+            x: d3.scaleLinear()
+                .domain([range.x[0], range.x[range.x.length-1]])
+                .range([0, this.graph.view_box[2]]),
+            y: d3.scaleLinear()
+                .domain([range.y[0], range.y[range.y.length-1]])
+                .range([this.graph.view_box[3], 0]),
+            color: d3.scaleLinear()
+                .domain([0, 1])
+                .range([vm.$vuetify.theme.themes.light.secondary, vm.$vuetify.theme.themes.light.primary])
+          }
+          gdr.selectAll("*").remove();
+          gdr.selectAll()
+            .data(data)
+            .enter().append("rect")
+            .attr('x', d => scale.x(d.x))
+            .attr('y', d => scale.y(d.y))
+            .attr('width', scale.x(range.x[1]) - scale.x(range.x[0]))
+            .attr('height', scale.y(range.y[0]) - scale.y(range.y[1]))
+            .attr('fill', d => scale.color(d.o));
+          gdr.selectAll("circle")
+            .data(this.training.data.map(d => ({x: d[0], y: d[1], o: d[2]})))
+            .enter().append("circle")
+            .attr("cx", d => scale.x(d.x))
+            .attr("cy", d => scale.y(d.y))
+            .attr("r", scale.x(range.x[1]) - scale.x(range.x[0]))
+            .attr("fill", d => scale.color(d.o))
+            .attr("stroke", "white")
+            .attr("stroke-width", .2*(scale.x(range.x[1]) - scale.x(range.x[0])));
         }
       }
     })
