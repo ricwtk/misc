@@ -48,21 +48,21 @@
                   <v-tab-item>
                     <v-card flat>
                       <v-card-text>
-                        <svg id="g-decision-regions" width="100%" :height="`${graph.height}px`" :view-box.camel="graph.view_box.join(' ')"></svg>
+                        <svg id="g-decision-regions" width="100%" :height="`${graph.height}px`" :view-box.camel="graph.view_box.join(' ')" :key="graph.keys.decision_regions"></svg>
                       </v-card-text>
                     </v-card>
                   </v-tab-item>
                   <v-tab-item>
                     <v-card flat>
                       <v-card-text>
-                        <svg id="g-weights" width="100%" :height="`${graph.height}px`" :view-box.camel="graph.view_box.join(' ')"></svg>
+                        <svg id="g-weights" width="100%" :height="`${graph.height}px`" :view-box.camel="graph.view_box.join(' ')" :key="graph.keys.weights"></svg>
                       </v-card-text>
                     </v-card>
                   </v-tab-item>
                   <v-tab-item>
                     <v-card flat>
                       <v-card-text>
-                        <svg id="g-error" width="100%" :height="`${graph.height}px`" :view-box.camel="graph.view_box.join(' ')"></svg>
+                        <svg id="g-error" width="100%" :height="`${graph.height}px`" :view-box.camel="graph.view_box.join(' ')" :key="graph.keys.error"></svg>
                       </v-card-text>
                     </v-card>
                   </v-tab-item>
@@ -187,6 +187,11 @@
         },
         graph: {
           tab: 2,
+          keys: {
+            decision_regions: 0,
+            weights: 0,
+            error: 0
+          },
           height: 500,
           view_box: [0,0,1000,500],
           decision_regions: {
@@ -231,7 +236,7 @@
       watch: {
         "training.results.content": function () { this.updateGraph(); },
         "display.epoch": function () { this.updateGraph(); },
-        "graph.tab": function () { this.updateGraph(); }
+        "graph.tab": function () { this.$nextTick(this.updateGraph()); }
       },
       methods: {
         activationFcn: function (X) {
@@ -298,6 +303,7 @@
         updateGraph: function () {
           if (this.graph.tab == 0) { this.drawDecisionRegions(); }
           else if (this.graph.tab == 1) { this.drawWeights(); }
+          else if (this.graph.tab == 2) { this.drawError(); }
         },
         drawDecisionRegions: function () {
           let gdr = d3.select("#g-decision-regions");
@@ -384,13 +390,15 @@
             .attr("fill", d => scale.color(d.o))
             .attr("stroke", "white")
             .attr("stroke-width", 3);
+          // this.graph.keys.decision_regions += 1;
+          this.$forceUpdate();
         },
         drawWeights: function () {
           let showing_iter = Math.min(this.display.epoch * this.training.data.length, this.training.results.content.length - 1);
           if (showing_iter < 0) { return ;}
 
           let data = this.training.results.content.slice(0,showing_iter+1).map((d,i) => ({
-            x: i,
+            x: i+1,
             y: d.slice(3,6)
           }));
           let scale = {
@@ -433,6 +441,57 @@
               .attr("stroke", "white")
               .attr("stroke-width", 3);
           });
+          // this.graph.keys.weights += 1;
+          this.$forceUpdate();
+        },
+        drawError: function () {
+          let showing_iter = Math.min(this.display.epoch * this.training.data.length, this.training.results.content.length - 1);
+          if (showing_iter < 0) { return ;}
+
+          let data = this.training.results.content.slice(0,showing_iter+1).map((d,i) => ({
+            x: i+1,
+            y: d[7]
+          }));
+          let scale = {
+            x: d3.scaleLinear()
+              .domain([Math.min(...data.map(d => d.x)), Math.max(...data.map(d => d.x))])
+              .range([this.graph.analysis.margin.left, this.graph.view_box[2] + this.graph.view_box[0] - this.graph.analysis.margin.right]),
+            y: d3.scaleLinear()
+              .domain([Math.min(...data.map(d => d.y)), Math.max(...data.map(d => d.y))])
+              .range([this.graph.view_box[3] + this.graph.view_box[1] - this.graph.analysis.margin.bottom, this.graph.view_box[1] + this.graph.analysis.margin.top]),
+          };
+          let axes = {
+            x: d3.axisBottom(scale.x),
+            y: d3.axisLeft(scale.y)
+          };
+
+          let gw = d3.select("#g-error");
+          gw.selectAll("*").remove();
+          gw.append("g")
+            .attr("transform", `translate(0,${this.graph.view_box[3]+this.graph.view_box[1]-this.graph.analysis.margin.bottom})`)
+            .call(axes.x);
+          gw.append("g")
+            .attr("transform", `translate(${this.graph.view_box[0]+this.graph.analysis.margin.left},0)`)
+            .call(axes.y);
+          gw.append("path")
+            .datum(data)
+            .attr("fill", "none")
+            .attr("stroke", this.graph.analysis.colors[0])
+            .attr("stroke-width", 5)
+            .attr("stroke-linejoin", "round")
+            .attr("stroke-linecap", "round")
+            .attr("d", d3.line().x(d => scale.x(d.x)).y(d => scale.y(d.y)));
+          gw.selectAll()
+            .data(data)
+            .enter().append("circle")
+            .attr("cx", d => scale.x(d.x))
+            .attr("cy", d => scale.y(d.y))
+            .attr("r", 8)
+            .attr("fill", this.graph.analysis.colors[0])
+            .attr("stroke", "white")
+            .attr("stroke-width", 3);
+          // this.graph.keys.error += 1;
+          this.$forceUpdate();
         }
       }
     })
