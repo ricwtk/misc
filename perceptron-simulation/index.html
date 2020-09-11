@@ -55,14 +55,14 @@
                   <v-tab-item>
                     <v-card flat>
                       <v-card-text>
-                        <svg id="g-weights" width="100%" :height="`${graph.height}px`" viewBox="0 0 1000 800"></svg>
+                        <svg id="g-weights" width="100%" :height="`${graph.height}px`" :view-box.camel="graph.view_box.join(' ')"></svg>
                       </v-card-text>
                     </v-card>
                   </v-tab-item>
                   <v-tab-item>
                     <v-card flat>
                       <v-card-text>
-                        <svg id="g-error" width="100%" :height="`${graph.height}px`" viewBox="0 0 1000 800"></svg>
+                        <svg id="g-error" width="100%" :height="`${graph.height}px`" :view-box.camel="graph.view_box.join(' ')"></svg>
                       </v-card-text>
                     </v-card>
                   </v-tab-item>
@@ -186,9 +186,9 @@
           epoch: 1
         },
         graph: {
-          tab: 0,
+          tab: 2,
           height: 500,
-          view_box: [0,0,1000,800],
+          view_box: [0,0,1000,500],
           decision_regions: {
             x: {
               min: -1,
@@ -200,6 +200,19 @@
               max: 2,
               count: 50
             }
+          },
+          analysis: {
+            margin: {
+              left: 50,
+              bottom: 50,
+              right: 50,
+              top: 50
+            },
+            colors: [
+              "#66c2a5",
+              "#fc8d62",
+              "#8da0cb"
+            ]
           }
         }
       },
@@ -284,10 +297,10 @@
         },
         updateGraph: function () {
           if (this.graph.tab == 0) { this.drawDecisionRegions(); }
+          else if (this.graph.tab == 1) { this.drawWeights(); }
         },
         drawDecisionRegions: function () {
           let gdr = d3.select("#g-decision-regions");
-          let data = [];
           let showing_iter = Math.min(this.display.epoch * this.training.data.length, this.training.results.content.length - 1);
           if (showing_iter < 0) { return ;}
           // w1x + w2y - theta = 0
@@ -371,7 +384,55 @@
             .attr("fill", d => scale.color(d.o))
             .attr("stroke", "white")
             .attr("stroke-width", 3);
-          
+        },
+        drawWeights: function () {
+          let showing_iter = Math.min(this.display.epoch * this.training.data.length, this.training.results.content.length - 1);
+          if (showing_iter < 0) { return ;}
+
+          let data = this.training.results.content.slice(0,showing_iter+1).map((d,i) => ({
+            x: i,
+            y: d.slice(3,6)
+          }));
+          let scale = {
+            x: d3.scaleLinear()
+              .domain([Math.min(...data.map(d => d.x)), Math.max(...data.map(d => d.x))])
+              .range([this.graph.analysis.margin.left, this.graph.view_box[2] + this.graph.view_box[0] - this.graph.analysis.margin.right]),
+            y: d3.scaleLinear()
+              .domain([Math.min(...data.reduce((acc,d) => { acc.push(...d.y); return acc; }, [])), Math.max(...data.reduce((acc,d) => { acc.push(...d.y); return acc; }, []))])
+              .range([this.graph.view_box[3] + this.graph.view_box[1] - this.graph.analysis.margin.bottom, this.graph.view_box[1] + this.graph.analysis.margin.top]),
+          };
+          let axes = {
+            x: d3.axisBottom(scale.x),
+            y: d3.axisLeft(scale.y)
+          };
+
+          let gw = d3.select("#g-weights");
+          gw.selectAll("*").remove();
+          gw.append("g")
+            .attr("transform", `translate(0,${this.graph.view_box[3]+this.graph.view_box[1]-this.graph.analysis.margin.bottom})`)
+            .call(axes.x);
+          gw.append("g")
+            .attr("transform", `translate(${this.graph.view_box[0]+this.graph.analysis.margin.left},0)`)
+            .call(axes.y);
+          [...Array(3).keys()].forEach(i => {
+            gw.append("path")
+              .datum(data)
+              .attr("fill", "none")
+              .attr("stroke", this.graph.analysis.colors[i])
+              .attr("stroke-width", 5)
+              .attr("stroke-linejoin", "round")
+              .attr("stroke-linecap", "round")
+              .attr("d", d3.line().x(d => scale.x(d.x)).y(d => scale.y(d.y[i])));
+            gw.selectAll()
+              .data(data)
+              .enter().append("circle")
+              .attr("cx", d => scale.x(d.x))
+              .attr("cy", d => scale.y(d.y[i]))
+              .attr("r", 8)
+              .attr("fill", this.graph.analysis.colors[i])
+              .attr("stroke", "white")
+              .attr("stroke-width", 3);
+          });
         }
       }
     })
