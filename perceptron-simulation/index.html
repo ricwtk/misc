@@ -17,7 +17,7 @@
   <div id="app">
     <v-app>
       <v-main>
-        <v-sheet width="100vw" style="position:sticky;top:0;z-index:100;">
+        <v-sheet width="100%" style="position:sticky;top:0;z-index:100;">
           <v-toolbar color="primary" dark flat>
             <v-toolbar-title>
               Perceptron Simulation
@@ -37,7 +37,7 @@
         <v-container fluid class="align-content-start py-0">
           <v-row>
             <v-col>
-              <v-card dark color="primary">
+              <v-card dark color="primary" v-show="training.results.content.length">
                 <v-card-title>Graph</v-card-title>
                 <v-tabs background-color="primary" center-active dark v-model="graph.tab">
                   <v-tab>Decision regions</v-tab>
