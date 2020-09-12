@@ -186,7 +186,7 @@
           epoch: 1
         },
         graph: {
-          tab: 2,
+          tab: 0,
           height: 500,
           view_box: [0,0,1000,500],
           decision_regions: {
@@ -433,6 +433,24 @@
               .attr("stroke", "white")
               .attr("stroke-width", 3);
           });
+
+          gw.append("text")
+            .attr("x", (scale.x.range()[1] + scale.x.range()[0])/2)
+            .attr("y", this.graph.view_box[1] + this.graph.view_box[3] - 10)
+            .attr("text-anchor", "middle")
+            .attr("dominant-baseline", "text-bottom")
+            .text("Iteration")
+          let labelpos = {
+            x: this.graph.view_box[0],
+            y: (scale.y.range()[1] + scale.y.range()[0])/2
+          }
+          gw.append("text")
+            .attr("x", labelpos.x)
+            .attr("y", labelpos.y)
+            .attr("transform", `rotate(-90,${labelpos.x},${labelpos.y})`)
+            .attr("text-anchor", "middle")
+            .attr("dominant-baseline", "middle")
+            .text("Iteration")
         },
         drawError: function () {
           let showing_iter = Math.min(this.display.epoch * this.training.data.length, this.training.results.content.length - 1);
@@ -480,6 +498,24 @@
             .attr("fill", this.graph.analysis.colors[0])
             .attr("stroke", "white")
             .attr("stroke-width", 3);
+
+          gw.append("text")
+            .attr("x", (scale.x.range()[1] + scale.x.range()[0])/2)
+            .attr("y", this.graph.view_box[1] + this.graph.view_box[3] - 10)
+            .attr("text-anchor", "middle")
+            .attr("dominant-baseline", "text-bottom")
+            .text("Iteration")
+          let labelpos = {
+            x: this.graph.view_box[0],
+            y: (scale.y.range()[1] + scale.y.range()[0])/2
+          }
+          gw.append("text")
+            .attr("x", labelpos.x)
+            .attr("y", labelpos.y)
+            .attr("transform", `rotate(-90,${labelpos.x},${labelpos.y})`)
+            .attr("text-anchor", "middle")
+            .attr("dominant-baseline", "middle")
+            .text("Iteration")
         }
       }
     })
