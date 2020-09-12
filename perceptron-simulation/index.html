@@ -230,8 +230,7 @@
       },
       watch: {
         "training.results.content": function () { this.updateGraph(); },
-        "display.epoch": function () { this.updateGraph(); },
-        "graph.tab": function () { this.updateGraph(); }
+        "display.epoch": function () { this.updateGraph(); }
       },
       methods: {
         activationFcn: function (X) {
@@ -296,9 +295,9 @@
           return this.settings.parameters.alpha * -1 * e;
         },
         updateGraph: function () {
-          if (this.graph.tab == 0) { this.drawDecisionRegions(); }
-          else if (this.graph.tab == 1) { this.drawWeights(); }
-          else if (this.graph.tab == 2) { this.drawError(); }
+          this.drawDecisionRegions();
+          this.drawWeights();
+          this.drawError();
         },
         drawDecisionRegions: function () {
           let gdr = d3.select("#g-decision-regions");
