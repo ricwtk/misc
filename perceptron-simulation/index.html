@@ -97,6 +97,9 @@
               <v-divider></v-divider>
               <v-card-text>
                 <v-list rounded>
+                  <v-list-item>
+                    <v-select label="Operation to model/learn" :items="settings.parameters.operation.options" v-model="settings.parameters.operation.chosen" hide-details></v-select>
+                  </v-list-item>
                   <v-list-item v-for="w,wi in settings.parameters.weights" :key="`weight-${wi}`">
                     <v-text-field :label="`Weight ${wi+1}`" v-model="settings.parameters.weights[wi]" hide-details></v-text-field>
                   </v-list-item>
@@ -112,8 +115,8 @@
               <v-card-actions>
                 <span class="subtitle-2"><b>Note</b>: no termination condition is implemented</span>
                 <v-spacer></v-spacer>
-                <v-btn color="primary">Set</v-btn>
-                <v-btn>Cancel</v-btn>
+                <v-btn color="primary" @click="setConfigurations">Set</v-btn>
+                <v-btn @click="settings.show=false">Cancel</v-btn>
               </v-card-actions>
             </v-card>
           </v-dialog>
@@ -159,6 +162,41 @@
         settings: {
           show: false,
           parameters: {
+            operation: {
+              chosen: "AND",
+              options: ["AND", "OR", "Not-AND", "Not-OR", "Exclusive-OR", "Exclusive-AND"],
+              data: [[ //AND
+                [0, 0, 0],
+                [0, 1, 0],
+                [1, 0, 0],
+                [1, 1, 1]
+              ],[ //OR
+                [0, 0, 0],
+                [0, 1, 1],
+                [1, 0, 1],
+                [1, 1, 1]
+              ],[ //NAND
+                [0, 0, 1],
+                [0, 1, 1],
+                [1, 0, 1],
+                [1, 1, 0]
+              ],[ //NOR
+                [0, 0, 1],
+                [0, 1, 0],
+                [1, 0, 0],
+                [1, 1, 0]
+              ],[ //XOR
+                [0, 0, 0],
+                [0, 1, 1],
+                [1, 0, 1],
+                [1, 1, 0]
+              ],[ //XAND
+                [0, 0, 1],
+                [0, 1, 0],
+                [1, 0, 0],
+                [1, 1, 1]
+              ]]
+            },
             weights: [Math.random() - 0.5, Math.random() - 0.5],
             theta: Math.random() - 0.5,
             alpha: 0.1
@@ -535,6 +573,9 @@
             .attr("text-anchor", "middle")
             .attr("dominant-baseline", "middle")
             .text("Error")
+        },
+        setConfigurations: function () {
+
         }
       }
     })
