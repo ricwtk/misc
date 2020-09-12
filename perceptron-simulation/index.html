@@ -521,14 +521,14 @@
               .attr("dominant-baseline", "middle")
               .attr("stroke-width", 3.5)
               .attr("stroke", this.graph.analysis.colors[i])
-              .text(`w${i+1}`);
+              .text(i == 2 ? "Θ" : `w${i+1}`);
             gw.append("text")
               .attr("x", scale.x(data[data.length-1].x)+10)
               .attr("y", scale.y(data[data.length-1].y[i]))
               .attr("text-anchor", "start")
               .attr("dominant-baseline", "middle")  
               .style("fill", "white")
-              .text(`w${i+1}`);
+              .text(i == 2 ? "Θ" : `w${i+1}`);
           });
           gw.append("text")
             .attr("x", (scale.x.range()[1] + scale.x.range()[0])/2)
