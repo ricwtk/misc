@@ -157,7 +157,17 @@
           icon: "mdi-skip-forward",
           label: "Run 10 epoch",
           color: "secondary",
-          fcn: function () { vm.runEpoch(10) }
+          fcn: function () { vm.runEpoch(10); }
+        },{
+          icon: "mdi-undo-variant",
+          label: "reset",
+          color: "secondary",
+          fcn: function () { vm.resetLearning(); }
+        },{
+          icon: "mdi-autorenew",
+          label: "randomise",
+          color: "secondary",
+          fcn: function () { vm.randomise(); }
         }],
         settings: {
           show: false,
@@ -622,6 +632,11 @@
             header: [],
             content: []
           };
+        },
+        randomise: function () {
+          this.settings.parameters.weights = [Math.random() - 0.5, Math.random() - 0.5];
+          this.settings.parameters.theta = Math.random() - 0.5;
+          this.resetLearning();
         }
       }
     })
