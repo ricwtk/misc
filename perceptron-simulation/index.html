@@ -48,21 +48,21 @@
                   <v-tab-item eager>
                     <v-card flat>
                       <v-card-text>
-                        <svg id="g-decision-regions" width="100%" :height="`${graph.height}px`" :view-box.camel="graph.view_box.join(' ')" :key="graph.keys.decision_regions"></svg>
+                        <svg id="g-decision-regions" width="100%" :height="`${graph.height}px`" :view-box.camel="graph.view_box.join(' ')"></svg>
                       </v-card-text>
                     </v-card>
                   </v-tab-item>
                   <v-tab-item eager>
                     <v-card flat>
                       <v-card-text>
-                        <svg id="g-weights" width="100%" :height="`${graph.height}px`" :view-box.camel="graph.view_box.join(' ')" :key="graph.keys.weights"></svg>
+                        <svg id="g-weights" width="100%" :height="`${graph.height}px`" :view-box.camel="graph.view_box.join(' ')"></svg>
                       </v-card-text>
                     </v-card>
                   </v-tab-item>
                   <v-tab-item eager>
                     <v-card flat>
                       <v-card-text>
-                        <svg id="g-error" width="100%" :height="`${graph.height}px`" :view-box.camel="graph.view_box.join(' ')" :key="graph.keys.error"></svg>
+                        <svg id="g-error" width="100%" :height="`${graph.height}px`" :view-box.camel="graph.view_box.join(' ')"></svg>
                       </v-card-text>
                     </v-card>
                   </v-tab-item>
@@ -187,11 +187,6 @@
         },
         graph: {
           tab: 2,
-          keys: {
-            decision_regions: 0,
-            weights: 0,
-            error: 0
-          },
           height: 500,
           view_box: [0,0,1000,500],
           decision_regions: {
@@ -236,7 +231,7 @@
       watch: {
         "training.results.content": function () { this.updateGraph(); },
         "display.epoch": function () { this.updateGraph(); },
-        "graph.tab": function () { this.$nextTick(this.updateGraph()); }
+        "graph.tab": function () { this.updateGraph(); }
       },
       methods: {
         activationFcn: function (X) {
@@ -390,8 +385,6 @@
             .attr("fill", d => scale.color(d.o))
             .attr("stroke", "white")
             .attr("stroke-width", 3);
-          // this.graph.keys.decision_regions += 1;
-          this.$forceUpdate();
         },
         drawWeights: function () {
           let showing_iter = Math.min(this.display.epoch * this.training.data.length, this.training.results.content.length - 1);
@@ -441,8 +434,6 @@
               .attr("stroke", "white")
               .attr("stroke-width", 3);
           });
-          // this.graph.keys.weights += 1;
-          this.$forceUpdate();
         },
         drawError: function () {
           let showing_iter = Math.min(this.display.epoch * this.training.data.length, this.training.results.content.length - 1);
@@ -490,8 +481,6 @@
             .attr("fill", this.graph.analysis.colors[0])
             .attr("stroke", "white")
             .attr("stroke-width", 3);
-          // this.graph.keys.error += 1;
-          this.$forceUpdate();
         }
       }
     })
