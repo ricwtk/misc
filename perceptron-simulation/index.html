@@ -316,7 +316,7 @@
         },
         runIter: function (n=1) {
           if (this.training.results.header.length == 0) { 
-            this.training.results.header = this.training.labels;
+            this.training.results.header = [...this.training.labels];
             this.training.results.header.push(...this.training.weights.map((w,i) => `w${i+1}`));
             this.training.results.header.push('Θ');
             this.training.results.header.push(...[`calculated ${this.training.labels[this.training.output]}`, 'error']);
