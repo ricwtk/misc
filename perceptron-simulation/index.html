@@ -45,21 +45,21 @@
                   <v-tab>Error</v-tab>
                 </v-tabs>
                 <v-tabs-items v-model="graph.tab">
-                  <v-tab-item>
+                  <v-tab-item eager>
                     <v-card flat>
                       <v-card-text>
                         <svg id="g-decision-regions" width="100%" :height="`${graph.height}px`" :view-box.camel="graph.view_box.join(' ')" :key="graph.keys.decision_regions"></svg>
                       </v-card-text>
                     </v-card>
                   </v-tab-item>
-                  <v-tab-item>
+                  <v-tab-item eager>
                     <v-card flat>
                       <v-card-text>
                         <svg id="g-weights" width="100%" :height="`${graph.height}px`" :view-box.camel="graph.view_box.join(' ')" :key="graph.keys.weights"></svg>
                       </v-card-text>
                     </v-card>
                   </v-tab-item>
-                  <v-tab-item>
+                  <v-tab-item eager>
                     <v-card flat>
                       <v-card-text>
                         <svg id="g-error" width="100%" :height="`${graph.height}px`" :view-box.camel="graph.view_box.join(' ')" :key="graph.keys.error"></svg>
