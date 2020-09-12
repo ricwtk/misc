@@ -401,8 +401,9 @@
               .domain([Math.min(...data.reduce((acc,d) => { acc.push(...d.y); return acc; }, [])), Math.max(...data.reduce((acc,d) => { acc.push(...d.y); return acc; }, []))])
               .range([this.graph.view_box[3] + this.graph.view_box[1] - this.graph.analysis.margin.bottom, this.graph.view_box[1] + this.graph.analysis.margin.top]),
           };
+          let xtickValues = scale.x.ticks().filter(Number.isInteger);
           let axes = {
-            x: d3.axisBottom(scale.x),
+            x: d3.axisBottom(scale.x).tickValues(xtickValues).tickFormat(d3.format('d')),
             y: d3.axisLeft(scale.y)
           };
 
@@ -450,7 +451,7 @@
             .attr("transform", `rotate(-90,${labelpos.x},${labelpos.y})`)
             .attr("text-anchor", "middle")
             .attr("dominant-baseline", "middle")
-            .text("Iteration")
+            .text("Weights")
         },
         drawError: function () {
           let showing_iter = Math.min(this.display.epoch * this.training.data.length, this.training.results.content.length - 1);
@@ -468,8 +469,9 @@
               .domain([Math.min(...data.map(d => d.y)), Math.max(...data.map(d => d.y))])
               .range([this.graph.view_box[3] + this.graph.view_box[1] - this.graph.analysis.margin.bottom, this.graph.view_box[1] + this.graph.analysis.margin.top]),
           };
+          let xtickValues = scale.x.ticks().filter(Number.isInteger);
           let axes = {
-            x: d3.axisBottom(scale.x),
+            x: d3.axisBottom(scale.x).tickValues(xtickValues).tickFormat(d3.format('d')),
             y: d3.axisLeft(scale.y)
           };
 
@@ -515,7 +517,7 @@
             .attr("transform", `rotate(-90,${labelpos.x},${labelpos.y})`)
             .attr("text-anchor", "middle")
             .attr("dominant-baseline", "middle")
-            .text("Iteration")
+            .text("Error")
         }
       }
     })
