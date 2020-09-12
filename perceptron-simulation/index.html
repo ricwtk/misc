@@ -199,7 +199,13 @@
             },
             weights: [Math.random() - 0.5, Math.random() - 0.5],
             theta: Math.random() - 0.5,
-            alpha: 0.1
+            alpha: 0.1,
+            cached: {
+              operation: "",
+              weights: [],
+              theta: 0,
+              alpha: 0
+            }
           }
         },
         training: {
@@ -263,12 +269,26 @@
         }
       },
       mounted: function () {
-        this.training.weights = this.settings.parameters.weights.map(x => x);
-        this.training.theta = this.settings.parameters.theta;
+        this.resetLearning();
       },
       watch: {
         "training.results.content": function () { this.updateGraph(); },
-        "display.epoch": function () { this.updateGraph(); }
+        "display.epoch": function () { this.updateGraph(); },
+        "settings.show": function (showing) {
+          if (showing) {
+            this.settings.parameters.cached = {
+              operation: this.settings.parameters.operation.chosen,
+              weights: [...this.settings.parameters.weights],
+              theta: this.settings.parameters.theta,
+              alpha: this.settings.parameters.alpha
+            };
+          } else {
+            this.settings.parameters.operation.chosen = this.settings.parameters.cached.operation;
+            this.settings.parameters.weights = [...this.settings.parameters.cached.weights];
+            this.settings.parameters.theta = this.settings.parameters.cached.theta;
+            this.settings.parameters.alpha = this.settings.parameters.cached.alpha;
+          }
+        }
       },
       methods: {
         activationFcn: function (X) {
@@ -575,7 +595,23 @@
             .text("Error")
         },
         setConfigurations: function () {
-
+          this.settings.parameters.cached = {
+            operation: this.settings.parameters.operation.chosen,
+            weights: [...this.settings.parameters.weights],
+            theta: this.settings.parameters.theta,
+            alpha: this.settings.parameters.alpha
+          };
+          this.settings.show = false;
+          this.resetLearning();
+        },
+        resetLearning: function () {
+          this.training.weights = this.settings.parameters.weights.map(x => x);
+          this.training.theta = this.settings.parameters.theta;
+          this.training.data = this.settings.parameters.operation.data[this.settings.parameters.operation.options.indexOf(this.settings.parameters.operation.chosen)].map(x => [...x]);
+          this.training.results = {
+            header: [],
+            content: []
+          };
         }
       }
     })
