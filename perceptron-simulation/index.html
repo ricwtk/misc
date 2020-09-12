@@ -37,14 +37,14 @@
         <v-container fluid class="align-content-start py-0">
           <v-row>
             <v-col>
-              <v-card dark color="primary" v-show="training.results.content.length">
-                <v-card-title>Graph</v-card-title>
-                <v-tabs background-color="primary" center-active dark v-model="graph.tab">
+              <v-card dark color="primary">
+                <v-card-title>Graph ({{ settings.parameters.operation.chosen }})</v-card-title>
+                <v-tabs background-color="primary" center-active dark v-model="graph.tab" v-show="training.results.content.length">
                   <v-tab>Decision regions</v-tab>
                   <v-tab>Weights</v-tab>
                   <v-tab>Error</v-tab>
                 </v-tabs>
-                <v-tabs-items v-model="graph.tab">
+                <v-tabs-items v-model="graph.tab" v-show="training.results.content.length">
                   <v-tab-item eager>
                     <v-card flat>
                       <v-card-text>
@@ -164,7 +164,7 @@
           parameters: {
             operation: {
               chosen: "AND",
-              options: ["AND", "OR", "Not-AND", "Not-OR", "Exclusive-OR", "Exclusive-AND"],
+              options: ["AND", "OR", "is-x1", "is-x2", "Exclusive-OR", "Exclusive-AND"],
               data: [[ //AND
                 [0, 0, 0],
                 [0, 1, 0],
@@ -175,16 +175,26 @@
                 [0, 1, 1],
                 [1, 0, 1],
                 [1, 1, 1]
-              ],[ //NAND
-                [0, 0, 1],
-                [0, 1, 1],
-                [1, 0, 1],
-                [1, 1, 0]
-              ],[ //NOR
-                [0, 0, 1],
+              // ],[ //NAND
+              //   [0, 0, 1],
+              //   [0, 1, 1],
+              //   [1, 0, 1],
+              //   [1, 1, 0]
+              // ],[ //NOR
+              //   [0, 0, 1],
+              //   [0, 1, 0],
+              //   [1, 0, 0],
+              //   [1, 1, 0]
+              ],[ //is-x1
+                [0, 0, 0],
                 [0, 1, 0],
+                [1, 0, 1],
+                [1, 1, 1]
+              ],[ //is-x2
+                [0, 0, 0],
+                [0, 1, 1],
                 [1, 0, 0],
-                [1, 1, 0]
+                [1, 1, 1]
               ],[ //XOR
                 [0, 0, 0],
                 [0, 1, 1],
