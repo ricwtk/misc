@@ -494,6 +494,55 @@
             .attr("text-anchor", "middle")
             .attr("dominant-baseline", "middle")
             .text("x2")
+
+          let legend = {
+            width: 95,
+            margin: {
+              top: 10,
+              right: 10
+            },
+            padding: { left: 10, bottom: 10, right: 10, top: 10, between: 10 },
+            fill: {
+              color: "white",
+              opacity: 0.8
+            },
+            border: {
+              radius: 5,
+            },
+            block: { width: 30, height: 30 }
+          }
+          gdr.append("rect")
+            .attr("x", scale.x.range()[1]-legend.width-legend.margin.right)
+            .attr("y", scale.y.range()[1]+legend.margin.top)
+            .attr("width", legend.width)
+            .attr("height", legend.padding.top+2*legend.block.height+legend.padding.between+legend.padding.bottom)
+            .attr("rx", legend.border.radius)
+            .style("fill", legend.fill.color)
+            .style("fill-opacity", legend.fill.opacity);
+          gdr.append("rect")
+            .attr("x", scale.x.range()[1]-legend.width-legend.margin.right+legend.padding.left)
+            .attr("y", scale.y.range()[1]+legend.margin.top+legend.padding.top)
+            .attr("width", legend.block.width)
+            .attr("height", legend.block.height)
+            .attr("rx", legend.border.radius)
+            .style("fill", scale.color(0));
+          gdr.append("text")
+            .attr("x", scale.x.range()[1]-legend.width-legend.margin.right+legend.padding.left+legend.block.width+legend.padding.between)
+            .attr("y", scale.y.range()[1]+legend.margin.top+legend.padding.top+.5*legend.block.height)
+            .attr("dominant-baseline", "middle")
+            .text("y = 0");
+          gdr.append("rect")
+            .attr("x", scale.x.range()[1]-legend.width-legend.margin.right+legend.padding.left)
+            .attr("y", scale.y.range()[1]+legend.margin.top+legend.padding.top+legend.block.height+legend.padding.between)
+            .attr("width", legend.block.width)
+            .attr("height", legend.block.height)
+            .attr("rx", legend.border.radius)
+            .style("fill", scale.color(1));
+          gdr.append("text")
+            .attr("x", scale.x.range()[1]-legend.width-legend.margin.right+legend.padding.left+legend.block.width+legend.padding.between)
+            .attr("y", scale.y.range()[1]+legend.margin.top+legend.padding.top+1.5*legend.block.height+legend.padding.between)
+            .attr("dominant-baseline", "middle")
+            .text("y = 1");
         },
         drawWeights: function () {
           let showing_iter = Math.min(this.display.epoch * this.training.data.length, this.training.results.content.length - 1);
