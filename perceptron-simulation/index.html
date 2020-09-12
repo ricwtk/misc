@@ -253,6 +253,12 @@
           tab: 0,
           height: 500,
           view_box: [0,0,1000,500],
+          margin: {
+            left: 50,
+            bottom: 50,
+            right: 50,
+            top: 25
+          },
           decision_regions: {
             x: {
               min: -1,
@@ -266,12 +272,6 @@
             }
           },
           analysis: {
-            margin: {
-              left: 50,
-              bottom: 50,
-              right: 50,
-              top: 50
-            },
             colors: [
               "#66c2a5",
               "#fc8d62",
@@ -378,7 +378,6 @@
           this.drawError();
         },
         drawDecisionRegions: function () {
-          let gdr = d3.select("#g-decision-regions");
           let showing_iter = Math.min(this.display.epoch * this.training.data.length, this.training.results.content.length - 1);
           if (showing_iter < 0) { return ;}
           // w1x + w2y - theta = 0
@@ -434,15 +433,31 @@
           let scale = {
             x: d3.scaleLinear()
                 .domain([this.graph.decision_regions.x.min, this.graph.decision_regions.x.max])
-                .range([0, this.graph.view_box[2]]),
+                .range([this.graph.view_box[0]+this.graph.margin.left, this.graph.view_box[0]+this.graph.view_box[2]-this.graph.margin.right]),
             y: d3.scaleLinear()
                 .domain([this.graph.decision_regions.y.min, this.graph.decision_regions.y.max])
-                .range([this.graph.view_box[3], 0]),
+                .range([this.graph.view_box[1]+this.graph.view_box[3]-this.graph.margin.bottom, this.graph.view_box[1]+this.graph.margin.top]),
             color: d3.scaleLinear()
                 .domain([0, 1])
                 .range([vm.$vuetify.theme.themes.light.secondary, vm.$vuetify.theme.themes.light.primary])
           }
+          let tickValues = {
+            x: scale.x.ticks().filter(Number.isInteger),
+            y: scale.y.ticks().filter(Number.isInteger),
+          };
+          let axes = {
+            x: d3.axisBottom(scale.x).tickValues(tickValues.x).tickFormat(d3.format('d')),
+            y: d3.axisLeft(scale.y).tickValues(tickValues.y).tickFormat(d3.format('d'))
+          };
+
+          let gdr = d3.select("#g-decision-regions");
           gdr.selectAll("*").remove();
+          gdr.append("g")
+            .attr("transform", `translate(0,${this.graph.view_box[3]+this.graph.view_box[1]-this.graph.margin.bottom})`)
+            .call(axes.x);
+          gdr.append("g")
+            .attr("transform", `translate(${this.graph.view_box[0]+this.graph.margin.left},0)`)
+            .call(axes.y);
           areas.forEach((area, ai) => {
             gdr.append("path")
               .datum(area)
@@ -462,6 +477,23 @@
             .attr("fill", d => scale.color(d.o))
             .attr("stroke", "white")
             .attr("stroke-width", 3);
+          gdr.append("text")
+            .attr("x", (scale.x.range()[1] + scale.x.range()[0])/2)
+            .attr("y", this.graph.view_box[1] + this.graph.view_box[3] - 10)
+            .attr("text-anchor", "middle")
+            .attr("dominant-baseline", "text-bottom")
+            .text("x1")
+          let labelpos = {
+            x: this.graph.view_box[0],
+            y: (scale.y.range()[1] + scale.y.range()[0])/2
+          }
+          gdr.append("text")
+            .attr("x", labelpos.x)
+            .attr("y", labelpos.y)
+            .attr("transform", `rotate(-90,${labelpos.x},${labelpos.y})`)
+            .attr("text-anchor", "middle")
+            .attr("dominant-baseline", "middle")
+            .text("x2")
         },
         drawWeights: function () {
           let showing_iter = Math.min(this.display.epoch * this.training.data.length, this.training.results.content.length - 1);
@@ -474,10 +506,10 @@
           let scale = {
             x: d3.scaleLinear()
               .domain([Math.min(...data.map(d => d.x)), Math.max(...data.map(d => d.x))])
-              .range([this.graph.analysis.margin.left, this.graph.view_box[2] + this.graph.view_box[0] - this.graph.analysis.margin.right]),
+              .range([this.graph.margin.left, this.graph.view_box[2] + this.graph.view_box[0] - this.graph.margin.right]),
             y: d3.scaleLinear()
               .domain([Math.min(...data.reduce((acc,d) => { acc.push(...d.y); return acc; }, [])), Math.max(...data.reduce((acc,d) => { acc.push(...d.y); return acc; }, []))])
-              .range([this.graph.view_box[3] + this.graph.view_box[1] - this.graph.analysis.margin.bottom, this.graph.view_box[1] + this.graph.analysis.margin.top]),
+              .range([this.graph.view_box[3] + this.graph.view_box[1] - this.graph.margin.bottom, this.graph.view_box[1] + this.graph.margin.top]),
           };
           let xtickValues = scale.x.ticks().filter(Number.isInteger);
           let axes = {
@@ -488,10 +520,10 @@
           let gw = d3.select("#g-weights");
           gw.selectAll("*").remove();
           gw.append("g")
-            .attr("transform", `translate(0,${this.graph.view_box[3]+this.graph.view_box[1]-this.graph.analysis.margin.bottom})`)
+            .attr("transform", `translate(0,${this.graph.view_box[3]+this.graph.view_box[1]-this.graph.margin.bottom})`)
             .call(axes.x);
           gw.append("g")
-            .attr("transform", `translate(${this.graph.view_box[0]+this.graph.analysis.margin.left},0)`)
+            .attr("transform", `translate(${this.graph.view_box[0]+this.graph.margin.left},0)`)
             .call(axes.y);
           [...Array(3).keys()].forEach(i => {
             gw.append("path")
@@ -559,11 +591,11 @@
           let scale = {
             x: d3.scaleLinear()
               .domain([Math.min(...data.map(d => d.x)), Math.max(...data.map(d => d.x))])
-              .range([this.graph.analysis.margin.left, this.graph.view_box[2] + this.graph.view_box[0] - this.graph.analysis.margin.right]),
+              .range([this.graph.margin.left, this.graph.view_box[2] + this.graph.view_box[0] - this.graph.margin.right]),
             y: d3.scaleLinear()
               .domain([Math.min(...data.map(d => d.y)), Math.max(...data.map(d => d.y))])
-              .range([this.graph.view_box[3] + this.graph.view_box[1] - this.graph.analysis.margin.bottom, this.graph.view_box[1] + this.graph.analysis.margin.top]),
-          };
+              .range([this.graph.view_box[3] + this.graph.view_box[1] - this.graph.margin.bottom, this.graph.view_box[1] + this.graph.margin.top]),
+          }
           let xtickValues = scale.x.ticks().filter(Number.isInteger);
           let axes = {
             x: d3.axisBottom(scale.x).tickValues(xtickValues).tickFormat(d3.format('d')),
@@ -573,10 +605,10 @@
           let gw = d3.select("#g-error");
           gw.selectAll("*").remove();
           gw.append("g")
-            .attr("transform", `translate(0,${this.graph.view_box[3]+this.graph.view_box[1]-this.graph.analysis.margin.bottom})`)
+            .attr("transform", `translate(0,${this.graph.view_box[3]+this.graph.view_box[1]-this.graph.margin.bottom})`)
             .call(axes.x);
           gw.append("g")
-            .attr("transform", `translate(${this.graph.view_box[0]+this.graph.analysis.margin.left},0)`)
+            .attr("transform", `translate(${this.graph.view_box[0]+this.graph.margin.left},0)`)
             .call(axes.y);
           gw.append("path")
             .datum(data)
