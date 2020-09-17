@@ -133,7 +133,8 @@
   <script>
     let defaults = {
       nn: {
-        neuron_n: [2, 5, 1]
+        neuron_n: [2, 5, 1],
+        activation_fcns: ["sigmoid", "sigmoid"]
       }
     };
     let vm = new Vue({
@@ -223,6 +224,7 @@
             weights: [],
             thetas: [],
             alpha: 0.1,
+            activation_fcns: [],
             cached: {
               operation: "",
               weights: [],
@@ -287,10 +289,15 @@
               "#8da0cb"
             ]
           }
+        },
+        activation_fcns: {
+          sigmoid: (X) => 1/(1+Math.exp(-X)),
+          step: (X,low_y=0,high_y=1) => Math.min(high_y, Math.max(low_y, Math.ceil(X)))
         }
       },
       created: function () {
         this.settings.parameters.neuron_n = [...defaults.nn.neuron_n];
+        this.settings.parameters.activation_fcns = [...defaults.nn.activation_fcns];
         this.randomise();
       },
       computed: {
@@ -417,40 +424,49 @@
         }
       },
       methods: {
-        activationFcn: function (X) {
-          return Math.min(1, Math.max(0, Math.ceil(X)));
-        },
         runIter: function (n=1) {
-          if (this.training.results.header.length == 0) { 
-            this.training.results.header = [...this.training.labels];
-            this.training.results.header.push(...this.training.weights.map((w,i) => `w${i+1}`));
-            this.training.results.header.push('Θ');
-            this.training.results.header.push(...[`calculated ${this.training.labels[this.training.output]}`, 'error']);
-            this.training.results.header.push(...this.training.weights.map((w,i) => `Δw${i+1}`));
-            this.training.results.header.push('ΔΘ');
-            this.training.results.header.push(...this.training.weights.map((w,i) => `w${i+1}'`));
-            this.training.results.header.push("Θ'");
-          }
+          
+          // if (this.training.results.header.length == 0) { 
+          //   this.training.results.header = [...this.training.labels];
+          //   this.training.results.header.push(...this.training.weights.map((w,i) => `w${i+1}`));
+          //   this.training.results.header.push('Θ');
+          //   this.training.results.header.push(...[`calculated ${this.training.labels[this.training.output]}`, 'error']);
+          //   this.training.results.header.push(...this.training.weights.map((w,i) => `Δw${i+1}`));
+          //   this.training.results.header.push('ΔΘ');
+          //   this.training.results.header.push(...this.training.weights.map((w,i) => `w${i+1}'`));
+          //   this.training.results.header.push("Θ'");
+          // }
           [...Array(n).keys()].forEach(() => {
             let res = [];
             dt = this.training.data[this.training.current_data_idx]
-            res.push(...dt);
-            res.push(...this.training.weights);
-            res.push(this.training.thetas);
-            op = this.calcOutput(dt);
-            res.push(op);
-            e = this.calcError(op, this.training.data[this.training.current_data_idx][this.training.output]);
-            res.push(e);
-            dw = this.calcWeightCorrections(dt, e);
-            res.push(...dw);
-            dt = this.calcThetaCorrection(e);
-            res.push(dt);
-            this.training.weights = this.training.weights.map((w,i) => w + dw[i]);
-            res.push(...this.training.weights);
-            this.training.thetas = this.training.thetas + dt;
-            res.push(this.training.thetas);
-            this.training.current_data_idx = ( this.training.current_data_idx + 1 )% this.training.data.length;
-            this.training.results.content.push(res);
+            // res.push(...dt);
+            // res.push(...this.training.weights);
+            // res.push(this.training.thetas);
+            let outputs = this.calcOutput(dt.slice(0,this.settings.parameters.neuron_n[0]), this.training.weights, this.training.thetas, this.settings.parameters.activation_fcns);
+            let errGrad = this.calcErrorGradients(
+              dt.slice(this.settings.parameters.neuron_n[0],this.settings.parameters.neuron_n[0]+this.settings.parameters.neuron_n[this.settings.parameters.neuron_n.length-1]),
+              outputs,
+              this.training.weights
+            );
+            let weightCorrections = this.calcWeightCorrections(outputs, errGrad, this.training.weights);
+            this.training.weights = this.calcNewWeights(this.training.weights, weightCorrections);
+            let thetaCorrections = this.calcThetaCorrections(errGrad);
+            this.training.thetas = this.calcNewThetas(this.training.thetas, thetaCorrections);
+            console.log(outputs, errGrad, weightCorrections, this.training.weights, thetaCorrections, this.training.thetas);
+            // op = this.calcOutput(dt);
+            // res.push(op);
+            // e = this.calcError(op, this.training.data[this.training.current_data_idx][this.training.output]);
+            // res.push(e);
+            // dw = this.calcWeightCorrections(dt, e);
+            // res.push(...dw);
+            // dt = this.calcThetaCorrection(e);
+            // res.push(dt);
+            // this.training.weights = this.training.weights.map((w,i) => w + dw[i]);
+            // res.push(...this.training.weights);
+            // this.training.thetas = this.training.thetas + dt;
+            // res.push(this.training.thetas);
+            // this.training.current_data_idx = ( this.training.current_data_idx + 1 )% this.training.data.length;
+            // this.training.results.content.push(res);
           });
           this.display.epoch = this.epochMax;
         },
@@ -459,24 +475,57 @@
             this.runIter(this.training.data.length - this.training.current_data_idx);
           });
         },
-        calcOutput: function (dt) {
-          y = this.training.weights.reduce((acc,w,i) => { return acc + w * dt[this.training.inputs[i]]; }, 0);
-          y = y - this.training.thetas;
-          return this.activationFcn(y);
+        calcOutput: function (inputs, weights, thetas, actfcns) {
+          let ys = [[...inputs]];
+          weights.forEach((layer,l) => {
+            ys.push([]);
+            layer.forEach((weight,w) => {
+              ys[ys.length-1].push(this.activateNeuron(ys[ys.length-2], weight, thetas[l][w], this.activation_fcns[actfcns[l]]));
+            })
+          });
+          return ys;
         },
-        calcOutputWithWeights: function (dt, weights, thetas) {
-          y = weights.reduce((acc,w,i) => { return acc + w * dt[this.training.inputs[i]]; }, 0);
-          y = y - thetas;
-          return this.activationFcn(y);
+        activateNeuron: function (inputs, weights, theta, actfcn) {
+          return actfcn(inputs.map((ip,i) => ip * weights[i]).reduce((acc,v) => acc + v, 0) - theta);
         },
-        calcError: function (calcop, expop) {
-          return expop - calcop;
+        calcErrorGradients: function (expecteds, outputs, weights) {
+          let err = [expecteds.map((ex,i) => ex - outputs[outputs.length-1][i])];
+          let egrad = [];
+          [...Array(weights.length).keys()].map(x => weights.length - x - 1).forEach(layer_i => {
+            egrad.unshift([...Array(weights[layer_i].length).keys()].map( neuron_i => outputs[layer_i+1][neuron_i] * (1 - outputs[layer_i+1][neuron_i]) * err[0][neuron_i] ));
+            if (layer_i > 0) { 
+              err.unshift(weights[layer_i - 1].map((beforelayer_weights,beforelayer_neuron_i) => weights[layer_i].map((neuron_weights,neuron_i) => neuron_weights[beforelayer_neuron_i]*egrad[0][neuron_i]).reduce((acc,val) => acc+val,0)));
+            }
+          });
+          return egrad;
         },
-        calcWeightCorrections: function (dt, e) {
-          return this.training.weights.map((w,i) => this.settings.parameters.alpha * dt[i] * e);
+        calcWeightCorrections: function (outputs, egradients, weights) {
+          return weights.map((layer,l) => 
+            layer.map((neuron,n) => 
+              neuron.map((conn,c) => 
+                this.settings.parameters.alpha * outputs[l][c] * egradients[l][n]
+              )
+            )
+          );
         },
-        calcThetaCorrection: function (e) {
-          return this.settings.parameters.alpha * -1 * e;
+        calcNewWeights: function (weights, wcorrections) {
+          return weights.map((layer,l) => 
+            layer.map((neuron,n) => 
+              neuron.map((conn,c) => 
+                conn + wcorrections[l][n][c]
+              )
+            )
+          );
+        },
+        calcThetaCorrections: function (egradients) {
+          return egradients.map(layer => layer.map(egrad => this.settings.parameters.alpha * -1 * egrad));
+        },
+        calcNewThetas: function (thetas, tcorrections) {
+          return thetas.map((layer,l) => 
+            layer.map((theta,t) => 
+              theta + tcorrections[l][t]
+            )
+          );
         },
         updateGraph: function () {
           this.drawDecisionRegions();
