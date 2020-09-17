@@ -71,7 +71,7 @@
                 </v-tab-item>
                 <v-tab-item eager>
                   <v-card flat>
-                    <svg id="g-error" width="100%" :height="`${graph.height}px`" :view-box.camel="graph.view_box.join(' ')"></svg>
+                    <svg id="g-error" width="100%" :height="`${graph.height}px`" :view-box.camel="graph.view_box.join(' ')" v-html="errorGraph"></svg>
                   </v-card>
                 </v-tab-item>
               </v-tabs-items>
@@ -603,8 +603,100 @@
             .attr("transform", `rotate(-90,${labelpos.x},${labelpos.y})`)
             .attr("text-anchor", "middle")
             .attr("dominant-baseline", "middle")
-            .text("Weights")
+            .text("Thetas, Θ")
           return gt.html();
+        },
+        errorGraph: function () {
+          if (this.training.results.content.length == 0) { return ""; }
+
+          let startindex = this.settings.parameters.neuron_n[0]+this.settings.parameters.neuron_n[this.settings.parameters.neuron_n.length-1]+this.numberOfWeights+this.numberOfThetas+this.numberOfThetas;
+          let numberoferrors = this.settings.parameters.neuron_n[this.settings.parameters.neuron_n.length-1];
+
+          let data = this.training.results.content.map((d,i) => ({
+            x: i+1,
+            y: d.slice(
+              startindex,
+              startindex + numberoferrors
+            )
+          }));
+          let scale = {
+            x: d3.scaleLinear()
+              .domain([Math.min(...data.map(d => d.x)), Math.max(...data.map(d => d.x))])
+              .range([this.graph.margin.left, this.graph.view_box[2] + this.graph.view_box[0] - this.graph.margin.right]),
+            y: d3.scaleLinear()
+              .domain([Math.min(...data.reduce((acc,d) => { acc.push(...d.y); return acc; }, [])), Math.max(...data.reduce((acc,d) => { acc.push(...d.y); return acc; }, []))])
+              .range([this.graph.view_box[3] + this.graph.view_box[1] - this.graph.margin.bottom, this.graph.view_box[1] + this.graph.margin.top]),
+          };
+          let xtickValues = scale.x.ticks().filter(Number.isInteger);
+          let axes = {
+            x: d3.axisBottom(scale.x).tickValues(xtickValues).tickFormat(d3.format('d')),
+            y: d3.axisLeft(scale.y)
+          };
+
+          let ge = d3.create("svg");
+          ge.selectAll("*").remove();
+          ge.append("g")
+            .attr("transform", `translate(0,${this.graph.view_box[3]+this.graph.view_box[1]-this.graph.margin.bottom})`)
+            .call(axes.x);
+          ge.append("g")
+            .attr("transform", `translate(${this.graph.view_box[0]+this.graph.margin.left},0)`)
+            .call(axes.y);
+          [...Array(numberoferrors).keys()].forEach(i => {
+            ge.append("path")
+              .datum(data)
+              .attr("fill", "none")
+              .attr("stroke", this.graph.analysis.colors[i%this.graph.analysis.colors.length])
+              .attr("stroke-width", 5)
+              .attr("stroke-linejoin", "round")
+              .attr("stroke-linecap", "round")
+              .attr("d", d3.line().x(d => scale.x(d.x)).y(d => scale.y(d.y[i])));
+            ge.selectAll()
+              .data(data)
+              .enter().append("circle")
+              .attr("cx", d => scale.x(d.x))
+              .attr("cy", d => scale.y(d.y[i]))
+              .attr("r", 8)
+              .attr("fill", this.graph.analysis.colors[i%this.graph.analysis.colors.length])
+              .attr("stroke", "white")
+              .attr("stroke-width", 0);
+          });
+
+          let errornames = this.training.results.header.slice(startindex, startindex+numberoferrors);
+          [...Array(numberoferrors).keys()].forEach(i => {
+            ge.append("text")
+              .attr("x", scale.x(data[data.length-1].x)+10)
+              .attr("y", scale.y(data[data.length-1].y[i]))
+              .attr("text-anchor", "start")
+              .attr("dominant-baseline", "middle")
+              .attr("stroke-width", 3.5)
+              .attr("stroke", this.graph.analysis.colors[i%this.graph.analysis.colors.length])
+              .text(errornames[i]);
+            ge.append("text")
+              .attr("x", scale.x(data[data.length-1].x)+10)
+              .attr("y", scale.y(data[data.length-1].y[i]))
+              .attr("text-anchor", "start")
+              .attr("dominant-baseline", "middle")  
+              .style("fill", "white")
+              .text(errornames[i]);
+          });
+          ge.append("text")
+            .attr("x", (scale.x.range()[1] + scale.x.range()[0])/2)
+            .attr("y", this.graph.view_box[1] + this.graph.view_box[3] - 10)
+            .attr("text-anchor", "middle")
+            .attr("dominant-baseline", "text-bottom")
+            .text("Iteration")
+          let labelpos = {
+            x: this.graph.view_box[0],
+            y: (scale.y.range()[1] + scale.y.range()[0])/2
+          }
+          ge.append("text")
+            .attr("x", labelpos.x)
+            .attr("y", labelpos.y)
+            .attr("transform", `rotate(-90,${labelpos.x},${labelpos.y})`)
+            .attr("text-anchor", "middle")
+            .attr("dominant-baseline", "middle")
+            .text("Errors")
+          return ge.html();
         }
       },
       watch: {
@@ -836,7 +928,7 @@
         updateGraph: function () {
           this.drawDecisionRegions();
           // this.drawWeights();
-          this.drawError();
+          // this.drawError();
         },
         drawDecisionRegions: function () {
           let showing_iter = Math.min(this.display.epoch * this.training.data.length, this.training.results.content.length - 1);
