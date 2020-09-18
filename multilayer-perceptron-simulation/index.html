@@ -43,10 +43,11 @@
               <v-subheader class="px-0">Data point</v-subheader>
               <v-slider min="1" :max="training.data.length" v-model="display.point" ticks="always" tick-size="5" thumb-label thumb-color="secondary"></v-slider>
               <v-card light flat>
-                <svg id="g-neural-network" width="100%" :height="`${graph.neural_network.height}px`" :view-box.camel="graph.neural_network.view_box.join(' ')" v-html="neuralNetworkGraph"></svg>
+                <svg id="g-neural-network" width="100%" :height="`${graph.neural_network.height}px`" :view-box.camel="graph.neural_network.view_box.join(' ')"></svg>
               </v-card>
               <v-card light flat class="mt-3">
-                <svg id="g-decision-regions" width="100%" :height="`${graph.decision_regions.height}px`" :view-box.camel="graph.decision_regions.view_box.join(' ')" v-html="decisionRegionsGraph"></svg>
+                <svg id="g-decision-regions" width="100%" :height="`${graph.decision_regions.height}px`" :view-box.camel="graph.decision_regions.view_box.join(' ')"></svg>
+                <div id="gdrtt" style="opacity:0;position:absolute"></div>
               </v-card>
             </v-card-text>
           </v-card>
@@ -61,17 +62,17 @@
               <v-tabs-items v-model="graph.tab">
                 <v-tab-item eager>
                   <v-card flat>
-                    <svg id="g-weights" width="100%" :height="`${graph.height}px`" :view-box.camel="graph.view_box.join(' ')" v-html="weightGraph"></svg>
+                    <svg id="g-weights" width="100%" :height="`${graph.height}px`" :view-box.camel="graph.view_box.join(' ')"></svg>
                   </v-card>
                 </v-tab-item>
                 <v-tab-item eager>
                   <v-card flat>
-                    <svg id="g-thetas" width="100%" :height="`${graph.height}px`" :view-box.camel="graph.view_box.join(' ')" v-html="thetaGraph"></svg>
+                    <svg id="g-thetas" width="100%" :height="`${graph.height}px`" :view-box.camel="graph.view_box.join(' ')"></svg>
                   </v-card>
                 </v-tab-item>
                 <v-tab-item eager>
                   <v-card flat>
-                    <svg id="g-error" width="100%" :height="`${graph.height}px`" :view-box.camel="graph.view_box.join(' ')" v-html="errorGraph"></svg>
+                    <svg id="g-error" width="100%" :height="`${graph.height}px`" :view-box.camel="graph.view_box.join(' ')"></svg>
                   </v-card>
                 </v-tab-item>
               </v-tabs-items>
@@ -342,509 +343,23 @@
         numberOfThetas: function () {
           return this.settings.parameters.neuron_n.slice(1).reduce((acc,n) => acc + n, 0);
         },
-        neuralNetworkGraph: function () {
-          let gnn = d3.create("svg");
-          let neuron_scale = this.settings.parameters.neuron_n.map(n => {
-            return d3.scaleLinear()
-              .domain([0.5, n+0.5])
-              .range([this.graph.neural_network.view_box[1]+this.graph.neural_network.view_box[3]-this.graph.neural_network.margin.bottom, this.graph.neural_network.view_box[1]+this.graph.neural_network.margin.top]);
-          });
-          let layer_scale = d3.scaleLinear()
-            .domain([-0.5, this.settings.parameters.neuron_n.length-0.5])
-            .range([this.graph.neural_network.view_box[0]+this.graph.neural_network.margin.left, this.graph.neural_network.view_box[0]+this.graph.neural_network.view_box[2]-this.graph.neural_network.margin.right]);
-          neuron_scale.map((scale,i) => {
-            if (i == 0) {
-              let idata = gnn.selectAll()
-                .data([...Array(Math.floor(scale.domain()[1])).keys()].map(x => x+1));
-              idata.enter()
-                .append("line")
-                .attr("x1", layer_scale(i-0.5))
-                .attr("x2", layer_scale(i))
-                .attr("y1", d => scale(d))
-                .attr("y2", d => scale(d))
-                .attr("stroke", this.$vuetify.theme.themes.light.primary);
-              idata.enter()
-                .append("text")
-                .attr("x", layer_scale(i-0.5))
-                .attr("y", d => scale(d))
-                .attr("dominant-baseline", "middle")
-                .attr("text-anchor", "end")
-                .attr("fill", this.$vuetify.theme.themes.light.primary)
-                .text(d => `x${Math.floor(scale.domain()[1]) - d + 1}`);
-            }
-            if (i < neuron_scale.length - 1) {
-              gnn.selectAll()
-                .data([...Array(Math.floor(scale.domain()[1])).keys()].reduce((conn,connin) => {
-                  conn.push(...[...Array(Math.floor(neuron_scale[i+1].domain()[1])).keys()].reduce((conn,connout) => {
-                    conn.push([connin+1, connout+1]);
-                    return conn;
-                  }, conn));
-                  return conn;
-                }, []))
-                .enter()
-                  .append("line")
-                  .attr("x1", layer_scale(i))
-                  .attr("x2", layer_scale(i+1))
-                  .attr("y1", d => scale(d[0]))
-                  .attr("y2", d => neuron_scale[i+1](d[1]))
-                  .attr("stroke", this.$vuetify.theme.themes.light.primary);
-            }
-            if (i == neuron_scale.length - 1) {
-              let odata = gnn.selectAll()
-                .data([...Array(Math.floor(scale.domain()[1])).keys()].map(x => x+1));
-              odata.enter()
-                .append("line")
-                .attr("x1", layer_scale(i+0.5))
-                .attr("x2", layer_scale(i))
-                .attr("y1", d => scale(d))
-                .attr("y2", d => scale(d))
-                .attr("stroke", this.$vuetify.theme.themes.light.primary);
-              odata.enter()
-                .append("text")
-                .attr("x", layer_scale(i+0.5))
-                .attr("y", d => scale(d))
-                .attr("dominant-baseline", "middle")
-                .attr("text-anchor", "start")
-                .attr("fill", this.$vuetify.theme.themes.light.primary)
-                .text(d => Math.floor(scale.domain()[1]) == 1 ? "Y" : `Y${Math.floor(scale.domain()[1]) - d + 1}`);
-            }
-          });
-          let radius = Math.min(...neuron_scale.reduce((acc, scale) => {
-            acc.push(scale(1)-scale(1.3));
-            return acc;
-          }, []));
-          let neuron_n_prev = 0;
-          neuron_scale.map((scale,i) => {
-            let ndata = gnn.selectAll()
-              .data([...Array(Math.floor(scale.domain()[1])).keys()].map(x => x+1));
-            ndata.enter()
-              .append("circle")
-              .attr("cx", layer_scale(i))
-              .attr("cy", d => scale(d))
-              .attr("r", radius)
-              .attr("fill", this.$vuetify.theme.themes.light.secondary)
-              .attr("stroke", this.$vuetify.theme.themes.light.primary)
-              .attr("stroke-width", 0.1*radius);
-            ndata.enter()
-              .append("text")
-              .attr("x", layer_scale(i))
-              .attr("y", d => scale(d))
-              .attr("fill", this.$vuetify.theme.themes.light.primary)
-              .attr("dominant-baseline", "middle")
-              .attr("text-anchor", "middle")
-              .style("font-size", `${1.1*radius}px`)
-              .text(d => neuron_n_prev + Math.floor(scale.domain()[1]) - d + 1);
-            neuron_n_prev += Math.floor(scale.domain()[1]);
-          });
-          return gnn.html();
-        },
-        weightGraph: function () {
-          if (this.training.results.content.length == 0) { return ""; }
-
-          let startindex = this.settings.parameters.neuron_n[0]+this.settings.parameters.neuron_n[this.settings.parameters.neuron_n.length-1];
-          
-          let data = this.training.results.content.map((d,i) => ({
-            x: i+1,
-            y: d.slice(
-              startindex,
-              startindex + this.numberOfWeights
-            )
-          }));
-          let scale = {
-            x: d3.scaleLinear()
-              .domain([Math.min(...data.map(d => d.x)), Math.max(...data.map(d => d.x))])
-              .range([this.graph.margin.left, this.graph.view_box[2] + this.graph.view_box[0] - this.graph.margin.right]),
-            y: d3.scaleLinear()
-              .domain([Math.min(...data.reduce((acc,d) => { acc.push(...d.y); return acc; }, [])), Math.max(...data.reduce((acc,d) => { acc.push(...d.y); return acc; }, []))])
-              .range([this.graph.view_box[3] + this.graph.view_box[1] - this.graph.margin.bottom, this.graph.view_box[1] + this.graph.margin.top]),
-          };
-          let xtickValues = scale.x.ticks().filter(Number.isInteger);
-          let axes = {
-            x: d3.axisBottom(scale.x).tickValues(xtickValues).tickFormat(d3.format('d')),
-            y: d3.axisLeft(scale.y)
-          };
-
-          let gw = d3.create("svg");
-          gw.selectAll("*").remove();
-          gw.append("g")
-            .attr("transform", `translate(0,${this.graph.view_box[3]+this.graph.view_box[1]-this.graph.margin.bottom})`)
-            .call(axes.x);
-          gw.append("g")
-            .attr("transform", `translate(${this.graph.view_box[0]+this.graph.margin.left},0)`)
-            .call(axes.y);
-          [...Array(this.numberOfWeights).keys()].forEach(i => {
-            gw.append("path")
-              .datum(data)
-              .attr("fill", "none")
-              .attr("stroke", this.graph.analysis.colors[i%this.graph.analysis.colors.length])
-              .attr("stroke-width", 5)
-              .attr("stroke-linejoin", "round")
-              .attr("stroke-linecap", "round")
-              .attr("d", d3.line().x(d => scale.x(d.x)).y(d => scale.y(d.y[i])));
-            // gw.selectAll()
-            //   .data(data)
-            //   .enter().append("circle")
-            //   .attr("cx", d => scale.x(d.x))
-            //   .attr("cy", d => scale.y(d.y[i]))
-            //   .attr("r", 8)
-            //   .attr("fill", this.graph.analysis.colors[i%this.graph.analysis.colors.length])
-            //   .attr("stroke", "white")
-            //   .attr("stroke-width", 0);
-          });
-
-          let weightnames = this.training.results.header.slice(startindex, startindex+this.numberOfWeights);
-          [...Array(this.numberOfWeights).keys()].forEach(i => {
-            gw.append("text")
-              .attr("x", scale.x(data[data.length-1].x)+10)
-              .attr("y", scale.y(data[data.length-1].y[i]))
-              .attr("text-anchor", "start")
-              .attr("dominant-baseline", "middle")
-              .attr("stroke-width", 3.5)
-              .attr("stroke", this.graph.analysis.colors[i%this.graph.analysis.colors.length])
-              .text(weightnames[i]);
-            gw.append("text")
-              .attr("x", scale.x(data[data.length-1].x)+10)
-              .attr("y", scale.y(data[data.length-1].y[i]))
-              .attr("text-anchor", "start")
-              .attr("dominant-baseline", "middle")  
-              .style("fill", "white")
-              .text(weightnames[i]);
-          });
-          gw.append("text")
-            .attr("x", (scale.x.range()[1] + scale.x.range()[0])/2)
-            .attr("y", this.graph.view_box[1] + this.graph.view_box[3] - 10)
-            .attr("text-anchor", "middle")
-            .attr("dominant-baseline", "text-bottom")
-            .text("Iteration")
-          let labelpos = {
-            x: this.graph.view_box[0],
-            y: (scale.y.range()[1] + scale.y.range()[0])/2
-          }
-          gw.append("text")
-            .attr("x", labelpos.x)
-            .attr("y", labelpos.y)
-            .attr("transform", `rotate(-90,${labelpos.x},${labelpos.y})`)
-            .attr("text-anchor", "middle")
-            .attr("dominant-baseline", "middle")
-            .text("Weights")
-          return gw.html();
-        },
-        thetaGraph: function () {
-          if (this.training.results.content.length == 0) { return ""; }
-
-          let startindex = this.settings.parameters.neuron_n[0]+this.settings.parameters.neuron_n[this.settings.parameters.neuron_n.length-1]+this.numberOfWeights;
-
-          let data = this.training.results.content.map((d,i) => ({
-            x: i+1,
-            y: d.slice(
-              startindex,
-              startindex + this.numberOfThetas
-            )
-          }));
-          let scale = {
-            x: d3.scaleLinear()
-              .domain([Math.min(...data.map(d => d.x)), Math.max(...data.map(d => d.x))])
-              .range([this.graph.margin.left, this.graph.view_box[2] + this.graph.view_box[0] - this.graph.margin.right]),
-            y: d3.scaleLinear()
-              .domain([Math.min(...data.reduce((acc,d) => { acc.push(...d.y); return acc; }, [])), Math.max(...data.reduce((acc,d) => { acc.push(...d.y); return acc; }, []))])
-              .range([this.graph.view_box[3] + this.graph.view_box[1] - this.graph.margin.bottom, this.graph.view_box[1] + this.graph.margin.top]),
-          };
-          let xtickValues = scale.x.ticks().filter(Number.isInteger);
-          let axes = {
-            x: d3.axisBottom(scale.x).tickValues(xtickValues).tickFormat(d3.format('d')),
-            y: d3.axisLeft(scale.y)
-          };
-
-          let gt = d3.create("svg");
-          gt.selectAll("*").remove();
-          gt.append("g")
-            .attr("transform", `translate(0,${this.graph.view_box[3]+this.graph.view_box[1]-this.graph.margin.bottom})`)
-            .call(axes.x);
-          gt.append("g")
-            .attr("transform", `translate(${this.graph.view_box[0]+this.graph.margin.left},0)`)
-            .call(axes.y);
-          [...Array(this.numberOfThetas).keys()].forEach(i => {
-            gt.append("path")
-              .datum(data)
-              .attr("fill", "none")
-              .attr("stroke", this.graph.analysis.colors[i%this.graph.analysis.colors.length])
-              .attr("stroke-width", 5)
-              .attr("stroke-linejoin", "round")
-              .attr("stroke-linecap", "round")
-              .attr("d", d3.line().x(d => scale.x(d.x)).y(d => scale.y(d.y[i])));
-            // gt.selectAll()
-            //   .data(data)
-            //   .enter().append("circle")
-            //   .attr("cx", d => scale.x(d.x))
-            //   .attr("cy", d => scale.y(d.y[i]))
-            //   .attr("r", 8)
-            //   .attr("fill", this.graph.analysis.colors[i%this.graph.analysis.colors.length])
-            //   .attr("stroke", "white")
-            //   .attr("stroke-width", 0);
-          });
-
-          let thetanames = this.training.results.header.slice(startindex, startindex+this.numberOfThetas);
-          [...Array(this.numberOfThetas).keys()].forEach(i => {
-            gt.append("text")
-              .attr("x", scale.x(data[data.length-1].x)+10)
-              .attr("y", scale.y(data[data.length-1].y[i]))
-              .attr("text-anchor", "start")
-              .attr("dominant-baseline", "middle")
-              .attr("stroke-width", 3.5)
-              .attr("stroke", this.graph.analysis.colors[i%this.graph.analysis.colors.length])
-              .text(thetanames[i]);
-            gt.append("text")
-              .attr("x", scale.x(data[data.length-1].x)+10)
-              .attr("y", scale.y(data[data.length-1].y[i]))
-              .attr("text-anchor", "start")
-              .attr("dominant-baseline", "middle")  
-              .style("fill", "white")
-              .text(thetanames[i]);
-          });
-          gt.append("text")
-            .attr("x", (scale.x.range()[1] + scale.x.range()[0])/2)
-            .attr("y", this.graph.view_box[1] + this.graph.view_box[3] - 10)
-            .attr("text-anchor", "middle")
-            .attr("dominant-baseline", "text-bottom")
-            .text("Iteration")
-          let labelpos = {
-            x: this.graph.view_box[0],
-            y: (scale.y.range()[1] + scale.y.range()[0])/2
-          }
-          gt.append("text")
-            .attr("x", labelpos.x)
-            .attr("y", labelpos.y)
-            .attr("transform", `rotate(-90,${labelpos.x},${labelpos.y})`)
-            .attr("text-anchor", "middle")
-            .attr("dominant-baseline", "middle")
-            .text("Thetas, Θ")
-          return gt.html();
-        },
-        errorGraph: function () {
-          if (this.training.results.content.length == 0) { return ""; }
-
-          let startindex = this.settings.parameters.neuron_n[0]+this.settings.parameters.neuron_n[this.settings.parameters.neuron_n.length-1]+this.numberOfWeights+this.numberOfThetas+this.numberOfThetas;
-          let numberoferrors = this.settings.parameters.neuron_n[this.settings.parameters.neuron_n.length-1];
-
-          let data = this.training.results.content.map((d,i) => ({
-            x: i+1,
-            y: d.slice(
-              startindex,
-              startindex + numberoferrors
-            )
-          }));
-          let scale = {
-            x: d3.scaleLinear()
-              .domain([Math.min(...data.map(d => d.x)), Math.max(...data.map(d => d.x))])
-              .range([this.graph.margin.left, this.graph.view_box[2] + this.graph.view_box[0] - this.graph.margin.right]),
-            y: d3.scaleLinear()
-              .domain([Math.min(...data.reduce((acc,d) => { acc.push(...d.y); return acc; }, [])), Math.max(...data.reduce((acc,d) => { acc.push(...d.y); return acc; }, []))])
-              .range([this.graph.view_box[3] + this.graph.view_box[1] - this.graph.margin.bottom, this.graph.view_box[1] + this.graph.margin.top]),
-          };
-          let xtickValues = scale.x.ticks().filter(Number.isInteger);
-          let axes = {
-            x: d3.axisBottom(scale.x).tickValues(xtickValues).tickFormat(d3.format('d')),
-            y: d3.axisLeft(scale.y)
-          };
-
-          let ge = d3.create("svg");
-          ge.selectAll("*").remove();
-          ge.append("g")
-            .attr("transform", `translate(0,${this.graph.view_box[3]+this.graph.view_box[1]-this.graph.margin.bottom})`)
-            .call(axes.x);
-          ge.append("g")
-            .attr("transform", `translate(${this.graph.view_box[0]+this.graph.margin.left},0)`)
-            .call(axes.y);
-          [...Array(numberoferrors).keys()].forEach(i => {
-            ge.append("path")
-              .datum(data)
-              .attr("fill", "none")
-              .attr("stroke", this.graph.analysis.colors[i%this.graph.analysis.colors.length])
-              .attr("stroke-width", 5)
-              .attr("stroke-linejoin", "round")
-              .attr("stroke-linecap", "round")
-              .attr("d", d3.line().x(d => scale.x(d.x)).y(d => scale.y(d.y[i])));
-            // ge.selectAll()
-            //   .data(data)
-            //   .enter().append("circle")
-            //   .attr("cx", d => scale.x(d.x))
-            //   .attr("cy", d => scale.y(d.y[i]))
-            //   .attr("r", 8)
-            //   .attr("fill", this.graph.analysis.colors[i%this.graph.analysis.colors.length])
-            //   .attr("stroke", "white")
-            //   .attr("stroke-width", 0);
-          });
-
-          let errornames = this.training.results.header.slice(startindex, startindex+numberoferrors);
-          [...Array(numberoferrors).keys()].forEach(i => {
-            ge.append("text")
-              .attr("x", scale.x(data[data.length-1].x)+10)
-              .attr("y", scale.y(data[data.length-1].y[i]))
-              .attr("text-anchor", "start")
-              .attr("dominant-baseline", "middle")
-              .attr("stroke-width", 3.5)
-              .attr("stroke", this.graph.analysis.colors[i%this.graph.analysis.colors.length])
-              .text(errornames[i]);
-            ge.append("text")
-              .attr("x", scale.x(data[data.length-1].x)+10)
-              .attr("y", scale.y(data[data.length-1].y[i]))
-              .attr("text-anchor", "start")
-              .attr("dominant-baseline", "middle")  
-              .style("fill", "white")
-              .text(errornames[i]);
-          });
-          ge.append("text")
-            .attr("x", (scale.x.range()[1] + scale.x.range()[0])/2)
-            .attr("y", this.graph.view_box[1] + this.graph.view_box[3] - 10)
-            .attr("text-anchor", "middle")
-            .attr("dominant-baseline", "text-bottom")
-            .text("Iteration")
-          let labelpos = {
-            x: this.graph.view_box[0],
-            y: (scale.y.range()[1] + scale.y.range()[0])/2
-          }
-          ge.append("text")
-            .attr("x", labelpos.x)
-            .attr("y", labelpos.y)
-            .attr("transform", `rotate(-90,${labelpos.x},${labelpos.y})`)
-            .attr("text-anchor", "middle")
-            .attr("dominant-baseline", "middle")
-            .text("Errors")
-          return ge.html();
-        },
-        decisionRegionsGraph: function () {
-          let showing_iter = Math.min((this.display.epoch - 1) * this.training.data.length + this.display.point, this.training.results.content.length - 1);
-          if (showing_iter < 0) { return "";}
-          
-          let startindex = this.settings.parameters.neuron_n[0] + this.settings.parameters.neuron_n[this.settings.parameters.neuron_n.length-1];
-          let weights = this.training.results.content[showing_iter].slice(startindex,startindex+this.numberOfWeights);
-          weights = this.settings.parameters.neuron_n.slice(1).reduce((acc,n,i) => {
-            let layer = [];
-            [...Array(n)].forEach(() => {
-              let neuron = [];
-              [...Array(this.settings.parameters.neuron_n[i])].forEach(() => {
-                neuron.push(weights.shift());
-              });
-              layer.push(neuron);
-            });
-            acc.push(layer);
-            return acc;
-          }, []);
-          let thetas = this.training.results.content[showing_iter].slice(startindex+this.numberOfWeights,startindex+this.numberOfWeights+this.numberOfThetas);
-          thetas = this.settings.parameters.neuron_n.slice(1).reduce((acc,n) => {
-            let layer = [];
-            [...Array(n)].forEach(() => {
-              layer.push(thetas.shift());
-            });
-            acc.push(layer);
-            return acc;
-          }, []);
-
-          let step = {
-            x: (this.graph.decision_regions.x.max - this.graph.decision_regions.x.min)/(this.graph.decision_regions.x.count-1),
-            y: (this.graph.decision_regions.y.max - this.graph.decision_regions.y.min)/(this.graph.decision_regions.y.count-1)
-          };
-          let domain = {
-            x: [...Array(this.graph.decision_regions.x.count).keys()].map(i => this.graph.decision_regions.x.min + i*step.x),
-            y: [...Array(this.graph.decision_regions.y.count).keys()].map(i => this.graph.decision_regions.y.min + i*step.y),
-            color: [...Array(11).keys()].map(i => i*0.1)
-          };
-          let scale = {
-            xBand: d3.scaleBand()
-                .domain(domain.x)
-                .range([this.graph.decision_regions.view_box[0]+this.graph.decision_regions.margin.left, this.graph.decision_regions.view_box[0]+this.graph.decision_regions.view_box[2]-this.graph.decision_regions.margin.right]),
-            yBand: d3.scaleBand()
-                .domain(domain.y)
-                .range([this.graph.decision_regions.view_box[1]+this.graph.decision_regions.view_box[3]-this.graph.decision_regions.margin.bottom, this.graph.decision_regions.view_box[1]+this.graph.decision_regions.margin.top]),
-            color: d3.scaleLinear()
-                .domain([domain.color[0], domain.color[domain.color.length-1]])
-                .range([vm.$vuetify.theme.themes.light.secondary, vm.$vuetify.theme.themes.light.primary])
-          }
-          scale.x = d3.scaleLinear()
-            .domain([domain.x[0], domain.x[domain.x.length-1]])
-            .range([scale.xBand(domain.x[0]), scale.xBand(domain.x[domain.x.length-1])].map(x => x + .5*scale.xBand.bandwidth()));
-          scale.y = d3.scaleLinear()
-            .domain([domain.y[0], domain.y[domain.y.length-1]])
-            .range([scale.yBand(domain.y[0]), scale.yBand(domain.y[domain.y.length-1])].map(y => y + .5*scale.yBand.bandwidth()));
-          scale.colorbar = d3.scaleBand()
-            .domain(domain.color)
-            .range(scale.yBand.range());
-          let tickValues = {
-            x: scale.x.ticks().filter(Number.isInteger),
-            y: scale.y.ticks().filter(Number.isInteger),
-            colorbar: [...domain.color]
-          };
-          let axes = {
-            x: d3.axisBottom(scale.x).tickValues(tickValues.x).tickFormat(d3.format('d')),
-            y: d3.axisLeft(scale.y).tickValues(tickValues.y).tickFormat(d3.format('d')),
-            colorbar: d3.axisRight(scale.colorbar).tickValues(tickValues.colorbar).tickFormat(d3.format('.1f')),
-          };
-
-          let gdr = d3.create("svg");
-          gdr.selectAll("*").remove();
-          gdr.append("g")
-            .attr("transform", `translate(0,${this.graph.decision_regions.view_box[3]+this.graph.decision_regions.view_box[1]-this.graph.decision_regions.margin.bottom})`)
-            .call(axes.x);
-          gdr.append("g")
-            .attr("transform", `translate(${this.graph.decision_regions.view_box[0]+this.graph.decision_regions.margin.left},0)`)
-            .call(axes.y);
-          gdr.append("g")
-            .attr("transform", `translate(${scale.xBand.range()[1] + 2*scale.xBand.bandwidth()},0)`)
-            .call(axes.colorbar);
-          gdr.selectAll()
-            .data(domain.x.reduce((acc,xval) => {
-              acc.push(...domain.y.map(yval => ({x: xval, y:yval, c:this.calcOutput([xval,yval], weights, thetas, this.settings.parameters.activation_fcns)})));
-              return acc;
-            }, []))
-            .enter()
-            .append("rect")
-            .attr("x", d => scale.xBand(d.x))
-            .attr("y", d => scale.yBand(d.y))
-            .attr("width", d => scale.xBand.bandwidth())
-            .attr("height", d => scale.yBand.bandwidth())
-            .attr("fill", d => scale.color(d.c[d.c.length-1][0]))
-            ;
-          gdr.selectAll("circle")
-            .data(this.training.data.map(d => ({x: d[0], y: d[1], o: d[2]})))
-            .enter().append("circle")
-            .attr("cx", d => scale.x(d.x))
-            .attr("cy", d => scale.y(d.y))
-            .attr("r", 15)
-            .attr("fill", d => scale.color(d.o))
-            .attr("stroke", "white")
-            .attr("stroke-width", 3);
-          gdr.append("text")
-            .attr("x", (scale.x.range()[1] + scale.x.range()[0])/2)
-            .attr("y", this.graph.decision_regions.view_box[1] + this.graph.decision_regions.view_box[3] - 10)
-            .attr("text-anchor", "middle")
-            .attr("dominant-baseline", "text-bottom")
-            .text("x1")
-          let labelpos = {
-            x: this.graph.decision_regions.view_box[0],
-            y: (scale.y.range()[1] + scale.y.range()[0])/2
-          }
-          gdr.append("text")
-            .attr("x", labelpos.x)
-            .attr("y", labelpos.y)
-            .attr("transform", `rotate(-90,${labelpos.x},${labelpos.y})`)
-            .attr("text-anchor", "middle")
-            .attr("dominant-baseline", "middle")
-            .text("x2")
-
-          gdr.selectAll()
-            .data(scale.colorbar.domain())
-            .enter()
-            .append("rect")
-            .attr("x", scale.xBand.range()[1] + 1*scale.xBand.bandwidth())
-            .attr("y", d => scale.colorbar(d))
-            .attr("width", scale.xBand.bandwidth())
-            .attr("height", scale.colorbar.bandwidth())
-            .attr("fill", d => scale.color(d));
-
-          return gdr.html();
-        }
       },
       watch: {
+        "training.results.content": function () {
+          this.drawNeuralNetworkGraph();
+          this.drawDecisionRegionsGraph();
+          this.drawWeightGraph();
+          this.drawThetaGraph();
+          this.drawErrorGraph();
+        },
+        "display.epoch": function () {
+          this.drawNeuralNetworkGraph();
+          this.drawDecisionRegionsGraph();
+        },
+        "display.point": function () {
+          this.drawNeuralNetworkGraph();
+          this.drawDecisionRegionsGraph();
+        },
         "settings.show": function (showing) {
           if (showing) {
             this.settings.parameters.cached = {
@@ -1097,6 +612,516 @@
             return [...Array(n)].map(x => Math.random() - 0.5);
           });
           this.resetLearning();
+        },
+        drawNeuralNetworkGraph: function () {
+          let gnn = d3.select("#g-neural-network");
+          let neuron_scale = this.settings.parameters.neuron_n.map(n => {
+            return d3.scaleLinear()
+              .domain([0.5, n+0.5])
+              .range([this.graph.neural_network.view_box[1]+this.graph.neural_network.view_box[3]-this.graph.neural_network.margin.bottom, this.graph.neural_network.view_box[1]+this.graph.neural_network.margin.top]);
+          });
+          let layer_scale = d3.scaleLinear()
+            .domain([-0.5, this.settings.parameters.neuron_n.length-0.5])
+            .range([this.graph.neural_network.view_box[0]+this.graph.neural_network.margin.left, this.graph.neural_network.view_box[0]+this.graph.neural_network.view_box[2]-this.graph.neural_network.margin.right]);
+          neuron_scale.map((scale,i) => {
+            if (i == 0) {
+              let idata = gnn.selectAll()
+                .data([...Array(Math.floor(scale.domain()[1])).keys()].map(x => x+1));
+              idata.enter()
+                .append("line")
+                .attr("x1", layer_scale(i-0.5))
+                .attr("x2", layer_scale(i))
+                .attr("y1", d => scale(d))
+                .attr("y2", d => scale(d))
+                .attr("stroke", this.$vuetify.theme.themes.light.primary);
+              idata.enter()
+                .append("text")
+                .attr("x", layer_scale(i-0.5))
+                .attr("y", d => scale(d))
+                .attr("dominant-baseline", "middle")
+                .attr("text-anchor", "end")
+                .attr("fill", this.$vuetify.theme.themes.light.primary)
+                .text(d => `x${Math.floor(scale.domain()[1]) - d + 1}`);
+            }
+            if (i < neuron_scale.length - 1) {
+              gnn.selectAll()
+                .data([...Array(Math.floor(scale.domain()[1])).keys()].reduce((conn,connin) => {
+                  conn.push(...[...Array(Math.floor(neuron_scale[i+1].domain()[1])).keys()].reduce((conn,connout) => {
+                    conn.push([connin+1, connout+1]);
+                    return conn;
+                  }, conn));
+                  return conn;
+                }, []))
+                .enter()
+                  .append("line")
+                  .attr("x1", layer_scale(i))
+                  .attr("x2", layer_scale(i+1))
+                  .attr("y1", d => scale(d[0]))
+                  .attr("y2", d => neuron_scale[i+1](d[1]))
+                  .attr("stroke", this.$vuetify.theme.themes.light.primary);
+            }
+            if (i == neuron_scale.length - 1) {
+              let odata = gnn.selectAll()
+                .data([...Array(Math.floor(scale.domain()[1])).keys()].map(x => x+1));
+              odata.enter()
+                .append("line")
+                .attr("x1", layer_scale(i+0.5))
+                .attr("x2", layer_scale(i))
+                .attr("y1", d => scale(d))
+                .attr("y2", d => scale(d))
+                .attr("stroke", this.$vuetify.theme.themes.light.primary);
+              odata.enter()
+                .append("text")
+                .attr("x", layer_scale(i+0.5))
+                .attr("y", d => scale(d))
+                .attr("dominant-baseline", "middle")
+                .attr("text-anchor", "start")
+                .attr("fill", this.$vuetify.theme.themes.light.primary)
+                .text(d => Math.floor(scale.domain()[1]) == 1 ? "Y" : `Y${Math.floor(scale.domain()[1]) - d + 1}`);
+            }
+          });
+          let radius = Math.min(...neuron_scale.reduce((acc, scale) => {
+            acc.push(scale(1)-scale(1.3));
+            return acc;
+          }, []));
+          let neuron_n_prev = 0;
+          neuron_scale.map((scale,i) => {
+            let ndata = gnn.selectAll()
+              .data([...Array(Math.floor(scale.domain()[1])).keys()].map(x => x+1));
+            ndata.enter()
+              .append("circle")
+              .attr("cx", layer_scale(i))
+              .attr("cy", d => scale(d))
+              .attr("r", radius)
+              .attr("fill", this.$vuetify.theme.themes.light.secondary)
+              .attr("stroke", this.$vuetify.theme.themes.light.primary)
+              .attr("stroke-width", 0.1*radius);
+            ndata.enter()
+              .append("text")
+              .attr("x", layer_scale(i))
+              .attr("y", d => scale(d))
+              .attr("fill", this.$vuetify.theme.themes.light.primary)
+              .attr("dominant-baseline", "middle")
+              .attr("text-anchor", "middle")
+              .style("font-size", `${1.1*radius}px`)
+              .text(d => neuron_n_prev + Math.floor(scale.domain()[1]) - d + 1);
+            neuron_n_prev += Math.floor(scale.domain()[1]);
+          });
+        },
+        drawWeightGraph: function () {
+          if (this.training.results.content.length == 0) { return ""; }
+
+          let startindex = this.settings.parameters.neuron_n[0]+this.settings.parameters.neuron_n[this.settings.parameters.neuron_n.length-1];
+          
+          let data = this.training.results.content.map((d,i) => ({
+            x: i+1,
+            y: d.slice(
+              startindex,
+              startindex + this.numberOfWeights
+            )
+          }));
+          let scale = {
+            x: d3.scaleLinear()
+              .domain([Math.min(...data.map(d => d.x)), Math.max(...data.map(d => d.x))])
+              .range([this.graph.margin.left, this.graph.view_box[2] + this.graph.view_box[0] - this.graph.margin.right]),
+            y: d3.scaleLinear()
+              .domain([Math.min(...data.reduce((acc,d) => { acc.push(...d.y); return acc; }, [])), Math.max(...data.reduce((acc,d) => { acc.push(...d.y); return acc; }, []))])
+              .range([this.graph.view_box[3] + this.graph.view_box[1] - this.graph.margin.bottom, this.graph.view_box[1] + this.graph.margin.top]),
+          };
+          let xtickValues = scale.x.ticks().filter(Number.isInteger);
+          let axes = {
+            x: d3.axisBottom(scale.x).tickValues(xtickValues).tickFormat(d3.format('d')),
+            y: d3.axisLeft(scale.y)
+          };
+
+          let gw = d3.select("#g-weights");
+          gw.selectAll("*").remove();
+          gw.append("g")
+            .attr("transform", `translate(0,${this.graph.view_box[3]+this.graph.view_box[1]-this.graph.margin.bottom})`)
+            .call(axes.x);
+          gw.append("g")
+            .attr("transform", `translate(${this.graph.view_box[0]+this.graph.margin.left},0)`)
+            .call(axes.y);
+          [...Array(this.numberOfWeights).keys()].forEach(i => {
+            gw.append("path")
+              .datum(data)
+              .attr("fill", "none")
+              .attr("stroke", this.graph.analysis.colors[i%this.graph.analysis.colors.length])
+              .attr("stroke-width", 5)
+              .attr("stroke-linejoin", "round")
+              .attr("stroke-linecap", "round")
+              .attr("d", d3.line().x(d => scale.x(d.x)).y(d => scale.y(d.y[i])));
+            // gw.selectAll()
+            //   .data(data)
+            //   .enter().append("circle")
+            //   .attr("cx", d => scale.x(d.x))
+            //   .attr("cy", d => scale.y(d.y[i]))
+            //   .attr("r", 8)
+            //   .attr("fill", this.graph.analysis.colors[i%this.graph.analysis.colors.length])
+            //   .attr("stroke", "white")
+            //   .attr("stroke-width", 0);
+          });
+
+          let weightnames = this.training.results.header.slice(startindex, startindex+this.numberOfWeights);
+          [...Array(this.numberOfWeights).keys()].forEach(i => {
+            gw.append("text")
+              .attr("x", scale.x(data[data.length-1].x)+10)
+              .attr("y", scale.y(data[data.length-1].y[i]))
+              .attr("text-anchor", "start")
+              .attr("dominant-baseline", "middle")
+              .attr("stroke-width", 3.5)
+              .attr("stroke", this.graph.analysis.colors[i%this.graph.analysis.colors.length])
+              .text(weightnames[i]);
+            gw.append("text")
+              .attr("x", scale.x(data[data.length-1].x)+10)
+              .attr("y", scale.y(data[data.length-1].y[i]))
+              .attr("text-anchor", "start")
+              .attr("dominant-baseline", "middle")  
+              .style("fill", "white")
+              .text(weightnames[i]);
+          });
+          gw.append("text")
+            .attr("x", (scale.x.range()[1] + scale.x.range()[0])/2)
+            .attr("y", this.graph.view_box[1] + this.graph.view_box[3] - 10)
+            .attr("text-anchor", "middle")
+            .attr("dominant-baseline", "text-bottom")
+            .text("Iteration")
+          let labelpos = {
+            x: this.graph.view_box[0],
+            y: (scale.y.range()[1] + scale.y.range()[0])/2
+          }
+          gw.append("text")
+            .attr("x", labelpos.x)
+            .attr("y", labelpos.y)
+            .attr("transform", `rotate(-90,${labelpos.x},${labelpos.y})`)
+            .attr("text-anchor", "middle")
+            .attr("dominant-baseline", "middle")
+            .text("Weights");
+        },
+        drawThetaGraph: function () {
+          if (this.training.results.content.length == 0) { return ""; }
+
+          let startindex = this.settings.parameters.neuron_n[0]+this.settings.parameters.neuron_n[this.settings.parameters.neuron_n.length-1]+this.numberOfWeights;
+
+          let data = this.training.results.content.map((d,i) => ({
+            x: i+1,
+            y: d.slice(
+              startindex,
+              startindex + this.numberOfThetas
+            )
+          }));
+          let scale = {
+            x: d3.scaleLinear()
+              .domain([Math.min(...data.map(d => d.x)), Math.max(...data.map(d => d.x))])
+              .range([this.graph.margin.left, this.graph.view_box[2] + this.graph.view_box[0] - this.graph.margin.right]),
+            y: d3.scaleLinear()
+              .domain([Math.min(...data.reduce((acc,d) => { acc.push(...d.y); return acc; }, [])), Math.max(...data.reduce((acc,d) => { acc.push(...d.y); return acc; }, []))])
+              .range([this.graph.view_box[3] + this.graph.view_box[1] - this.graph.margin.bottom, this.graph.view_box[1] + this.graph.margin.top]),
+          };
+          let xtickValues = scale.x.ticks().filter(Number.isInteger);
+          let axes = {
+            x: d3.axisBottom(scale.x).tickValues(xtickValues).tickFormat(d3.format('d')),
+            y: d3.axisLeft(scale.y)
+          };
+
+          let gt = d3.select("#g-thetas");
+          gt.selectAll("*").remove();
+          gt.append("g")
+            .attr("transform", `translate(0,${this.graph.view_box[3]+this.graph.view_box[1]-this.graph.margin.bottom})`)
+            .call(axes.x);
+          gt.append("g")
+            .attr("transform", `translate(${this.graph.view_box[0]+this.graph.margin.left},0)`)
+            .call(axes.y);
+          [...Array(this.numberOfThetas).keys()].forEach(i => {
+            gt.append("path")
+              .datum(data)
+              .attr("fill", "none")
+              .attr("stroke", this.graph.analysis.colors[i%this.graph.analysis.colors.length])
+              .attr("stroke-width", 5)
+              .attr("stroke-linejoin", "round")
+              .attr("stroke-linecap", "round")
+              .attr("d", d3.line().x(d => scale.x(d.x)).y(d => scale.y(d.y[i])));
+            // gt.selectAll()
+            //   .data(data)
+            //   .enter().append("circle")
+            //   .attr("cx", d => scale.x(d.x))
+            //   .attr("cy", d => scale.y(d.y[i]))
+            //   .attr("r", 8)
+            //   .attr("fill", this.graph.analysis.colors[i%this.graph.analysis.colors.length])
+            //   .attr("stroke", "white")
+            //   .attr("stroke-width", 0);
+          });
+
+          let thetanames = this.training.results.header.slice(startindex, startindex+this.numberOfThetas);
+          [...Array(this.numberOfThetas).keys()].forEach(i => {
+            gt.append("text")
+              .attr("x", scale.x(data[data.length-1].x)+10)
+              .attr("y", scale.y(data[data.length-1].y[i]))
+              .attr("text-anchor", "start")
+              .attr("dominant-baseline", "middle")
+              .attr("stroke-width", 3.5)
+              .attr("stroke", this.graph.analysis.colors[i%this.graph.analysis.colors.length])
+              .text(thetanames[i]);
+            gt.append("text")
+              .attr("x", scale.x(data[data.length-1].x)+10)
+              .attr("y", scale.y(data[data.length-1].y[i]))
+              .attr("text-anchor", "start")
+              .attr("dominant-baseline", "middle")  
+              .style("fill", "white")
+              .text(thetanames[i]);
+          });
+          gt.append("text")
+            .attr("x", (scale.x.range()[1] + scale.x.range()[0])/2)
+            .attr("y", this.graph.view_box[1] + this.graph.view_box[3] - 10)
+            .attr("text-anchor", "middle")
+            .attr("dominant-baseline", "text-bottom")
+            .text("Iteration")
+          let labelpos = {
+            x: this.graph.view_box[0],
+            y: (scale.y.range()[1] + scale.y.range()[0])/2
+          }
+          gt.append("text")
+            .attr("x", labelpos.x)
+            .attr("y", labelpos.y)
+            .attr("transform", `rotate(-90,${labelpos.x},${labelpos.y})`)
+            .attr("text-anchor", "middle")
+            .attr("dominant-baseline", "middle")
+            .text("Thetas, Θ");
+        },
+        drawErrorGraph: function () {
+          if (this.training.results.content.length == 0) { return ""; }
+
+          let startindex = this.settings.parameters.neuron_n[0]+this.settings.parameters.neuron_n[this.settings.parameters.neuron_n.length-1]+this.numberOfWeights+this.numberOfThetas+this.numberOfThetas;
+          let numberoferrors = this.settings.parameters.neuron_n[this.settings.parameters.neuron_n.length-1];
+
+          let data = this.training.results.content.map((d,i) => ({
+            x: i+1,
+            y: d.slice(
+              startindex,
+              startindex + numberoferrors
+            )
+          }));
+          let scale = {
+            x: d3.scaleLinear()
+              .domain([Math.min(...data.map(d => d.x)), Math.max(...data.map(d => d.x))])
+              .range([this.graph.margin.left, this.graph.view_box[2] + this.graph.view_box[0] - this.graph.margin.right]),
+            y: d3.scaleLinear()
+              .domain([Math.min(...data.reduce((acc,d) => { acc.push(...d.y); return acc; }, [])), Math.max(...data.reduce((acc,d) => { acc.push(...d.y); return acc; }, []))])
+              .range([this.graph.view_box[3] + this.graph.view_box[1] - this.graph.margin.bottom, this.graph.view_box[1] + this.graph.margin.top]),
+          };
+          let xtickValues = scale.x.ticks().filter(Number.isInteger);
+          let axes = {
+            x: d3.axisBottom(scale.x).tickValues(xtickValues).tickFormat(d3.format('d')),
+            y: d3.axisLeft(scale.y)
+          };
+
+          let ge = d3.select("#g-errors");
+          ge.selectAll("*").remove();
+          ge.append("g")
+            .attr("transform", `translate(0,${this.graph.view_box[3]+this.graph.view_box[1]-this.graph.margin.bottom})`)
+            .call(axes.x);
+          ge.append("g")
+            .attr("transform", `translate(${this.graph.view_box[0]+this.graph.margin.left},0)`)
+            .call(axes.y);
+          [...Array(numberoferrors).keys()].forEach(i => {
+            ge.append("path")
+              .datum(data)
+              .attr("fill", "none")
+              .attr("stroke", this.graph.analysis.colors[i%this.graph.analysis.colors.length])
+              .attr("stroke-width", 5)
+              .attr("stroke-linejoin", "round")
+              .attr("stroke-linecap", "round")
+              .attr("d", d3.line().x(d => scale.x(d.x)).y(d => scale.y(d.y[i])));
+            // ge.selectAll()
+            //   .data(data)
+            //   .enter().append("circle")
+            //   .attr("cx", d => scale.x(d.x))
+            //   .attr("cy", d => scale.y(d.y[i]))
+            //   .attr("r", 8)
+            //   .attr("fill", this.graph.analysis.colors[i%this.graph.analysis.colors.length])
+            //   .attr("stroke", "white")
+            //   .attr("stroke-width", 0);
+          });
+
+          let errornames = this.training.results.header.slice(startindex, startindex+numberoferrors);
+          [...Array(numberoferrors).keys()].forEach(i => {
+            ge.append("text")
+              .attr("x", scale.x(data[data.length-1].x)+10)
+              .attr("y", scale.y(data[data.length-1].y[i]))
+              .attr("text-anchor", "start")
+              .attr("dominant-baseline", "middle")
+              .attr("stroke-width", 3.5)
+              .attr("stroke", this.graph.analysis.colors[i%this.graph.analysis.colors.length])
+              .text(errornames[i]);
+            ge.append("text")
+              .attr("x", scale.x(data[data.length-1].x)+10)
+              .attr("y", scale.y(data[data.length-1].y[i]))
+              .attr("text-anchor", "start")
+              .attr("dominant-baseline", "middle")  
+              .style("fill", "white")
+              .text(errornames[i]);
+          });
+          ge.append("text")
+            .attr("x", (scale.x.range()[1] + scale.x.range()[0])/2)
+            .attr("y", this.graph.view_box[1] + this.graph.view_box[3] - 10)
+            .attr("text-anchor", "middle")
+            .attr("dominant-baseline", "text-bottom")
+            .text("Iteration")
+          let labelpos = {
+            x: this.graph.view_box[0],
+            y: (scale.y.range()[1] + scale.y.range()[0])/2
+          }
+          ge.append("text")
+            .attr("x", labelpos.x)
+            .attr("y", labelpos.y)
+            .attr("transform", `rotate(-90,${labelpos.x},${labelpos.y})`)
+            .attr("text-anchor", "middle")
+            .attr("dominant-baseline", "middle")
+            .text("Errors");
+        },
+        drawDecisionRegionsGraph: function () {
+          let showing_iter = Math.min((this.display.epoch - 1) * this.training.data.length + this.display.point, this.training.results.content.length - 1);
+          if (showing_iter < 0) { return "";}
+          
+          let startindex = this.settings.parameters.neuron_n[0] + this.settings.parameters.neuron_n[this.settings.parameters.neuron_n.length-1];
+          let weights = this.training.results.content[showing_iter].slice(startindex,startindex+this.numberOfWeights);
+          weights = this.settings.parameters.neuron_n.slice(1).reduce((acc,n,i) => {
+            let layer = [];
+            [...Array(n)].forEach(() => {
+              let neuron = [];
+              [...Array(this.settings.parameters.neuron_n[i])].forEach(() => {
+                neuron.push(weights.shift());
+              });
+              layer.push(neuron);
+            });
+            acc.push(layer);
+            return acc;
+          }, []);
+          let thetas = this.training.results.content[showing_iter].slice(startindex+this.numberOfWeights,startindex+this.numberOfWeights+this.numberOfThetas);
+          thetas = this.settings.parameters.neuron_n.slice(1).reduce((acc,n) => {
+            let layer = [];
+            [...Array(n)].forEach(() => {
+              layer.push(thetas.shift());
+            });
+            acc.push(layer);
+            return acc;
+          }, []);
+
+          let step = {
+            x: (this.graph.decision_regions.x.max - this.graph.decision_regions.x.min)/(this.graph.decision_regions.x.count-1),
+            y: (this.graph.decision_regions.y.max - this.graph.decision_regions.y.min)/(this.graph.decision_regions.y.count-1)
+          };
+          let domain = {
+            x: [...Array(this.graph.decision_regions.x.count).keys()].map(i => this.graph.decision_regions.x.min + i*step.x),
+            y: [...Array(this.graph.decision_regions.y.count).keys()].map(i => this.graph.decision_regions.y.min + i*step.y),
+            color: [...Array(11).keys()].map(i => i*0.1)
+          };
+          let scale = {
+            xBand: d3.scaleBand()
+                .domain(domain.x)
+                .range([this.graph.decision_regions.view_box[0]+this.graph.decision_regions.margin.left, this.graph.decision_regions.view_box[0]+this.graph.decision_regions.view_box[2]-this.graph.decision_regions.margin.right]),
+            yBand: d3.scaleBand()
+                .domain(domain.y)
+                .range([this.graph.decision_regions.view_box[1]+this.graph.decision_regions.view_box[3]-this.graph.decision_regions.margin.bottom, this.graph.decision_regions.view_box[1]+this.graph.decision_regions.margin.top]),
+            color: d3.scaleLinear()
+                .domain([domain.color[0], domain.color[domain.color.length-1]])
+                .range([vm.$vuetify.theme.themes.light.secondary, vm.$vuetify.theme.themes.light.primary])
+          }
+          scale.x = d3.scaleLinear()
+            .domain([domain.x[0], domain.x[domain.x.length-1]])
+            .range([scale.xBand(domain.x[0]), scale.xBand(domain.x[domain.x.length-1])].map(x => x + .5*scale.xBand.bandwidth()));
+          scale.y = d3.scaleLinear()
+            .domain([domain.y[0], domain.y[domain.y.length-1]])
+            .range([scale.yBand(domain.y[0]), scale.yBand(domain.y[domain.y.length-1])].map(y => y + .5*scale.yBand.bandwidth()));
+          scale.colorbar = d3.scaleBand()
+            .domain(domain.color)
+            .range(scale.yBand.range());
+          let tickValues = {
+            x: scale.x.ticks().filter(Number.isInteger),
+            y: scale.y.ticks().filter(Number.isInteger),
+            colorbar: [...domain.color]
+          };
+          let axes = {
+            x: d3.axisBottom(scale.x).tickValues(tickValues.x).tickFormat(d3.format('d')),
+            y: d3.axisLeft(scale.y).tickValues(tickValues.y).tickFormat(d3.format('d')),
+            colorbar: d3.axisRight(scale.colorbar).tickValues(tickValues.colorbar).tickFormat(d3.format('.1f')),
+          };
+
+          let gdr = d3.select("#g-decision-regions");
+          gdr.selectAll("*").remove();
+          gdr.append("g")
+            .attr("transform", `translate(0,${this.graph.decision_regions.view_box[3]+this.graph.decision_regions.view_box[1]-this.graph.decision_regions.margin.bottom})`)
+            .call(axes.x);
+          gdr.append("g")
+            .attr("transform", `translate(${this.graph.decision_regions.view_box[0]+this.graph.decision_regions.margin.left},0)`)
+            .call(axes.y);
+          gdr.append("g")
+            .attr("transform", `translate(${scale.xBand.range()[1] + 2*scale.xBand.bandwidth()},0)`)
+            .call(axes.colorbar);
+          gdr.selectAll()
+            .data(domain.x.reduce((acc,xval) => {
+              acc.push(...domain.y.map(yval => ({x: xval, y:yval, c:this.calcOutput([xval,yval], weights, thetas, this.settings.parameters.activation_fcns)})));
+              return acc;
+            }, []))
+            .enter()
+            .append("rect")
+            .attr("x", d => scale.xBand(d.x))
+            .attr("y", d => scale.yBand(d.y))
+            .attr("width", d => scale.xBand.bandwidth())
+            .attr("height", d => scale.yBand.bandwidth())
+            .attr("fill", d => scale.color(d.c[d.c.length-1][0]))
+            .on("click", console.log)
+            .on("mouseover", () => {
+              console.log("mouseover",console.log);
+              // d3.select("#gdrtt")
+              //   .transition().duration(100)
+              //   .style("opacity", 0.9)
+              //   .style("left", `${d3.event.pageX}px`)
+              //   .style("top", `${d3.event.pageY}px`)
+              //   .html(`${d.x},${d.y},${d.c}`);
+            })
+            .on("mouseout", () => {
+              console.log("mouseout",console.log);
+              // d3.select("#gdrtt")
+              // .transition().duration(200)
+              // .style("opacity",0);
+            });
+          gdr.selectAll("circle")
+            .data(this.training.data.map(d => ({x: d[0], y: d[1], o: d[2]})))
+            .enter().append("circle")
+            .attr("cx", d => scale.x(d.x))
+            .attr("cy", d => scale.y(d.y))
+            .attr("r", 15)
+            .attr("fill", d => scale.color(d.o))
+            .attr("stroke", "white")
+            .attr("stroke-width", 3);
+          gdr.append("text")
+            .attr("x", (scale.x.range()[1] + scale.x.range()[0])/2)
+            .attr("y", this.graph.decision_regions.view_box[1] + this.graph.decision_regions.view_box[3] - 10)
+            .attr("text-anchor", "middle")
+            .attr("dominant-baseline", "text-bottom")
+            .text("x1")
+          let labelpos = {
+            x: this.graph.decision_regions.view_box[0],
+            y: (scale.y.range()[1] + scale.y.range()[0])/2
+          }
+          gdr.append("text")
+            .attr("x", labelpos.x)
+            .attr("y", labelpos.y)
+            .attr("transform", `rotate(-90,${labelpos.x},${labelpos.y})`)
+            .attr("text-anchor", "middle")
+            .attr("dominant-baseline", "middle")
+            .text("x2")
+
+          gdr.selectAll()
+            .data(scale.colorbar.domain())
+            .enter()
+            .append("rect")
+            .attr("x", scale.xBand.range()[1] + 1*scale.xBand.bandwidth())
+            .attr("y", d => scale.colorbar(d))
+            .attr("width", scale.xBand.bandwidth())
+            .attr("height", scale.colorbar.bandwidth())
+            .attr("fill", d => scale.color(d));;
         }
       }
     })
