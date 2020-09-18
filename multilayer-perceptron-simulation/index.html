@@ -964,7 +964,7 @@
             y: d3.axisLeft(scale.y)
           };
 
-          let ge = d3.select("#g-errors");
+          let ge = d3.select("#g-error");
           ge.selectAll("*").remove();
           ge.append("g")
             .attr("transform", `translate(0,${this.graph.view_box[3]+this.graph.view_box[1]-this.graph.margin.bottom})`)
