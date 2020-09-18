@@ -46,7 +46,7 @@
                 <svg id="g-neural-network" width="100%" :height="`${graph.neural_network.height}px`" :view-box.camel="graph.neural_network.view_box.join(' ')" v-html="neuralNetworkGraph"></svg>
               </v-card>
               <v-card light flat class="mt-3">
-                <svg id="g-decision-regions" width="100%" :height="`${graph.height}px`" :view-box.camel="graph.view_box.join(' ')" v-html="decisionRegionsGraph"></svg>
+                <svg id="g-decision-regions" width="100%" :height="`${graph.decision_regions.height}px`" :view-box.camel="graph.decision_regions.view_box.join(' ')" v-html="decisionRegionsGraph"></svg>
               </v-card>
             </v-card-text>
           </v-card>
@@ -283,6 +283,14 @@
             }
           },
           decision_regions: {
+            view_box: [0,0,1000,500],
+            height: 500,
+            margin: {
+              left: 50,
+              bottom: 50,
+              right: 120,
+              top: 25
+            },
             x: {
               min: -1,
               max: 2,
@@ -473,15 +481,15 @@
               .attr("stroke-linejoin", "round")
               .attr("stroke-linecap", "round")
               .attr("d", d3.line().x(d => scale.x(d.x)).y(d => scale.y(d.y[i])));
-            gw.selectAll()
-              .data(data)
-              .enter().append("circle")
-              .attr("cx", d => scale.x(d.x))
-              .attr("cy", d => scale.y(d.y[i]))
-              .attr("r", 8)
-              .attr("fill", this.graph.analysis.colors[i%this.graph.analysis.colors.length])
-              .attr("stroke", "white")
-              .attr("stroke-width", 0);
+            // gw.selectAll()
+            //   .data(data)
+            //   .enter().append("circle")
+            //   .attr("cx", d => scale.x(d.x))
+            //   .attr("cy", d => scale.y(d.y[i]))
+            //   .attr("r", 8)
+            //   .attr("fill", this.graph.analysis.colors[i%this.graph.analysis.colors.length])
+            //   .attr("stroke", "white")
+            //   .attr("stroke-width", 0);
           });
 
           let weightnames = this.training.results.header.slice(startindex, startindex+this.numberOfWeights);
@@ -564,15 +572,15 @@
               .attr("stroke-linejoin", "round")
               .attr("stroke-linecap", "round")
               .attr("d", d3.line().x(d => scale.x(d.x)).y(d => scale.y(d.y[i])));
-            gt.selectAll()
-              .data(data)
-              .enter().append("circle")
-              .attr("cx", d => scale.x(d.x))
-              .attr("cy", d => scale.y(d.y[i]))
-              .attr("r", 8)
-              .attr("fill", this.graph.analysis.colors[i%this.graph.analysis.colors.length])
-              .attr("stroke", "white")
-              .attr("stroke-width", 0);
+            // gt.selectAll()
+            //   .data(data)
+            //   .enter().append("circle")
+            //   .attr("cx", d => scale.x(d.x))
+            //   .attr("cy", d => scale.y(d.y[i]))
+            //   .attr("r", 8)
+            //   .attr("fill", this.graph.analysis.colors[i%this.graph.analysis.colors.length])
+            //   .attr("stroke", "white")
+            //   .attr("stroke-width", 0);
           });
 
           let thetanames = this.training.results.header.slice(startindex, startindex+this.numberOfThetas);
@@ -656,15 +664,15 @@
               .attr("stroke-linejoin", "round")
               .attr("stroke-linecap", "round")
               .attr("d", d3.line().x(d => scale.x(d.x)).y(d => scale.y(d.y[i])));
-            ge.selectAll()
-              .data(data)
-              .enter().append("circle")
-              .attr("cx", d => scale.x(d.x))
-              .attr("cy", d => scale.y(d.y[i]))
-              .attr("r", 8)
-              .attr("fill", this.graph.analysis.colors[i%this.graph.analysis.colors.length])
-              .attr("stroke", "white")
-              .attr("stroke-width", 0);
+            // ge.selectAll()
+            //   .data(data)
+            //   .enter().append("circle")
+            //   .attr("cx", d => scale.x(d.x))
+            //   .attr("cy", d => scale.y(d.y[i]))
+            //   .attr("r", 8)
+            //   .attr("fill", this.graph.analysis.colors[i%this.graph.analysis.colors.length])
+            //   .attr("stroke", "white")
+            //   .attr("stroke-width", 0);
           });
 
           let errornames = this.training.results.header.slice(startindex, startindex+numberoferrors);
@@ -736,47 +744,56 @@
             x: (this.graph.decision_regions.x.max - this.graph.decision_regions.x.min)/(this.graph.decision_regions.x.count-1),
             y: (this.graph.decision_regions.y.max - this.graph.decision_regions.y.min)/(this.graph.decision_regions.y.count-1)
           };
-          let range = {
+          let domain = {
             x: [...Array(this.graph.decision_regions.x.count).keys()].map(i => this.graph.decision_regions.x.min + i*step.x),
-            y: [...Array(this.graph.decision_regions.y.count).keys()].map(i => this.graph.decision_regions.y.min + i*step.y)
+            y: [...Array(this.graph.decision_regions.y.count).keys()].map(i => this.graph.decision_regions.y.min + i*step.y),
+            color: [...Array(11).keys()].map(i => i*0.1)
           };
           let scale = {
             xBand: d3.scaleBand()
-                .domain(range.x)
-                .range([this.graph.view_box[0]+this.graph.margin.left, this.graph.view_box[0]+this.graph.view_box[2]-this.graph.margin.right]),
+                .domain(domain.x)
+                .range([this.graph.decision_regions.view_box[0]+this.graph.decision_regions.margin.left, this.graph.decision_regions.view_box[0]+this.graph.decision_regions.view_box[2]-this.graph.decision_regions.margin.right]),
             yBand: d3.scaleBand()
-                .domain(range.y)
-                .range([this.graph.view_box[1]+this.graph.view_box[3]-this.graph.margin.bottom, this.graph.view_box[1]+this.graph.margin.top]),
+                .domain(domain.y)
+                .range([this.graph.decision_regions.view_box[1]+this.graph.decision_regions.view_box[3]-this.graph.decision_regions.margin.bottom, this.graph.decision_regions.view_box[1]+this.graph.decision_regions.margin.top]),
             color: d3.scaleLinear()
-                .domain([0, 1])
+                .domain([domain.color[0], domain.color[domain.color.length-1]])
                 .range([vm.$vuetify.theme.themes.light.secondary, vm.$vuetify.theme.themes.light.primary])
           }
           scale.x = d3.scaleLinear()
-            .domain([range.x[0], range.x[range.x.length-1]])
-            .range([scale.xBand(range.x[0]), scale.xBand(range.x[range.x.length-1])].map(x => x + .5*scale.xBand.bandwidth()));
+            .domain([domain.x[0], domain.x[domain.x.length-1]])
+            .range([scale.xBand(domain.x[0]), scale.xBand(domain.x[domain.x.length-1])].map(x => x + .5*scale.xBand.bandwidth()));
           scale.y = d3.scaleLinear()
-            .domain([range.y[0], range.y[range.y.length-1]])
-            .range([scale.yBand(range.y[0]), scale.yBand(range.y[range.y.length-1])].map(y => y + .5*scale.yBand.bandwidth()));
+            .domain([domain.y[0], domain.y[domain.y.length-1]])
+            .range([scale.yBand(domain.y[0]), scale.yBand(domain.y[domain.y.length-1])].map(y => y + .5*scale.yBand.bandwidth()));
+          scale.colorbar = d3.scaleBand()
+            .domain(domain.color)
+            .range(scale.yBand.range());
           let tickValues = {
             x: scale.x.ticks().filter(Number.isInteger),
             y: scale.y.ticks().filter(Number.isInteger),
+            colorbar: [...domain.color]
           };
           let axes = {
             x: d3.axisBottom(scale.x).tickValues(tickValues.x).tickFormat(d3.format('d')),
-            y: d3.axisLeft(scale.y).tickValues(tickValues.y).tickFormat(d3.format('d'))
+            y: d3.axisLeft(scale.y).tickValues(tickValues.y).tickFormat(d3.format('d')),
+            colorbar: d3.axisRight(scale.colorbar).tickValues(tickValues.colorbar).tickFormat(d3.format('.1f')),
           };
 
           let gdr = d3.create("svg");
           gdr.selectAll("*").remove();
           gdr.append("g")
-            .attr("transform", `translate(0,${this.graph.view_box[3]+this.graph.view_box[1]-this.graph.margin.bottom})`)
+            .attr("transform", `translate(0,${this.graph.decision_regions.view_box[3]+this.graph.decision_regions.view_box[1]-this.graph.decision_regions.margin.bottom})`)
             .call(axes.x);
           gdr.append("g")
-            .attr("transform", `translate(${this.graph.view_box[0]+this.graph.margin.left},0)`)
+            .attr("transform", `translate(${this.graph.decision_regions.view_box[0]+this.graph.decision_regions.margin.left},0)`)
             .call(axes.y);
+          gdr.append("g")
+            .attr("transform", `translate(${scale.xBand.range()[1] + 2*scale.xBand.bandwidth()},0)`)
+            .call(axes.colorbar);
           gdr.selectAll()
-            .data(range.x.reduce((acc,xval) => {
-              acc.push(...range.y.map(yval => ({x: xval, y:yval, c:this.calcOutput([xval,yval], weights, thetas, this.settings.parameters.activation_fcns)})));
+            .data(domain.x.reduce((acc,xval) => {
+              acc.push(...domain.y.map(yval => ({x: xval, y:yval, c:this.calcOutput([xval,yval], weights, thetas, this.settings.parameters.activation_fcns)})));
               return acc;
             }, []))
             .enter()
@@ -798,12 +815,12 @@
             .attr("stroke-width", 3);
           gdr.append("text")
             .attr("x", (scale.x.range()[1] + scale.x.range()[0])/2)
-            .attr("y", this.graph.view_box[1] + this.graph.view_box[3] - 10)
+            .attr("y", this.graph.decision_regions.view_box[1] + this.graph.decision_regions.view_box[3] - 10)
             .attr("text-anchor", "middle")
             .attr("dominant-baseline", "text-bottom")
             .text("x1")
           let labelpos = {
-            x: this.graph.view_box[0],
+            x: this.graph.decision_regions.view_box[0],
             y: (scale.y.range()[1] + scale.y.range()[0])/2
           }
           gdr.append("text")
@@ -814,54 +831,16 @@
             .attr("dominant-baseline", "middle")
             .text("x2")
 
-          let legend = {
-            width: 95,
-            margin: {
-              top: 10,
-              right: 10
-            },
-            padding: { left: 10, bottom: 10, right: 10, top: 10, between: 10 },
-            fill: {
-              color: "white",
-              opacity: 0.8
-            },
-            border: {
-              radius: 5,
-            },
-            block: { width: 30, height: 30 }
-          }
-          gdr.append("rect")
-            .attr("x", scale.x.range()[1]-legend.width-legend.margin.right)
-            .attr("y", scale.y.range()[1]+legend.margin.top)
-            .attr("width", legend.width)
-            .attr("height", legend.padding.top+2*legend.block.height+legend.padding.between+legend.padding.bottom)
-            .attr("rx", legend.border.radius)
-            .style("fill", legend.fill.color)
-            .style("fill-opacity", legend.fill.opacity);
-          gdr.append("rect")
-            .attr("x", scale.x.range()[1]-legend.width-legend.margin.right+legend.padding.left)
-            .attr("y", scale.y.range()[1]+legend.margin.top+legend.padding.top)
-            .attr("width", legend.block.width)
-            .attr("height", legend.block.height)
-            .attr("rx", legend.border.radius)
-            .style("fill", scale.color(0));
-          gdr.append("text")
-            .attr("x", scale.x.range()[1]-legend.width-legend.margin.right+legend.padding.left+legend.block.width+legend.padding.between)
-            .attr("y", scale.y.range()[1]+legend.margin.top+legend.padding.top+.5*legend.block.height)
-            .attr("dominant-baseline", "middle")
-            .text("y = 0");
-          gdr.append("rect")
-            .attr("x", scale.x.range()[1]-legend.width-legend.margin.right+legend.padding.left)
-            .attr("y", scale.y.range()[1]+legend.margin.top+legend.padding.top+legend.block.height+legend.padding.between)
-            .attr("width", legend.block.width)
-            .attr("height", legend.block.height)
-            .attr("rx", legend.border.radius)
-            .style("fill", scale.color(1));
-          gdr.append("text")
-            .attr("x", scale.x.range()[1]-legend.width-legend.margin.right+legend.padding.left+legend.block.width+legend.padding.between)
-            .attr("y", scale.y.range()[1]+legend.margin.top+legend.padding.top+1.5*legend.block.height+legend.padding.between)
-            .attr("dominant-baseline", "middle")
-            .text("y = 1");
+          gdr.selectAll()
+            .data(scale.colorbar.domain())
+            .enter()
+            .append("rect")
+            .attr("x", scale.xBand.range()[1] + 1*scale.xBand.bandwidth())
+            .attr("y", d => scale.colorbar(d))
+            .attr("width", scale.xBand.bandwidth())
+            .attr("height", scale.colorbar.bandwidth())
+            .attr("fill", d => scale.color(d));
+
           return gdr.html();
         }
       },
