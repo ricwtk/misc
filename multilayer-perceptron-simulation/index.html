@@ -39,9 +39,9 @@
             <v-card-title>Operation: {{ settings.parameters.operation.chosen }}</v-card-title>
             <v-card-text>
               <v-subheader class="px-0">Epoch</v-subheader>
-              <v-slider :min="epochMin" :max="epochMax" v-model="display.epoch" ticks="always" tick-size="5" :tick-labels="[...Array(epochMax-epochMin+1).keys()].map(i => i+epochMin)"></v-slider>
+              <v-slider :min="epochMin" :max="epochMax" v-model="display.epoch" ticks="always" tick-size="5" thumb-label thumb-color="secondary"></v-slider>
               <v-subheader class="px-0">Data point</v-subheader>
-              <v-slider min="1" :max="training.data.length" v-model="display.point" ticks="always" tick-size="5" :tick-labels="[...Array(training.data.length).keys()].map(i => i+1)"></v-slider>
+              <v-slider min="1" :max="training.data.length" v-model="display.point" ticks="always" tick-size="5" thumb-label thumb-color="secondary"></v-slider>
               <v-card light flat>
                 <svg id="g-neural-network" width="100%" :height="`${graph.neural_network.height}px`" :view-box.camel="graph.neural_network.view_box.join(' ')" v-html="neuralNetworkGraph"></svg>
               </v-card>
@@ -89,7 +89,7 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <tr v-for="row,i in training.results.content.slice(0,display.epoch*training.data.length)">
+                    <tr v-for="row,i in training.results.content">
                       <td class="text-center" :class=" i % training.data.length == training.data.length - 1 ? 'epoch-end' : '' ">{{ i % training.data.length == 0 ? i/training.data.length + 1 : "" }}</td>
                       <td class="text-center" v-for="col,j in row" :key="`tableitem-${i}-${j}`" :class=" i % training.data.length == training.data.length - 1 ? 'epoch-end' : '' ">{{ j > 2 ? Number(col).toFixed(4) : col }}</td>
                     </tr>
