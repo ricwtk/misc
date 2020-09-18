@@ -698,12 +698,12 @@
         setConfigurations: function () {
           this.settings.parameters.cached = {
             operation: this.settings.parameters.operation.chosen,
-            weights: [...this.settings.parameters.weights],
-            theta: this.settings.parameters.theta,
-            alpha: this.settings.parameters.alpha
+            weights: [...this.settings.parameters.weights.map(w => Number(w))],
+            theta: Number(this.settings.parameters.theta),
+            alpha: Number(this.settings.parameters.alpha)
           };
           this.settings.show = false;
-          this.resetLearning();
+          this.$nextTick().then(this.resetLearning);
         },
         resetLearning: function () {
           this.training.weights = this.settings.parameters.weights.map(x => x);
