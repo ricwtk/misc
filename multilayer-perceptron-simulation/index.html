@@ -164,10 +164,15 @@
           color: "primary",
           fcn: function () { vm.runEpoch(); }
         },{
-          icon: "mdi-skip-forward",
+          icon: "mdi-skip-next",
           label: "Run 10 epoch",
           color: "secondary",
           fcn: function () { vm.runEpoch(10); }
+        },{
+          icon: "mdi-skip-forward",
+          label: "Run 50 epoch",
+          color: "secondary",
+          fcn: function () { vm.runEpoch(50); }
         },{
           icon: "mdi-undo-variant",
           label: "reset",
