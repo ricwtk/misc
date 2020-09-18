@@ -715,7 +715,6 @@
             return acc;
           }, []));
           let neuron_n_prev = 0;
-          console.log(weights, thetas);
           neuron_scale.map((scale,i) => {
             let ndata = gnn.selectAll()
               .data([...Array(Math.floor(scale.domain()[1])).keys()].map(x => x+1));
@@ -728,7 +727,6 @@
               .attr("stroke", this.$vuetify.theme.themes.light.primary)
               .attr("stroke-width", 0.1*radius)
               .on("mousemove", (event,d) => {
-                console.log(i,d);
                 if (i > 0) {
                   d3.select("#gnntt")
                     .style("opacity", 0.9)
@@ -1126,7 +1124,7 @@
                 .style("opacity", 0.9)
                 .style("left", `${event.pageX+20}px`)
                 .style("top", `${event.pageY}px`)
-                .html(`x1: ${d.x.toFixed(2)}<br>x2: ${d.y.toFixed(2)}<br>y: ${d.c[d.c.length-1][0].toFixed(2)}`);
+                .html(`x<sub>1</sub>: ${d.x.toFixed(2)}<br>x<sub>2</sub>: ${d.y.toFixed(2)}<br>y: ${d.c[d.c.length-1][0].toFixed(2)}`);
               d3.select(event.target)
                 .attr("stroke", this.$vuetify.theme.themes.light.highlight)
                 .attr("stroke-width",3);
@@ -1153,7 +1151,7 @@
                 .style("opacity", 0.9)
                 .style("left", `${event.pageX+20}px`)
                 .style("top", `${event.pageY}px`)
-                .html(`x1: ${d.x.toFixed(2)}<br>x2: ${d.y.toFixed(2)}<br>y: ${d.o.toFixed(2)}`);
+                .html(`x<sub>1</sub>: ${d.x.toFixed(2)}<br>x<sub>2</sub>: ${d.y.toFixed(2)}<br>y: ${d.o.toFixed(2)}`);
               d3.select(event.target)
                 .attr("stroke", this.$vuetify.theme.themes.light.highlight);
             })
