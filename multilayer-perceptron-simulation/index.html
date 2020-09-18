@@ -130,6 +130,7 @@
           </v-dialog>
 
           <div id="gdrtt" style="opacity:0;position:absolute;background-color:rgba(255,255,255,0.5);padding:5px 10px;border-radius:5px"></div>
+          <div id="gnntt" style="opacity:0;position:absolute;background-color:rgba(255,255,255,0.5);padding:5px 10px;border-radius:5px"></div>
         </v-container>
       </v-main>
     </v-app>
@@ -616,6 +617,33 @@
           this.resetLearning();
         },
         drawNeuralNetworkGraph: function () {
+          let showing_iter = Math.min((this.display.epoch - 1) * this.training.data.length + this.display.point, this.training.results.content.length - 1);
+          if (showing_iter < 0) { return "";}
+          
+          let startindex = this.settings.parameters.neuron_n[0] + this.settings.parameters.neuron_n[this.settings.parameters.neuron_n.length-1];
+          let weights = this.training.results.content[showing_iter].slice(startindex,startindex+this.numberOfWeights);
+          weights = this.settings.parameters.neuron_n.slice(1).reduce((acc,n,i) => {
+            let layer = [];
+            [...Array(n)].forEach(() => {
+              let neuron = [];
+              [...Array(this.settings.parameters.neuron_n[i])].forEach(() => {
+                neuron.push(weights.shift());
+              });
+              layer.push(neuron);
+            });
+            acc.push(layer);
+            return acc;
+          }, []);
+          let thetas = this.training.results.content[showing_iter].slice(startindex+this.numberOfWeights,startindex+this.numberOfWeights+this.numberOfThetas);
+          thetas = this.settings.parameters.neuron_n.slice(1).reduce((acc,n) => {
+            let layer = [];
+            [...Array(n)].forEach(() => {
+              layer.push(thetas.shift());
+            });
+            acc.push(layer);
+            return acc;
+          }, []);
+
           let gnn = d3.select("#g-neural-network");
           let neuron_scale = this.settings.parameters.neuron_n.map(n => {
             return d3.scaleLinear()
@@ -687,6 +715,7 @@
             return acc;
           }, []));
           let neuron_n_prev = 0;
+          console.log(weights, thetas);
           neuron_scale.map((scale,i) => {
             let ndata = gnn.selectAll()
               .data([...Array(Math.floor(scale.domain()[1])).keys()].map(x => x+1));
@@ -697,7 +726,27 @@
               .attr("r", radius)
               .attr("fill", this.$vuetify.theme.themes.light.secondary)
               .attr("stroke", this.$vuetify.theme.themes.light.primary)
-              .attr("stroke-width", 0.1*radius);
+              .attr("stroke-width", 0.1*radius)
+              .on("mousemove", (event,d) => {
+                console.log(i,d);
+                if (i > 0) {
+                  d3.select("#gnntt")
+                    .style("opacity", 0.9)
+                    .style("left", `${event.pageX+20}px`)
+                    .style("top", `${event.pageY}px`)
+                    .html(`${weights[i-1][weights[i-1].length-d].map((w,pi) => `w<sub>${this.neuronNames[i-1][pi]}${this.neuronNames[i][this.neuronNames[i].length-d]}</sub>: ${w.toFixed(2)}`).join("<br>")}<br>Θ<sub>${this.neuronNames[i][this.neuronNames[i].length-d]}</sub>: ${thetas[i-1][thetas[i-1].length-d].toFixed(2)}`);
+                  d3.select(event.target)
+                    .attr("stroke", this.$vuetify.theme.themes.light.accent);
+                }
+              })
+              .on("mouseleave", () => {
+                d3.select("#gnntt")
+                  .style("opacity",0)
+                  .style("left", "0px")
+                  .style("top", "0px");
+                d3.select(event.target)
+                  .attr("stroke", this.$vuetify.theme.themes.light.primary);
+              });
             ndata.enter()
               .append("text")
               .attr("x", layer_scale(i))
