@@ -950,6 +950,14 @@
               startindex + numberoferrors
             )
           }));
+          let rmsedata = data.reduce((acc,d,i,arr) => {
+            let sta = Math.floor(i/this.training.data.length) * this.training.data.length;
+            acc.push({
+              x: d.x,
+              y: arr.slice(sta, sta+this.training.data.length).reduce((a,v) => { v.y.forEach((y,yi) => a[yi]=a[yi]+y*y); return a; }, d.y.map(() => 0)).map(sse => Math.sqrt(sse/this.training.data.length))
+            });
+            return acc;
+          }, []);
           let scale = {
             x: d3.scaleLinear()
               .domain([Math.min(...data.map(d => d.x)), Math.max(...data.map(d => d.x))])
@@ -976,7 +984,15 @@
             ge.append("path")
               .datum(data)
               .attr("fill", "none")
-              .attr("stroke", this.graph.analysis.colors[i%this.graph.analysis.colors.length])
+              .attr("stroke", this.graph.analysis.colors[(i*2)%this.graph.analysis.colors.length])
+              .attr("stroke-width", 5)
+              .attr("stroke-linejoin", "round")
+              .attr("stroke-linecap", "round")
+              .attr("d", d3.line().x(d => scale.x(d.x)).y(d => scale.y(d.y[i])));
+            ge.append("path")
+              .datum(rmsedata)
+              .attr("fill", "none")
+              .attr("stroke", this.graph.analysis.colors[(i*2+1)%this.graph.analysis.colors.length])
               .attr("stroke-width", 5)
               .attr("stroke-linejoin", "round")
               .attr("stroke-linecap", "round")
@@ -1000,7 +1016,7 @@
               .attr("text-anchor", "start")
               .attr("dominant-baseline", "middle")
               .attr("stroke-width", 3.5)
-              .attr("stroke", this.graph.analysis.colors[i%this.graph.analysis.colors.length])
+              .attr("stroke", this.graph.analysis.colors[(i*2)%this.graph.analysis.colors.length])
               .text(errornames[i]);
             ge.append("text")
               .attr("x", scale.x(data[data.length-1].x)+10)
@@ -1009,6 +1025,21 @@
               .attr("dominant-baseline", "middle")  
               .style("fill", "white")
               .text(errornames[i]);
+            ge.append("text")
+              .attr("x", scale.x(rmsedata[rmsedata.length-1].x)+10)
+              .attr("y", scale.y(rmsedata[rmsedata.length-1].y[i]))
+              .attr("text-anchor", "start")
+              .attr("dominant-baseline", "middle")
+              .attr("stroke-width", 3.5)
+              .attr("stroke", this.graph.analysis.colors[(i*2+1)%this.graph.analysis.colors.length])
+              .text(`rms ${errornames[i]}`);
+            ge.append("text")
+              .attr("x", scale.x(rmsedata[rmsedata.length-1].x)+10)
+              .attr("y", scale.y(rmsedata[rmsedata.length-1].y[i]))
+              .attr("text-anchor", "start")
+              .attr("dominant-baseline", "middle")  
+              .style("fill", "white")
+              .text(`rms ${errornames[i]}`);
           });
           ge.append("text")
             .attr("x", (scale.x.range()[1] + scale.x.range()[0])/2)
