@@ -29,6 +29,13 @@
             <v-col v-for="c in controls" cols="auto" class="mx-2" :key="c.label" :title="c.label">
               <v-row class="justify-center"><v-btn light elevation="2" @click="c.fcn"><v-icon :color="c.color">{{ c.icon }}</v-icon></v-btn></v-row>
             </v-col>
+            <v-progress-linear
+              :active="display.loading"
+              indeterminate
+              absolute
+              bottom
+              color="accent"
+            ></v-progress-linear>
             <!-- <v-col class="d-flex align-center">
               <v-slider hide-details="auto" label="Epoch" :min="epochMin" :max="epochMax" thumb-label="always" thumb-color="secondary" v-model="display.epoch"></v-slider>
             </v-col> -->
@@ -98,6 +105,9 @@
               </v-simple-table>
             </v-card-text>
           </v-card>
+
+          <v-overlay :value="display.loading">
+          </v-overlay>
           
           <v-dialog v-model="settings.show" scrollable>
             <v-card>
@@ -283,7 +293,8 @@
         },
         display: {
           epoch: 1,
-          point: 1
+          point: 1,
+          loading: false
         },
         graph: {
           tab: 0,
@@ -368,19 +379,26 @@
       },
       watch: {
         "training.results.content": function () {
+          this.display.loading = true;
           this.drawNeuralNetworkGraph();
           this.drawDecisionRegionsGraph();
           this.drawWeightGraph();
           this.drawThetaGraph();
           this.drawErrorGraph();
+          setTimeout(() => this.display.loading = false, 1000);
         },
         "display.epoch": function () {
+          this.display.loading = true;
           this.drawNeuralNetworkGraph();
           this.drawDecisionRegionsGraph();
+          setTimeout(() => this.display.loading = false, 1000);
+
         },
         "display.point": function () {
+          this.display.loading = true;
           this.drawNeuralNetworkGraph();
           this.drawDecisionRegionsGraph();
+          setTimeout(() => this.display.loading = false, 1000);
         },
         "settings.show": function (showing) {
           if (showing) {
@@ -553,9 +571,13 @@
           this.display.epoch = this.epochMax;
         },
         runEpoch: function (n=1) {
-          [...Array(n).keys()].forEach(() => {
-            this.runIter(this.training.data.length - this.training.current_data_idx);
-          });
+          this.display.loading = true;
+          setTimeout(() => {
+            [...Array(n).keys()].forEach(() => {
+              this.runIter(this.training.data.length - this.training.current_data_idx);
+            });
+          }, 500);
+          // this.display.loading = false;
         },
         calcOutput: function (inputs, weights, thetas, actfcns) {
           let ys = [[...inputs]];
