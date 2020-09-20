@@ -108,12 +108,29 @@
                   <v-list-item>
                     <v-select label="Operation to model/learn" :items="settings.parameters.operation.options" v-model="settings.parameters.operation.chosen" hide-details></v-select>
                   </v-list-item>
-                  <v-list-item v-for="w,wi in settings.parameters.weights" :key="`weight-${wi}`">
-                    <v-text-field :label="`Weight ${wi+1}`" v-model="settings.parameters.weights[wi]" hide-details></v-text-field>
+                  <v-subheader>Neuron Number in Layers</v-subheader>
+                  <v-list-item v-for="l,li in settings.parameters.neuron_n" :key="`neuron-n-${li}`">
+                    <v-text-field :label="li == 0 ? 'Input layer' : li == settings.parameters.neuron_n.length - 1 ? 'Output layer' : `Hidden layer ${li}`" v-model="settings.parameters.neuron_n[li]" hide-details :readonly="li == 0 || li == settings.parameters.neuron_n.length-1"></v-text-field>
                   </v-list-item>
-                  <v-list-item>
-                    <v-text-field label="Θ" v-model="settings.parameters.thetas" hide-details></v-text-field>
+                  <v-subheader>Activation Functions</v-subheader>
+                  <v-list-item v-for="actfcn,ai in settings.parameters.activation_fcns" :key="`actfcn-${ai}`">
+                    <v-select :label="ai == settings.parameters.activation_fcns.length - 1 ? 'Output layer' : `Hidden layer ${ai+1}`" v-model="settings.parameters.activation_fcns[ai]" :items="Object.keys(activation_fcns)" hide-details></v-text-field>
                   </v-list-item>
+                  <v-subheader>Weights</v-subheader>
+                  <template v-for="l,li in settings.parameters.weights">
+                    <template v-for="n,ni in l">
+                      <v-list-item v-for="w,wi in n" :key="`weight-${neuronNames[li][wi]}-${neuronNames[li+1][ni]}`">
+                        <v-text-field :label="`w${neuronNames[li][wi]}${neuronNames[li+1][ni]}`" v-model="settings.parameters.weights[li][ni][wi]" hide-details></v-text-field>
+                      </v-list-item>
+                    </template>
+                  </template>
+                  <v-subheader>Thresholds</v-subheader>
+                  <template v-for="l,li in settings.parameters.thetas">
+                    <v-list-item v-for="n,ni in l" :key="`theta-${neuronNames[li+1][ni]}`">
+                      <v-text-field :label="`Θ${neuronNames[li+1][ni]}`" v-model="settings.parameters.thetas[li][ni]" hide-details></v-text-field>
+                    </v-list-item>
+                  </template>
+                  <v-subheader>Learning rate</v-subheader>
                   <v-list-item>
                     <v-text-field label="α" v-model="settings.parameters.alpha" hide-details></v-text-field>
                   </v-list-item>
@@ -243,6 +260,8 @@
             activation_fcns: [],
             cached: {
               operation: "",
+              neuron_n: [],
+              activation_fcns: [],
               weights: [],
               thetas: [],
               alpha: 0
@@ -367,14 +386,18 @@
           if (showing) {
             this.settings.parameters.cached = {
               operation: this.settings.parameters.operation.chosen,
-              weights: [...this.settings.parameters.weights],
-              thetas: this.settings.parameters.thetas,
+              neuron_n: this.settings.parameters.neuron_n.map(layer => layer),
+              activation_fcns: this.settings.parameters.activation_fcns.map(layer => layer),
+              weights: this.settings.parameters.weights.map(layer => layer.map(neuron => neuron.map(weight => weight))),
+              thetas: this.settings.parameters.thetas.map(layer => layer.map(neuron => neuron)),
               alpha: this.settings.parameters.alpha
             };
           } else {
             this.settings.parameters.operation.chosen = this.settings.parameters.cached.operation;
-            this.settings.parameters.weights = [...this.settings.parameters.cached.weights];
-            this.settings.parameters.thetas = this.settings.parameters.cached.thetas;
+            this.settings.parameters.neuron_n = this.settings.parameters.cached.neuron_n.map(layer => layer);
+            this.settings.parameters.activation_fcns = this.settings.parameters.cached.activation_fcns.map(layer => layer);
+            this.settings.parameters.weights = this.settings.parameters.cached.weights.map(layer => layer.map(neuron => neuron.map(weight => weight)));
+            this.settings.parameters.thetas = this.settings.parameters.cached.thetas.map(layer => layer.map(neuron => neuron));
             this.settings.parameters.alpha = this.settings.parameters.cached.alpha;
           }
         }
@@ -589,16 +612,18 @@
         setConfigurations: function () {
           this.settings.parameters.cached = {
             operation: this.settings.parameters.operation.chosen,
-            weights: [...this.settings.parameters.weights],
-            thetas: this.settings.parameters.thetas,
-            alpha: this.settings.parameters.alpha
+            neuron_n: this.settings.parameters.neuron_n.map(layer => Number(layer)),
+            activation_fcns: this.settings.parameters.activation_fcns.map(layer => layer),
+            weights: this.settings.parameters.weights.map(layer => layer.map(neuron => neuron.map(weight => Number(weight)))),
+            thetas: this.settings.parameters.thetas.map(layer => layer.map(neuron => Number(neuron))),
+            alpha: Number(this.settings.parameters.alpha)
           };
           this.settings.show = false;
-          this.resetLearning();
+          this.$nextTick().then(this.resetLearning);
         },
         resetLearning: function () {
-          this.training.weights = this.settings.parameters.weights.map(layer => layer.map(neuron => [...neuron]));
-          this.training.thetas = this.settings.parameters.thetas.map(layer => [...layer]);
+          this.training.weights = this.settings.parameters.weights.map(layer => layer.map(neuron => neuron.map(weight => weight)));
+          this.training.thetas = this.settings.parameters.thetas.map(layer => layer.map(neuron => neuron));
           this.training.data = this.settings.parameters.operation.data[this.settings.parameters.operation.options.indexOf(this.settings.parameters.operation.chosen)].map(x => [...x]);
           this.training.results = {
             header: [],
