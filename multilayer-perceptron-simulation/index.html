@@ -119,9 +119,18 @@
                     <v-select label="Operation to model/learn" :items="settings.parameters.operation.options" v-model="settings.parameters.operation.chosen" hide-details></v-select>
                   </v-list-item>
                   <v-subheader>Neuron Number in Layers</v-subheader>
-                  <v-list-item v-for="l,li in settings.parameters.neuron_n" :key="`neuron-n-${li}`">
-                    <v-text-field :label="li == 0 ? 'Input layer' : li == settings.parameters.neuron_n.length - 1 ? 'Output layer' : `Hidden layer ${li}`" v-model="settings.parameters.neuron_n[li]" hide-details :readonly="li == 0 || li == settings.parameters.neuron_n.length-1"></v-text-field>
-                  </v-list-item>
+                  <template v-for="l,li in settings.parameters.neuron_n">
+                    <v-list-item :key="`neuron-n-${li}`">
+                      <v-text-field :label="li == 0 ? 'Input layer' : li == settings.parameters.neuron_n.length - 1 ? 'Output layer' : `Hidden layer ${li}`" v-model="settings.parameters.neuron_n[li]" hide-details :readonly="li == 0 || li == settings.parameters.neuron_n.length-1">
+                        <template v-slot:append v-if="settings.parameters.neuron_n.length > 3 && li > 0 && li < settings.parameters.neuron_n.length - 1">
+                          <v-btn icon title="remove this layer" @click="settings.parameters.neuron_n.splice(li,1)"><v-icon>mdi-minus</v-icon></v-btn>
+                        </template>
+                      </v-text-field>
+                    </v-list-item>
+                    <v-list-item v-if="li == settings.parameters.neuron_n.length - 2">
+                      <v-btn color="secondary" block @click="settings.parameters.neuron_n.splice(settings.parameters.neuron_n.length - 1, 0, 2)"><v-icon>mdi-plus</v-icon></v-btn>
+                    </v-list-item>
+                  </template>
                   <v-subheader>Activation Functions</v-subheader>
                   <v-list-item v-for="actfcn,ai in settings.parameters.activation_fcns" :key="`actfcn-${ai}`">
                     <v-select :label="ai == settings.parameters.activation_fcns.length - 1 ? 'Output layer' : `Hidden layer ${ai+1}`" v-model="settings.parameters.activation_fcns[ai]" :items="Object.keys(activation_fcns)" hide-details></v-text-field>
@@ -424,14 +433,17 @@
             this.settings.parameters.neuron_n = new_nn.map(x => Number(x));
           } else {  
             if (old_nn.length !== 0) {
-              let layer_delta = Math.abs(new_nn.length - old_nn.length);
-              if (new_nn.length > old_nn.length) {
-                console.log("more layer")
+              let nn_from_weights = [old_nn[0]]
+              nn_from_weights.push(...this.settings.parameters.weights.map(layer => layer.length));
+              let layer_delta = Math.abs(new_nn.length - nn_from_weights.length);
+              if (new_nn.length > nn_from_weights.length) {
                 this.settings.parameters.weights.splice(this.settings.parameters.weights.length - 1, 0, ...[...Array(layer_delta)].map(() => []));
                 this.settings.parameters.thetas.splice(this.settings.parameters.thetas.length - 1, 0, ...[...Array(layer_delta)].map(() => []));
+                this.settings.parameters.activation_fcns.splice(this.settings.parameters.activation_fcns.length - 1, 0, ...[...Array(layer_delta)].map(() => "sigmoid"));
               } else {
                 this.settings.parameters.weights.splice(this.settings.parameters.weights.length - 1 - layer_delta, layer_delta);
                 this.settings.parameters.thetas.splice(this.settings.parameters.thetas.length - 1 - layer_delta, layer_delta);
+                this.settings.parameters.activation_fcns.splice(this.settings.parameters.activation_fcns.length - 1 - layer_delta, layer_delta);
               }
               new_nn.slice(1).forEach((layer,l) => {
                 let neuron_delta = Math.abs(layer - this.settings.parameters.thetas[l].length);
