@@ -156,7 +156,7 @@
               primary: "#009688",
               secondary: "#80CBC4",
               accent: "#1DE9B6",
-              highlight: "#607D8B"
+              highlight: "#D32F2F"
             }
           }
         }
@@ -723,7 +723,22 @@
               .attr("cx", layer_scale(i))
               .attr("cy", d => scale(d))
               .attr("r", radius)
-              .attr("fill", this.$vuetify.theme.themes.light.secondary)
+              .attr("fill", this.$vuetify.theme.themes.light.secondary);
+            ndata.enter()
+              .append("text")
+              .attr("x", layer_scale(i))
+              .attr("y", d => scale(d))
+              .attr("fill", this.$vuetify.theme.themes.light.primary)
+              .attr("dominant-baseline", "middle")
+              .attr("text-anchor", "middle")
+              .style("font-size", `${1.1*radius}px`)
+              .text(d => neuron_n_prev + Math.floor(scale.domain()[1]) - d + 1);
+            ndata.enter()
+              .append("circle")
+              .attr("cx", layer_scale(i))
+              .attr("cy", d => scale(d))
+              .attr("r", radius)
+              .attr("fill-opacity", 0)
               .attr("stroke", this.$vuetify.theme.themes.light.primary)
               .attr("stroke-width", 0.1*radius)
               .on("mousemove", (event,d) => {
@@ -734,7 +749,7 @@
                     .style("top", `${event.pageY}px`)
                     .html(`${weights[i-1][weights[i-1].length-d].map((w,pi) => `w<sub>${this.neuronNames[i-1][pi]}${this.neuronNames[i][this.neuronNames[i].length-d]}</sub>: ${w.toFixed(2)}`).join("<br>")}<br>Θ<sub>${this.neuronNames[i][this.neuronNames[i].length-d]}</sub>: ${thetas[i-1][thetas[i-1].length-d].toFixed(2)}`);
                   d3.select(event.target)
-                    .attr("stroke", this.$vuetify.theme.themes.light.accent);
+                    .attr("stroke", this.$vuetify.theme.themes.light.highlight);
                 }
               })
               .on("mouseleave", () => {
@@ -745,15 +760,6 @@
                 d3.select(event.target)
                   .attr("stroke", this.$vuetify.theme.themes.light.primary);
               });
-            ndata.enter()
-              .append("text")
-              .attr("x", layer_scale(i))
-              .attr("y", d => scale(d))
-              .attr("fill", this.$vuetify.theme.themes.light.primary)
-              .attr("dominant-baseline", "middle")
-              .attr("text-anchor", "middle")
-              .style("font-size", `${1.1*radius}px`)
-              .text(d => neuron_n_prev + Math.floor(scale.domain()[1]) - d + 1);
             neuron_n_prev += Math.floor(scale.domain()[1]);
           });
         },
