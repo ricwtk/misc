@@ -674,6 +674,7 @@
           }, []);
 
           let gnn = d3.select("#g-neural-network");
+          gnn.selectAll("*").remove();
           let neuron_scale = this.settings.parameters.neuron_n.map(n => {
             return d3.scaleLinear()
               .domain([0.5, n+0.5])
@@ -736,13 +737,13 @@
                 .attr("dominant-baseline", "middle")
                 .attr("text-anchor", "start")
                 .attr("fill", this.$vuetify.theme.themes.light.primary)
-                .text(d => (Math.floor(scale.domain()[1]) == 1 ? "Y" : `Y${Math.floor(scale.domain()[1]) - d + 1}`) + ` (${output[Math.floor(scale.domain()[1]) - d]} | ${calculatedoutput[Math.floor(scale.domain()[1]) - d].toFixed(2)}) `)
+                .text(d => (Math.floor(scale.domain()[1]) == 1 ? "Y" : `Y${Math.floor(scale.domain()[1]) - d + 1}`) + ` (${output[Math.floor(scale.domain()[1]) - d]} | ${calculatedoutput[Math.floor(scale.domain()[1]) - d].toFixed(3)}) `)
                 .on("mousemove", (event,d) => {
                   d3.select("#gnntt")
                     .style("opacity", 0.9)
                     .style("left", `${event.pageX+20}px`)
                     .style("top", `${event.pageY}px`)
-                    .html(`Expected: ${output[Math.floor(scale.domain()[1]) - d]}<br>Calculated: ${calculatedoutput[Math.floor(scale.domain()[1]) - d].toFixed(2)}`);
+                    .html(`Expected: ${output[Math.floor(scale.domain()[1]) - d]}<br>Calculated: ${calculatedoutput[Math.floor(scale.domain()[1]) - d].toFixed(3)}`);
                 })
                 .on("mouseleave", () => {
                   d3.select("#gnntt")
