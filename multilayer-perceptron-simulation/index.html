@@ -37,7 +37,7 @@
         <v-container fluid class="align-content-start py-0">
           <v-card dark color="primary" class="mt-3">
             <v-card-title>Operation: {{ settings.parameters.operation.chosen }}</v-card-title>
-            <v-card-text>
+            <v-card-text v-show="training.results.content.length > 0">
               <v-subheader class="px-0">Epoch</v-subheader>
               <v-slider :min="epochMin" :max="epochMax" v-model="display.epoch" ticks="always" tick-size="5" thumb-label thumb-color="secondary"></v-slider>
               <v-subheader class="px-0">Data point</v-subheader>
@@ -52,7 +52,7 @@
           </v-card>
           <v-card dark color="primary" class="mt-3">
             <v-card-title>History</v-card-title>
-            <v-card-text>
+            <v-card-text v-show="training.results.content.length > 0">
               <v-tabs background-color="transparent" center-active dark v-model="graph.tab">
                 <v-tab>Weights</v-tab>
                 <v-tab>Thetas</v-tab>
@@ -642,8 +642,10 @@
           this.resetLearning();
         },
         drawNeuralNetworkGraph: function () {
+          let gnn = d3.select("#g-neural-network");
+          gnn.selectAll("*").remove();
           let showing_iter = Math.min((this.display.epoch - 1) * this.training.data.length + this.display.point, this.training.results.content.length - 1);
-          if (showing_iter < 0) { return "";}
+          if (showing_iter < 0) { return; }
           
           let inputs = this.training.results.content[showing_iter].slice(0,this.settings.parameters.neuron_n[0]);
           let output = this.training.results.content[showing_iter].slice(this.settings.parameters.neuron_n[0], this.settings.parameters.neuron_n[0]+this.settings.parameters.neuron_n[this.settings.parameters.neuron_n.length-1]);
@@ -673,8 +675,6 @@
             return acc;
           }, []);
 
-          let gnn = d3.select("#g-neural-network");
-          gnn.selectAll("*").remove();
           let neuron_scale = this.settings.parameters.neuron_n.map(n => {
             return d3.scaleLinear()
               .domain([0.5, n+0.5])
@@ -807,8 +807,9 @@
           });
         },
         drawWeightGraph: function () {
-          if (this.training.results.content.length == 0) { return ""; }
-
+          let gw = d3.select("#g-weights");
+          gw.selectAll("*").remove();
+          if (this.training.results.content.length == 0) { return; }
           let startindex = this.settings.parameters.neuron_n[0]+this.settings.parameters.neuron_n[this.settings.parameters.neuron_n.length-1];
           
           let data = this.training.results.content.map((d,i) => ({
@@ -832,8 +833,6 @@
             y: d3.axisLeft(scale.y)
           };
 
-          let gw = d3.select("#g-weights");
-          gw.selectAll("*").remove();
           gw.append("g")
             .attr("transform", `translate(0,${this.graph.view_box[3]+this.graph.view_box[1]-this.graph.margin.bottom})`)
             .call(axes.x);
@@ -897,7 +896,9 @@
             .text("Weights");
         },
         drawThetaGraph: function () {
-          if (this.training.results.content.length == 0) { return ""; }
+          let gt = d3.select("#g-thetas");
+          gt.selectAll("*").remove();
+          if (this.training.results.content.length == 0) { return; }
 
           let startindex = this.settings.parameters.neuron_n[0]+this.settings.parameters.neuron_n[this.settings.parameters.neuron_n.length-1]+this.numberOfWeights;
 
@@ -922,8 +923,6 @@
             y: d3.axisLeft(scale.y)
           };
 
-          let gt = d3.select("#g-thetas");
-          gt.selectAll("*").remove();
           gt.append("g")
             .attr("transform", `translate(0,${this.graph.view_box[3]+this.graph.view_box[1]-this.graph.margin.bottom})`)
             .call(axes.x);
@@ -987,7 +986,9 @@
             .text("Thetas, Θ");
         },
         drawErrorGraph: function () {
-          if (this.training.results.content.length == 0) { return ""; }
+          let ge = d3.select("#g-error");
+          ge.selectAll("*").remove();
+          if (this.training.results.content.length == 0) { return; }
 
           let startindex = this.settings.parameters.neuron_n[0]+this.settings.parameters.neuron_n[this.settings.parameters.neuron_n.length-1]+this.numberOfWeights+this.numberOfThetas+this.numberOfThetas;
           let numberoferrors = this.settings.parameters.neuron_n[this.settings.parameters.neuron_n.length-1];
@@ -1021,8 +1022,6 @@
             y: d3.axisLeft(scale.y)
           };
 
-          let ge = d3.select("#g-error");
-          ge.selectAll("*").remove();
           ge.append("g")
             .attr("transform", `translate(0,${this.graph.view_box[3]+this.graph.view_box[1]-this.graph.margin.bottom})`)
             .call(axes.x);
@@ -1109,8 +1108,10 @@
             .text("Errors");
         },
         drawDecisionRegionsGraph: function () {
+          let gdr = d3.select("#g-decision-regions");
+          gdr.selectAll("*").remove();
           let showing_iter = Math.min((this.display.epoch - 1) * this.training.data.length + this.display.point, this.training.results.content.length - 1);
-          if (showing_iter < 0) { return "";}
+          if (showing_iter < 0) { return; }
           
           let startindex = this.settings.parameters.neuron_n[0] + this.settings.parameters.neuron_n[this.settings.parameters.neuron_n.length-1];
           let weights = this.training.results.content[showing_iter].slice(startindex,startindex+this.numberOfWeights);
@@ -1176,8 +1177,6 @@
             colorbar: d3.axisRight(scale.colorbar).tickValues(tickValues.colorbar).tickFormat(d3.format('.1f')),
           };
 
-          let gdr = d3.select("#g-decision-regions");
-          gdr.selectAll("*").remove();
           gdr.append("g")
             .attr("transform", `translate(0,${this.graph.decision_regions.view_box[3]+this.graph.decision_regions.view_box[1]-this.graph.decision_regions.margin.bottom})`)
             .call(axes.x);
