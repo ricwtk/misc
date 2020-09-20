@@ -114,11 +114,11 @@
               <v-card-title>Parameter values</v-card-title>
               <v-divider></v-divider>
               <v-card-text>
-                <v-list rounded>
+                <v-list rounded dense>
                   <v-list-item>
                     <v-select label="Operation to model/learn" :items="settings.parameters.operation.options" v-model="settings.parameters.operation.chosen" hide-details></v-select>
                   </v-list-item>
-                  <v-subheader>Neuron Number in Layers</v-subheader>
+                  <v-subheader class="font-weight-black" style="height:2em">Neuron Number in Layers</v-subheader>
                   <template v-for="l,li in settings.parameters.neuron_n">
                     <v-list-item :key="`neuron-n-${li}`">
                       <v-text-field :label="li == 0 ? 'Input layer' : li == settings.parameters.neuron_n.length - 1 ? 'Output layer' : `Hidden layer ${li}`" v-model="settings.parameters.neuron_n[li]" hide-details :readonly="li == 0 || li == settings.parameters.neuron_n.length-1">
@@ -131,25 +131,27 @@
                       <v-btn color="secondary" block @click="settings.parameters.neuron_n.splice(settings.parameters.neuron_n.length - 1, 0, 2)"><v-icon>mdi-plus</v-icon></v-btn>
                     </v-list-item>
                   </template>
-                  <v-subheader>Activation Functions</v-subheader>
+                  <v-subheader class="font-weight-black" style="height:2em">Activation Functions</v-subheader>
                   <v-list-item v-for="actfcn,ai in settings.parameters.activation_fcns" :key="`actfcn-${ai}`">
                     <v-select :label="ai == settings.parameters.activation_fcns.length - 1 ? 'Output layer' : `Hidden layer ${ai+1}`" v-model="settings.parameters.activation_fcns[ai]" :items="Object.keys(activation_fcns)" hide-details></v-text-field>
                   </v-list-item>
-                  <v-subheader>Weights</v-subheader>
+                  <v-subheader class="font-weight-black" style="height:2em">Weights</v-subheader>
                   <template v-for="l,li in settings.parameters.weights">
+                    <v-subheader style="height:2em">{{ li == 0 ? "Input layer" : `Hidden layer ${li}`}} to {{ li == settings.parameters.thetas.length - 1 ? "output layer" : `hidden layer ${li+1}` }}</v-subheader>
                     <template v-for="n,ni in l">
                       <v-list-item v-for="w,wi in n" :key="`weight-${neuronNames[li][wi]}-${neuronNames[li+1][ni]}`">
                         <v-text-field :label="`w${neuronNames[li][wi]}${neuronNames[li+1][ni]}`" v-model="settings.parameters.weights[li][ni][wi]" hide-details></v-text-field>
                       </v-list-item>
                     </template>
                   </template>
-                  <v-subheader>Thresholds</v-subheader>
+                  <v-subheader class="font-weight-black" style="height:2em">Thresholds</v-subheader>
                   <template v-for="l,li in settings.parameters.thetas">
+                    <v-subheader style="height:2em">{{ li == settings.parameters.thetas.length - 1 ? "Output layer" : `Hidden layer ${li+1}` }}</v-subheader>
                     <v-list-item v-for="n,ni in l" :key="`theta-${neuronNames[li+1][ni]}`">
                       <v-text-field :label="`Θ${neuronNames[li+1][ni]}`" v-model="settings.parameters.thetas[li][ni]" hide-details></v-text-field>
                     </v-list-item>
                   </template>
-                  <v-subheader>Learning rate</v-subheader>
+                  <v-subheader class="font-weight-black" style="height:2em">Learning rate</v-subheader>
                   <v-list-item>
                     <v-text-field label="α" v-model="settings.parameters.alpha" hide-details></v-text-field>
                   </v-list-item>
