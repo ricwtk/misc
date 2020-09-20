@@ -418,6 +418,41 @@
             this.settings.parameters.thetas = this.settings.parameters.cached.thetas.map(layer => layer.map(neuron => neuron));
             this.settings.parameters.alpha = this.settings.parameters.cached.alpha;
           }
+        },
+        "settings.parameters.neuron_n": function (new_nn, old_nn) {
+          if (new_nn.reduce((acc,val) => acc || (typeof val !== 'number'), false)) {
+            this.settings.parameters.neuron_n = new_nn.map(x => Number(x));
+          } else {  
+            if (old_nn.length !== 0) {
+              let layer_delta = Math.abs(new_nn.length - old_nn.length);
+              if (new_nn.length > old_nn.length) {
+                console.log("more layer")
+                this.settings.parameters.weights.splice(this.settings.parameters.weights.length - 1, 0, ...[...Array(layer_delta)].map(() => []));
+                this.settings.parameters.thetas.splice(this.settings.parameters.thetas.length - 1, 0, ...[...Array(layer_delta)].map(() => []));
+              } else {
+                this.settings.parameters.weights.splice(this.settings.parameters.weights.length - 1 - layer_delta, layer_delta);
+                this.settings.parameters.thetas.splice(this.settings.parameters.thetas.length - 1 - layer_delta, layer_delta);
+              }
+              new_nn.slice(1).forEach((layer,l) => {
+                let neuron_delta = Math.abs(layer - this.settings.parameters.thetas[l].length);
+                if (layer > this.settings.parameters.thetas[l].length) {
+                  this.settings.parameters.thetas[l].push(...[...Array(neuron_delta)].map(() => Math.random() - 0.5));
+                  this.settings.parameters.weights[l].push(...[...Array(neuron_delta)].map(() => []));
+                } else {
+                  this.settings.parameters.thetas[l].splice(this.settings.parameters.thetas[l].length - neuron_delta, neuron_delta);
+                  this.settings.parameters.weights[l].splice(this.settings.parameters.weights[l].length - neuron_delta, neuron_delta);
+                }
+                this.settings.parameters.weights[l].forEach((neuron,n) => {
+                  let weight_delta = Math.abs(new_nn[l] - neuron.length);
+                  if (new_nn[l] > neuron.length) {
+                    this.settings.parameters.weights[l][n].push(...[...Array(weight_delta)].map(() => Math.random() - 0.5));
+                  } else {
+                    this.settings.parameters.weights[l][n].splice(this.settings.parameters.weights[l][n].length - weight_delta, weight_delta);
+                  }
+                });
+              });
+            }
+          }
         }
       },
       methods: {
