@@ -620,6 +620,10 @@
           let showing_iter = Math.min((this.display.epoch - 1) * this.training.data.length + this.display.point, this.training.results.content.length - 1);
           if (showing_iter < 0) { return "";}
           
+          let inputs = this.training.results.content[showing_iter].slice(0,this.settings.parameters.neuron_n[0]);
+          let output = this.training.results.content[showing_iter].slice(this.settings.parameters.neuron_n[0], this.settings.parameters.neuron_n[0]+this.settings.parameters.neuron_n[this.settings.parameters.neuron_n.length-1]);
+          let aftercalcoutputindex = this.settings.parameters.neuron_n[0] + this.settings.parameters.neuron_n[this.settings.parameters.neuron_n.length-1] + this.numberOfWeights + this.numberOfThetas + this.numberOfThetas;
+          let calculatedoutput = this.training.results.content[showing_iter].slice(aftercalcoutputindex-output.length, aftercalcoutputindex);
           let startindex = this.settings.parameters.neuron_n[0] + this.settings.parameters.neuron_n[this.settings.parameters.neuron_n.length-1];
           let weights = this.training.results.content[showing_iter].slice(startindex,startindex+this.numberOfWeights);
           weights = this.settings.parameters.neuron_n.slice(1).reduce((acc,n,i) => {
@@ -671,7 +675,7 @@
                 .attr("dominant-baseline", "middle")
                 .attr("text-anchor", "end")
                 .attr("fill", this.$vuetify.theme.themes.light.primary)
-                .text(d => `x${Math.floor(scale.domain()[1]) - d + 1}`);
+                .text(d => `x${Math.floor(scale.domain()[1]) - d + 1} (${inputs[Math.floor(scale.domain()[1]) - d]}) `);
             }
             if (i < neuron_scale.length - 1) {
               gnn.selectAll()
@@ -707,7 +711,20 @@
                 .attr("dominant-baseline", "middle")
                 .attr("text-anchor", "start")
                 .attr("fill", this.$vuetify.theme.themes.light.primary)
-                .text(d => Math.floor(scale.domain()[1]) == 1 ? "Y" : `Y${Math.floor(scale.domain()[1]) - d + 1}`);
+                .text(d => (Math.floor(scale.domain()[1]) == 1 ? "Y" : `Y${Math.floor(scale.domain()[1]) - d + 1}`) + ` (${output[Math.floor(scale.domain()[1]) - d]} | ${calculatedoutput[Math.floor(scale.domain()[1]) - d].toFixed(2)}) `)
+                .on("mousemove", (event,d) => {
+                  d3.select("#gnntt")
+                    .style("opacity", 0.9)
+                    .style("left", `${event.pageX+20}px`)
+                    .style("top", `${event.pageY}px`)
+                    .html(`Expected: ${output[Math.floor(scale.domain()[1]) - d]}<br>Calculated: ${calculatedoutput[Math.floor(scale.domain()[1]) - d].toFixed(2)}`);
+                })
+                .on("mouseleave", () => {
+                  d3.select("#gnntt")
+                    .style("opacity",0)
+                    .style("left", "0px")
+                    .style("top", "0px");
+                });
             }
           });
           let radius = Math.min(...neuron_scale.reduce((acc, scale) => {
