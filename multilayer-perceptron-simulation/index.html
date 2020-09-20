@@ -1162,7 +1162,13 @@
                 .style("left", `${event.pageX+20}px`)
                 .style("top", `${event.pageY}px`)
                 .html(`x<sub>1</sub>: ${d.x.toFixed(2)}<br>x<sub>2</sub>: ${d.y.toFixed(2)}<br>y: ${d.c[d.c.length-1][0].toFixed(2)}`);
-              d3.select(event.target)
+              gdr.append("rect")
+                .attr("id", "highlight-cell")
+                .attr("x", event.target.x.baseVal.valueAsString)
+                .attr("y", event.target.y.baseVal.valueAsString)
+                .attr("width", event.target.width.baseVal.valueAsString)
+                .attr("height", event.target.height.baseVal.valueAsString)
+                .attr("fill", "none")
                 .attr("stroke", this.$vuetify.theme.themes.light.highlight)
                 .attr("stroke-width",3);
             })
@@ -1171,8 +1177,7 @@
                 .style("opacity",0)
                 .style("left", "0px")
                 .style("top", "0px");
-              d3.select(event.target)
-                .attr("stroke-width",0);
+              gdr.selectAll("#highlight-cell").remove();
             });
           gdr.selectAll("circle")
             .data(this.training.data.map(d => ({x: d[0], y: d[1], o: d[2]})))
