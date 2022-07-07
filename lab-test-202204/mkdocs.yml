@@ -1,0 +1,9 @@
+site_name: Lab test (April 2022 Semester)
+site_url: https://ricwtk.github.io/misc/lab-test-202204/site
+site_dir: site
+markdown_extensions:
+  - pymdownx.superfences
+theme:
+  name: material
+  palette:
+    primary: blue grey
